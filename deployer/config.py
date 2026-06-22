@@ -11,6 +11,7 @@ REMOTE_SCRIPT = PROJECT_ROOT / "remote_scripts" / "install_remote.sh"
 REMOTE_PREFLIGHT_SCRIPT = PROJECT_ROOT / "remote_scripts" / "preflight_remote.sh"
 REMOTE_HARDEN_SCRIPT = PROJECT_ROOT / "remote_scripts" / "harden_after_success.sh"
 REMOTE_RESULT_DIR = "/root/3xui-oneclick-result"
+REMOTE_BACKUP_DIR = "/root/3xui-oneclick-backups"
 
 
 @dataclass(frozen=True)

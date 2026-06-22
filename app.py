@@ -8,8 +8,16 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from deployer.config import NodeConfig, OUTPUT_DIR, VPSLogin
-from deployer.deploy_service import ERROR_HINTS, clear_output, deploy, preflight
+from deployer.deploy_service import (
+    ERROR_HINTS,
+    backup_remote_results,
+    clear_output,
+    deploy,
+    download_remote_results,
+    preflight,
+)
 from deployer.export_service import build_export_zip
+from deployer.qr_service import regenerate_output_qrs
 from deployer.result_parser import load_results
 from deployer.ssh_runner import DeploymentError, redact
 
@@ -25,6 +33,7 @@ def init_state() -> None:
     st.session_state.setdefault("confirm_redeploy", False)
     st.session_state.setdefault("last_preflight", load_results(OUTPUT_DIR).get("preflight", {}))
     st.session_state.setdefault("export_zip_path", "")
+    st.session_state.setdefault("last_remote_backup", "")
 
 
 def append_log(message: str, password: str = "") -> None:
@@ -138,7 +147,7 @@ def render_management_mode(results: dict) -> None:
     status_cols[2].metric("节点名称", results.get("node_name", "auto-reality"))
     status_cols[3].metric("订阅", "已生成" if results.get("subscription_link") else "单节点")
 
-    actions = st.columns(3)
+    actions = st.columns(4)
     panel_url = results.get("panel_url", "")
     if panel_url:
         actions[0].link_button("打开 3x-ui 面板", panel_url, use_container_width=True)
@@ -148,8 +157,15 @@ def render_management_mode(results: dict) -> None:
         zip_path = build_export_zip(OUTPUT_DIR)
         st.session_state.export_zip_path = str(zip_path)
         st.toast("导出配置包已生成。")
-    actions[2].button("远程重置/卸载", disabled=True, use_container_width=True)
-    st.caption("远程重置/卸载属于危险操作，v0.2 先不默认开放；后续会做二次确认、备份和远程回滚提示。")
+    if actions[2].button("重建本地二维码", use_container_width=True):
+        regenerated = regenerate_output_qrs(OUTPUT_DIR)
+        st.session_state.last_results = load_results(OUTPUT_DIR)
+        if regenerated:
+            st.toast(f"已重建 {len(regenerated)} 个二维码。")
+        else:
+            st.warning("没有可用于重建二维码的链接。")
+    actions[3].button("远程重置/卸载", disabled=True, use_container_width=True)
+    st.caption("远程重置/卸载属于危险操作，v0.3 仍不默认开放；后续会做二次确认、备份和远程回滚提示。")
 
     export_zip_path = st.session_state.get("export_zip_path", "")
     if export_zip_path and Path(export_zip_path).exists():
@@ -161,6 +177,8 @@ def render_management_mode(results: dict) -> None:
             mime="application/zip",
             use_container_width=True,
         )
+    if st.session_state.get("last_remote_backup"):
+        st.info(f"最近一次远程备份位置：{st.session_state.last_remote_backup}")
 
 
 def render_preflight(preflight_result: dict) -> None:
@@ -323,11 +341,13 @@ def main() -> None:
             run_hardening = st.checkbox("执行服务器加固", value=False)
             st.caption("服务器加固脚本默认不会执行；只有主动勾选时才会运行。第一版不会默认关闭 root 登录、密码登录或 ping。")
 
-        col_a, col_b, col_c = st.columns([1, 1, 1])
+        col_a, col_b, col_c, col_d, col_e = st.columns([1, 1, 1, 1, 1])
         start_disabled = st.session_state.is_running or (existing_success and not confirm_redeploy)
-        check = col_a.form_submit_button("检测 VPS 环境", disabled=st.session_state.is_running)
-        start = col_b.form_submit_button("开始一键部署", type="primary", disabled=start_disabled)
-        clear = col_c.form_submit_button("清空本地输出", disabled=st.session_state.is_running)
+        check = col_a.form_submit_button("刷新远程状态", disabled=st.session_state.is_running)
+        redownload = col_b.form_submit_button("重新下载结果", disabled=st.session_state.is_running)
+        backup_remote = col_c.form_submit_button("远程备份结果", disabled=st.session_state.is_running)
+        start = col_d.form_submit_button("开始一键部署", type="primary", disabled=start_disabled)
+        clear = col_e.form_submit_button("清空本地输出", disabled=st.session_state.is_running)
 
     if clear:
         clear_output()
@@ -335,6 +355,7 @@ def main() -> None:
         st.session_state.last_results = load_results(OUTPUT_DIR)
         st.session_state.last_preflight = {}
         st.session_state.export_zip_path = ""
+        st.session_state.last_remote_backup = ""
         st.success("本地 output/ 已清空。")
 
     log_placeholder = st.empty()
@@ -376,6 +397,59 @@ def main() -> None:
         except Exception as exc:  # noqa: BLE001
             append_log(f"未知错误：{exc}", ssh_password)
             st.error(f"检测失败：{exc}")
+        finally:
+            st.session_state.is_running = False
+            render_logs(log_placeholder)
+
+    if redownload:
+        st.session_state.is_running = True
+        st.session_state.logs = []
+        login = VPSLogin(host=host.strip(), port=int(ssh_port), username=ssh_user.strip(), password=ssh_password)
+
+        def ui_log(line: str) -> None:
+            append_log(line, ssh_password)
+            render_logs(log_placeholder)
+
+        try:
+            ui_log("开始从远程重新下载结果文件。不会重新部署，也不会修改 3x-ui 配置。")
+            results = download_remote_results(login, ui_log)
+            st.session_state.last_results = results
+            st.session_state.last_preflight = results.get("preflight", {})
+            ui_log("远程结果文件已重新下载到本地 output/。")
+            st.success("远程结果已重新下载。")
+        except DeploymentError as exc:
+            append_log(f"错误：{exc.message}", ssh_password)
+            hint = ERROR_HINTS.get(exc.code, exc.message)
+            st.error(hint)
+        except Exception as exc:  # noqa: BLE001
+            append_log(f"未知错误：{exc}", ssh_password)
+            st.error(f"重新下载失败：{exc}")
+        finally:
+            st.session_state.is_running = False
+            render_logs(log_placeholder)
+
+    if backup_remote:
+        st.session_state.is_running = True
+        st.session_state.logs = []
+        login = VPSLogin(host=host.strip(), port=int(ssh_port), username=ssh_user.strip(), password=ssh_password)
+
+        def ui_log(line: str) -> None:
+            append_log(line, ssh_password)
+            render_logs(log_placeholder)
+
+        try:
+            ui_log("开始备份远程结果目录。备份只保存到 VPS，不下载到本地。")
+            backup_hint = backup_remote_results(login, ui_log)
+            st.session_state.last_remote_backup = backup_hint
+            ui_log(f"远程备份完成：{backup_hint}")
+            st.success("远程结果目录已备份。")
+        except DeploymentError as exc:
+            append_log(f"错误：{exc.message}", ssh_password)
+            hint = ERROR_HINTS.get(exc.code, exc.message)
+            st.error(hint)
+        except Exception as exc:  # noqa: BLE001
+            append_log(f"未知错误：{exc}", ssh_password)
+            st.error(f"远程备份失败：{exc}")
         finally:
             st.session_state.is_running = False
             render_logs(log_placeholder)

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shlex
 import shutil
 import tempfile
 from pathlib import Path
@@ -10,6 +11,7 @@ from .config import (
     NodeConfig,
     LAST_SUCCESS_DIR,
     OUTPUT_DIR,
+    REMOTE_BACKUP_DIR,
     REMOTE_PREFLIGHT_SCRIPT,
     REMOTE_OUTPUT_FILES,
     REMOTE_HARDEN_SCRIPT,
@@ -41,6 +43,7 @@ ERROR_HINTS = {
     "SUBSCRIPTION_FAILED": "订阅链接生成失败，但不影响单节点 VLESS 链接。",
     "DOWNLOAD_FAILED": "远程结果文件下载失败。",
     "PREFLIGHT_FAILED": "部署前检测失败，请查看检测日志。",
+    "REMOTE_BACKUP_FAILED": "远程备份失败，请查看日志。",
 }
 
 
@@ -103,14 +106,7 @@ def _restore_output_backup(temp_dir: tempfile.TemporaryDirectory | None) -> bool
 
 
 def validate_inputs(login: VPSLogin, config: NodeConfig) -> None:
-    if not login.host.strip():
-        raise DeploymentError("BAD_HOST", "请填写 VPS IP。")
-    if not (1 <= login.port <= 65535):
-        raise DeploymentError("BAD_PORT", "SSH 端口必须在 1-65535 之间。")
-    if not login.username.strip():
-        raise DeploymentError("BAD_USER", "请填写 SSH 用户名。")
-    if not login.password:
-        raise DeploymentError("AUTH_FAILED", "请填写 VPS 密码。")
+    validate_login(login)
     if not (1 <= config.reality_port <= 65535):
         raise DeploymentError("BAD_REALITY_PORT", "Reality 入站端口必须在 1-65535 之间。")
     if not (1 <= config.panel_port <= 65535):
@@ -119,6 +115,17 @@ def validate_inputs(login: VPSLogin, config: NodeConfig) -> None:
         raise DeploymentError("BAD_SNI", "SNI 只填写域名，不要带 http:// 或 https://。")
     if not config.target.strip() or "://" in config.target:
         raise DeploymentError("BAD_TARGET", "Target 使用 域名:端口 格式，不要带 http:// 或 https://。")
+
+
+def validate_login(login: VPSLogin) -> None:
+    if not login.host.strip():
+        raise DeploymentError("BAD_HOST", "请填写 VPS IP。")
+    if not (1 <= login.port <= 65535):
+        raise DeploymentError("BAD_PORT", "SSH 端口必须在 1-65535 之间。")
+    if not login.username.strip():
+        raise DeploymentError("BAD_USER", "请填写 SSH 用户名。")
+    if not login.password:
+        raise DeploymentError("AUTH_FAILED", "请填写 VPS 密码。")
 
 
 def deploy(login: VPSLogin, config: NodeConfig, log: LogCallback) -> dict:
@@ -196,3 +203,48 @@ def preflight(login: VPSLogin, config: NodeConfig, log: LogCallback) -> dict:
         if exit_code != 0:
             raise DeploymentError("PREFLIGHT_FAILED", "部署前检测脚本执行失败。")
     return load_results(OUTPUT_DIR).get("preflight", {})
+
+
+def download_remote_results(login: VPSLogin, log: LogCallback) -> dict:
+    validate_login(login)
+
+    with SSHRunner(login, log) as runner:
+        downloaded = runner.download_dir_files(REMOTE_RESULT_DIR, OUTPUT_DIR, REMOTE_OUTPUT_FILES)
+        if "result.json" not in downloaded:
+            raise DeploymentError("DOWNLOAD_FAILED", "远程结果目录里没有 result.json。")
+
+    results = load_results(OUTPUT_DIR)
+    result_file = OUTPUT_DIR / "result.json"
+    if result_file.exists():
+        try:
+            raw = json.loads(result_file.read_text(encoding="utf-8", errors="replace"))
+            raw["local_output_dir"] = str(OUTPUT_DIR)
+            result_file.write_text(json.dumps(raw, ensure_ascii=False, indent=2), encoding="utf-8")
+            results["local_output_dir"] = str(OUTPUT_DIR)
+        except json.JSONDecodeError:
+            pass
+    _save_last_success()
+    return results
+
+
+def backup_remote_results(login: VPSLogin, log: LogCallback) -> str:
+    validate_login(login)
+
+    with SSHRunner(login, log) as runner:
+        backup_dir = shlex.quote(REMOTE_BACKUP_DIR)
+        result_dir = shlex.quote(REMOTE_RESULT_DIR)
+        result_parent = shlex.quote(str(Path(REMOTE_RESULT_DIR).parent))
+        result_name = shlex.quote(Path(REMOTE_RESULT_DIR).name)
+        command = (
+            "set -Eeuo pipefail; "
+            f"mkdir -p {backup_dir}; "
+            f"test -d {result_dir}; "
+            f"backup_path={backup_dir}\"/result-$(date +%Y%m%d-%H%M%S).tgz\"; "
+            f"tar -C {result_parent} -czf \"$backup_path\" {result_name}; "
+            "chmod 600 \"$backup_path\"; "
+            "printf '%s\\n' \"$backup_path\""
+        )
+        exit_code = runner.run(command)
+        if exit_code != 0:
+            raise DeploymentError("REMOTE_BACKUP_FAILED", "远程结果备份失败。")
+    return f"{REMOTE_BACKUP_DIR}/result-*.tgz"

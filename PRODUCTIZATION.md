@@ -52,10 +52,15 @@ Out of scope for v0.2:
 
 ## v0.3 Management Features
 
+Implemented scope:
+
 - Refresh current remote status without redeploying.
 - Download remote result files again from an already deployed VPS.
 - Regenerate local QR images from saved links.
 - Add an explicit remote backup step before risky operations.
+
+Still intentionally guarded:
+
 - Add a guarded uninstall/reset flow with:
   - typed confirmation
   - backup reminder
