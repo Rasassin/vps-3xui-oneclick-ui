@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.10.0
+
+- Added `scripts/check_release_artifacts.py` as a standalone release artifact verifier.
+- Reused the artifact verifier from release readiness.
+- Included the artifact verifier in release and desktop packaging checks.
+
 ## v1.9.0
 
 - Added `scripts/doctor.py` as a one-command local project health check.

@@ -177,6 +177,7 @@ python scripts/doctor.py
 python3 scripts/build_release.py
 python3 scripts/generate_release_notes.py
 python3 scripts/build_release_bundle.py
+python3 scripts/check_release_artifacts.py
 python3 scripts/check_release_ready.py
 python3 scripts/check_secret_hygiene.py
 python3 scripts/check_streamlit_app.py
@@ -188,6 +189,8 @@ python3 scripts/doctor.py --release
 `build_release_bundle.py` 会同时生成源码包、GitHub Release 文案草稿、SHA256 校验文件和 release manifest。
 
 `check_release_ready.py` 会在不连接 VPS 的前提下运行发版前体检；开发中检查未提交改动时可加 `--allow-dirty`。
+
+`check_release_artifacts.py` 会检查 `dist/` 里的发布 zip、Release 文案、SHA256SUMS 和 manifest，确认没有混入本地 `output/` 结果或 `data/profiles.json`。
 
 `check_secret_hygiene.py` 会检查 Git 已跟踪文件，防止误提交 output 结果、profiles、env、日志、私钥和明显的节点链接。
 
@@ -245,6 +248,7 @@ vps-3xui-oneclick-ui/
 │   ├── install_remote.sh
 │   └── harden_after_success.sh
 ├── scripts/
+│   ├── check_release_artifacts.py
 │   ├── check_secret_hygiene.py
 │   ├── check_release_ready.py
 │   ├── check_streamlit_app.py

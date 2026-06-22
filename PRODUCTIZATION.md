@@ -322,6 +322,21 @@ Still intentionally not included:
 - Connecting to a VPS.
 - Running remote deployment actions.
 
+## v1.10 Release Artifact Verifier
+
+Implemented scope:
+
+- Add `scripts/check_release_artifacts.py` for standalone release artifact validation.
+- Verify source zip, GitHub Release notes, SHA256SUMS, and release manifest.
+- Confirm release zips exclude local `output/` results and `data/profiles.json`.
+- Reuse the verifier from release readiness.
+
+Still intentionally not included:
+
+- Uploading artifacts to GitHub.
+- Signing or notarizing desktop binaries.
+- Real VPS deployment during release checks.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

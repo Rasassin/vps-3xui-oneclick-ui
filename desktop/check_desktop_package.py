@@ -31,6 +31,7 @@ REQUIRED_RELEASE_FILES = {
     "docs/privacy.md",
     "requirements-desktop.txt",
     "scripts/build_release_bundle.py",
+    "scripts/check_release_artifacts.py",
     "scripts/check_release_ready.py",
     "scripts/check_streamlit_app.py",
     "scripts/doctor.py",
