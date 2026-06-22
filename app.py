@@ -7,7 +7,8 @@ from pathlib import Path
 import streamlit as st
 import streamlit.components.v1 as components
 
-from deployer.config import NodeConfig, OUTPUT_DIR, VPSLogin
+from deployer.config import APP_VERSION, NodeConfig, OUTPUT_DIR, VPSLogin
+from deployer.diagnostics_service import build_public_diagnostics_zip, collect_local_diagnostics
 from deployer.deploy_service import (
     ERROR_HINTS,
     backup_remote_results,
@@ -34,6 +35,8 @@ def init_state() -> None:
     st.session_state.setdefault("last_preflight", load_results(OUTPUT_DIR).get("preflight", {}))
     st.session_state.setdefault("export_zip_path", "")
     st.session_state.setdefault("last_remote_backup", "")
+    st.session_state.setdefault("local_diagnostics", {})
+    st.session_state.setdefault("diagnostics_zip_path", "")
 
 
 def append_log(message: str, password: str = "") -> None:
@@ -56,6 +59,48 @@ def generate_random_reality_port() -> int:
 
 def has_success_result(results: dict) -> bool:
     return results.get("status") == "success" and bool(results.get("vless_link"))
+
+
+def render_sidebar() -> None:
+    with st.sidebar:
+        st.subheader("产品信息")
+        st.caption(f"版本：v{APP_VERSION}")
+        st.link_button("GitHub 仓库", "https://github.com/Rasassin/vps-3xui-oneclick-ui", use_container_width=True)
+        st.divider()
+        st.subheader("本地诊断")
+        if st.button("运行本地自检", use_container_width=True):
+            st.session_state.local_diagnostics = collect_local_diagnostics(OUTPUT_DIR)
+        if st.button("生成公开诊断包", use_container_width=True):
+            zip_path = build_public_diagnostics_zip(OUTPUT_DIR)
+            st.session_state.diagnostics_zip_path = str(zip_path)
+            st.session_state.local_diagnostics = collect_local_diagnostics(OUTPUT_DIR)
+            st.toast("公开诊断包已生成。")
+
+        diagnostics = st.session_state.get("local_diagnostics", {})
+        if diagnostics:
+            deps = diagnostics.get("dependencies", {})
+            files = diagnostics.get("files", {})
+            missing_deps = [name for name, ok in deps.items() if not ok]
+            missing_files = [name for name, info in files.items() if not info.get("exists")]
+            if missing_deps or missing_files:
+                st.warning("本地自检发现问题。")
+                if missing_deps:
+                    st.caption(f"缺少依赖：{', '.join(missing_deps)}")
+                if missing_files:
+                    st.caption(f"缺少文件：{', '.join(missing_files)}")
+            else:
+                st.success("本地自检通过。")
+
+        diagnostics_zip_path = st.session_state.get("diagnostics_zip_path", "")
+        if diagnostics_zip_path and Path(diagnostics_zip_path).exists():
+            st.caption("公开诊断包不包含节点链接、二维码、订阅链接、面板账号密码或 VPS root 密码。")
+            st.download_button(
+                "下载公开诊断包",
+                data=Path(diagnostics_zip_path).read_bytes(),
+                file_name=Path(diagnostics_zip_path).name,
+                mime="application/zip",
+                use_container_width=True,
+            )
 
 
 def build_login_and_config(
@@ -280,6 +325,7 @@ def render_results(results: dict) -> None:
 
 def main() -> None:
     init_state()
+    render_sidebar()
     st.title("VPS 3x-ui 一键部署器")
     current_results = st.session_state.last_results or load_results(OUTPUT_DIR)
     existing_success = has_success_result(current_results)

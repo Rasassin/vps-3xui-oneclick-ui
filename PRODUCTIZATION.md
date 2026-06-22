@@ -67,7 +67,17 @@ Still intentionally guarded:
   - clear list of remote files/services affected
   - no default execution
 
-## v0.4 Desktop App Exploration
+## v0.4 Product Diagnostics
+
+Implemented scope:
+
+- Add an application version constant.
+- Add sidebar product information and GitHub entry.
+- Add local self-check for dependencies and required project files.
+- Add a public diagnostics zip for issue reporting.
+- Exclude node links, subscription links, QR images, panel credentials, and VPS root passwords from public diagnostics.
+
+## v0.5 Desktop App Exploration
 
 Preferred direction: Tauri frontend plus Python backend.
 
