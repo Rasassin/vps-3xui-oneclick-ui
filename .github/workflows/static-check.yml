@@ -18,5 +18,6 @@ jobs:
         run: python -m py_compile app.py deployer/*.py
       - name: Bash syntax check
         run: |
+          bash -n remote_scripts/preflight_remote.sh
           bash -n remote_scripts/install_remote.sh
           bash -n remote_scripts/harden_after_success.sh

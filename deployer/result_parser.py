@@ -22,6 +22,8 @@ def read_json_if_exists(path: Path) -> dict[str, Any]:
 
 def load_results(output_dir: Path) -> dict[str, Any]:
     result = read_json_if_exists(output_dir / "result.json")
+    result.setdefault("preflight", read_json_if_exists(output_dir / "preflight-result.json"))
+    result.setdefault("preflight_report", read_text_if_exists(output_dir / "preflight-report.txt"))
     result.setdefault("vless_link", read_text_if_exists(output_dir / "vless-link.txt"))
     result.setdefault("subscription_link", read_text_if_exists(output_dir / "subscription-link.txt"))
     result.setdefault("panel_login", read_text_if_exists(output_dir / "panel-login.txt"))
@@ -29,4 +31,3 @@ def load_results(output_dir: Path) -> dict[str, Any]:
     result["vless_qr_path"] = output_dir / "vless-qr.png"
     result["subscription_qr_path"] = output_dir / "subscription-qr.png"
     return result
-

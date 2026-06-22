@@ -10,6 +10,7 @@ from .config import (
     NodeConfig,
     LAST_SUCCESS_DIR,
     OUTPUT_DIR,
+    REMOTE_PREFLIGHT_SCRIPT,
     REMOTE_OUTPUT_FILES,
     REMOTE_HARDEN_SCRIPT,
     REMOTE_RESULT_DIR,
@@ -39,6 +40,7 @@ ERROR_HINTS = {
     "QR_FAILED": "二维码生成失败。",
     "SUBSCRIPTION_FAILED": "订阅链接生成失败，但不影响单节点 VLESS 链接。",
     "DOWNLOAD_FAILED": "远程结果文件下载失败。",
+    "PREFLIGHT_FAILED": "部署前检测失败，请查看检测日志。",
 }
 
 
@@ -172,3 +174,25 @@ def deploy(login: VPSLogin, config: NodeConfig, log: LogCallback) -> dict:
             pass
     _save_last_success()
     return results
+
+
+def preflight(login: VPSLogin, config: NodeConfig, log: LogCallback) -> dict:
+    validate_inputs(login, config)
+    if not REMOTE_PREFLIGHT_SCRIPT.exists():
+        raise DeploymentError("LOCAL_SCRIPT_MISSING", f"本地预检脚本不存在：{REMOTE_PREFLIGHT_SCRIPT}")
+
+    with SSHRunner(login, log) as runner:
+        runner.upload(REMOTE_PREFLIGHT_SCRIPT, "/root/preflight_3xui_oneclick.sh")
+        exports = [
+            shell_export("ONECLICK_REALITY_PORT", config.reality_port),
+            shell_export("ONECLICK_PANEL_PORT", config.panel_port),
+        ]
+        exit_code = runner.run(" && ".join(exports + ["bash /root/preflight_3xui_oneclick.sh"]))
+        try:
+            runner.download_dir_files(REMOTE_RESULT_DIR, OUTPUT_DIR, ["preflight-result.json", "preflight-report.txt"])
+        except DeploymentError:
+            if exit_code == 0:
+                raise
+        if exit_code != 0:
+            raise DeploymentError("PREFLIGHT_FAILED", "部署前检测脚本执行失败。")
+    return load_results(OUTPUT_DIR).get("preflight", {})

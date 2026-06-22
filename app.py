@@ -8,7 +8,8 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from deployer.config import NodeConfig, OUTPUT_DIR, VPSLogin
-from deployer.deploy_service import ERROR_HINTS, clear_output, deploy
+from deployer.deploy_service import ERROR_HINTS, clear_output, deploy, preflight
+from deployer.export_service import build_export_zip
 from deployer.result_parser import load_results
 from deployer.ssh_runner import DeploymentError, redact
 
@@ -22,6 +23,8 @@ def init_state() -> None:
     st.session_state.setdefault("is_running", False)
     st.session_state.setdefault("reality_port_value", 443)
     st.session_state.setdefault("confirm_redeploy", False)
+    st.session_state.setdefault("last_preflight", load_results(OUTPUT_DIR).get("preflight", {}))
+    st.session_state.setdefault("export_zip_path", "")
 
 
 def append_log(message: str, password: str = "") -> None:
@@ -44,6 +47,34 @@ def generate_random_reality_port() -> int:
 
 def has_success_result(results: dict) -> bool:
     return results.get("status") == "success" and bool(results.get("vless_link"))
+
+
+def build_login_and_config(
+    host: str,
+    ssh_port: int,
+    ssh_user: str,
+    ssh_password: str,
+    node_name: str,
+    reality_port: int,
+    sni: str,
+    target: str,
+    fingerprint: str,
+    panel_port: int,
+    generate_ssh_key: bool,
+    run_hardening: bool,
+) -> tuple[VPSLogin, NodeConfig]:
+    login = VPSLogin(host=host.strip(), port=int(ssh_port), username=ssh_user.strip(), password=ssh_password)
+    config = NodeConfig(
+        node_name=node_name.strip() or "auto-reality",
+        reality_port=int(reality_port),
+        sni=sni.strip(),
+        target=target.strip(),
+        fingerprint=fingerprint.strip(),
+        panel_port=int(panel_port),
+        generate_ssh_key=bool(generate_ssh_key),
+        run_hardening=bool(run_hardening),
+    )
+    return login, config
 
 
 def copy_box(label: str, value: str, height: int = 120) -> None:
@@ -97,6 +128,66 @@ def copy_inline(label: str, value: str) -> None:
     )
 
 
+def render_management_mode(results: dict) -> None:
+    if not has_success_result(results):
+        return
+    st.subheader("管理模式")
+    status_cols = st.columns(4)
+    status_cols[0].metric("部署状态", "可用")
+    status_cols[1].metric("Reality 端口", results.get("reality_port", "未知"))
+    status_cols[2].metric("节点名称", results.get("node_name", "auto-reality"))
+    status_cols[3].metric("订阅", "已生成" if results.get("subscription_link") else "单节点")
+
+    actions = st.columns(3)
+    panel_url = results.get("panel_url", "")
+    if panel_url:
+        actions[0].link_button("打开 3x-ui 面板", panel_url, use_container_width=True)
+    else:
+        actions[0].button("打开 3x-ui 面板", disabled=True, use_container_width=True)
+    if actions[1].button("生成导出配置包", use_container_width=True):
+        zip_path = build_export_zip(OUTPUT_DIR)
+        st.session_state.export_zip_path = str(zip_path)
+        st.toast("导出配置包已生成。")
+    actions[2].button("远程重置/卸载", disabled=True, use_container_width=True)
+    st.caption("远程重置/卸载属于危险操作，v0.2 先不默认开放；后续会做二次确认、备份和远程回滚提示。")
+
+    export_zip_path = st.session_state.get("export_zip_path", "")
+    if export_zip_path and Path(export_zip_path).exists():
+        st.warning("导出配置包包含节点链接、订阅链接和面板信息，请只保存在你信任的位置。")
+        st.download_button(
+            "下载导出配置包",
+            data=Path(export_zip_path).read_bytes(),
+            file_name=Path(export_zip_path).name,
+            mime="application/zip",
+            use_container_width=True,
+        )
+
+
+def render_preflight(preflight_result: dict) -> None:
+    if not preflight_result:
+        return
+    status = preflight_result.get("status", "unknown")
+    status_text = {
+        "ok": "通过",
+        "warning": "有提醒",
+        "blocked": "阻塞",
+    }.get(status, status)
+    st.subheader("部署前检测")
+    cols = st.columns(5)
+    cols[0].metric("检测状态", status_text)
+    cols[1].metric("系统", preflight_result.get("os_name", "unknown"))
+    cols[2].metric("Reality 端口", preflight_result.get("reality_port_status", "unknown"))
+    cols[3].metric("3x-ui", preflight_result.get("xui_status", "unknown"))
+    cols[4].metric("GitHub", preflight_result.get("github_status", "unknown"))
+    notes = preflight_result.get("notes", "")
+    if status == "blocked":
+        st.error(notes or "检测发现阻塞项，请先处理后再部署。")
+    elif status == "warning":
+        st.warning(notes or "检测发现提醒项，继续部署前建议确认。")
+    else:
+        st.success("检测通过，可以继续部署。")
+
+
 def render_panel_access(results: dict) -> None:
     panel_url = results.get("panel_url", "")
     panel_username = results.get("panel_username", "")
@@ -135,23 +226,30 @@ def render_results(results: dict) -> None:
     vless_qr_path = Path(results.get("vless_qr_path", OUTPUT_DIR / "vless-qr.png"))
     subscription_qr_path = Path(results.get("subscription_qr_path", OUTPUT_DIR / "subscription-qr.png"))
 
-    if image_exists(vless_qr_path):
-        st.image(str(vless_qr_path), caption="VLESS Reality 节点二维码", width=260)
-    elif vless_link:
-        st.warning("VLESS 链接已生成，但本地二维码图片不存在。")
+    node_col, sub_col = st.columns(2)
+    with node_col:
+        with st.container(border=True):
+            st.markdown("**VLESS Reality 节点**")
+            if image_exists(vless_qr_path):
+                st.image(str(vless_qr_path), caption="VLESS Reality 节点二维码", width=260)
+            elif vless_link:
+                st.warning("VLESS 链接已生成，但本地二维码图片不存在。")
+            copy_box("vless:// 链接", vless_link, height=100)
 
-    copy_box("vless:// 链接", vless_link, height=100)
+    with sub_col:
+        with st.container(border=True):
+            st.markdown("**订阅**")
+            if subscription_link:
+                copy_box("订阅链接", subscription_link, height=72)
+                if image_exists(subscription_qr_path):
+                    st.image(str(subscription_qr_path), caption="订阅二维码", width=260)
+                else:
+                    st.warning("订阅链接已生成，但订阅二维码图片不存在。")
+            elif vless_link:
+                st.info("订阅链接生成失败，但单节点 VLESS 二维码已经生成，可直接扫码使用。")
 
-    if subscription_link:
-        copy_box("订阅链接", subscription_link, height=72)
-        if image_exists(subscription_qr_path):
-            st.image(str(subscription_qr_path), caption="订阅二维码", width=260)
-        else:
-            st.warning("订阅链接已生成，但订阅二维码图片不存在。")
-    elif vless_link:
-        st.info("订阅链接生成失败，但单节点 VLESS 二维码已经生成，可直接扫码使用。")
-
-    render_panel_access(results)
+    with st.container(border=True):
+        render_panel_access(results)
 
     deploy_report = results.get("deploy_report", "")
     if deploy_report:
@@ -174,6 +272,7 @@ def main() -> None:
             f"检测到已有成功部署结果，Reality 端口：{existing_port or '未知'}。"
             "如果只是查看二维码、订阅链接或面板信息，不需要再次点击部署。"
         )
+        render_management_mode(current_results)
 
     with st.container(border=True):
         st.subheader("快捷优化")
@@ -224,35 +323,81 @@ def main() -> None:
             run_hardening = st.checkbox("执行服务器加固", value=False)
             st.caption("服务器加固脚本默认不会执行；只有主动勾选时才会运行。第一版不会默认关闭 root 登录、密码登录或 ping。")
 
-        col_a, col_b = st.columns([1, 1])
+        col_a, col_b, col_c = st.columns([1, 1, 1])
         start_disabled = st.session_state.is_running or (existing_success and not confirm_redeploy)
-        start = col_a.form_submit_button("开始一键部署", type="primary", disabled=start_disabled)
-        clear = col_b.form_submit_button("清空本地输出", disabled=st.session_state.is_running)
+        check = col_a.form_submit_button("检测 VPS 环境", disabled=st.session_state.is_running)
+        start = col_b.form_submit_button("开始一键部署", type="primary", disabled=start_disabled)
+        clear = col_c.form_submit_button("清空本地输出", disabled=st.session_state.is_running)
 
     if clear:
         clear_output()
         st.session_state.logs = []
         st.session_state.last_results = load_results(OUTPUT_DIR)
+        st.session_state.last_preflight = {}
+        st.session_state.export_zip_path = ""
         st.success("本地 output/ 已清空。")
 
     log_placeholder = st.empty()
     render_logs(log_placeholder)
+
+    if check:
+        st.session_state.is_running = True
+        st.session_state.logs = []
+        login, config = build_login_and_config(
+            host,
+            int(ssh_port),
+            ssh_user,
+            ssh_password,
+            node_name,
+            int(reality_port),
+            sni,
+            target,
+            fingerprint,
+            int(panel_port),
+            bool(generate_ssh_key),
+            bool(run_hardening),
+        )
+
+        def ui_log(line: str) -> None:
+            append_log(line, ssh_password)
+            render_logs(log_placeholder)
+
+        try:
+            ui_log("开始部署前检测。检测只读取服务器状态，不安装软件、不修改配置。")
+            preflight_result = preflight(login, config, ui_log)
+            st.session_state.last_preflight = preflight_result
+            st.session_state.last_results = load_results(OUTPUT_DIR)
+            ui_log("部署前检测完成。")
+            st.success("部署前检测完成。")
+        except DeploymentError as exc:
+            append_log(f"错误：{exc.message}", ssh_password)
+            hint = ERROR_HINTS.get(exc.code, exc.message)
+            st.error(hint)
+        except Exception as exc:  # noqa: BLE001
+            append_log(f"未知错误：{exc}", ssh_password)
+            st.error(f"检测失败：{exc}")
+        finally:
+            st.session_state.is_running = False
+            render_logs(log_placeholder)
 
     if start:
         if existing_success and int(reality_port) == int(existing_port or 0):
             st.warning("你正在使用上一轮成功部署相同的 Reality 端口，若服务器上已有入站监听，可能会提示端口占用。")
         st.session_state.is_running = True
         st.session_state.logs = []
-        login = VPSLogin(host=host.strip(), port=int(ssh_port), username=ssh_user.strip(), password=ssh_password)
-        config = NodeConfig(
-            node_name=node_name.strip() or "auto-reality",
-            reality_port=int(reality_port),
-            sni=sni.strip(),
-            target=target.strip(),
-            fingerprint=fingerprint.strip(),
-            panel_port=int(panel_port),
-            generate_ssh_key=bool(generate_ssh_key),
-            run_hardening=bool(run_hardening),
+        login, config = build_login_and_config(
+            host,
+            int(ssh_port),
+            ssh_user,
+            ssh_password,
+            node_name,
+            int(reality_port),
+            sni,
+            target,
+            fingerprint,
+            int(panel_port),
+            bool(generate_ssh_key),
+            bool(run_hardening),
         )
 
         def ui_log(line: str) -> None:
@@ -279,6 +424,7 @@ def main() -> None:
             render_logs(log_placeholder)
 
     results = st.session_state.last_results or load_results(OUTPUT_DIR)
+    render_preflight(st.session_state.last_preflight or results.get("preflight", {}))
     if results.get("vless_link") or results.get("panel_login") or (OUTPUT_DIR / "result.json").exists():
         render_results(results)
     else:

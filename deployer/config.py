@@ -8,6 +8,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = PROJECT_ROOT / "output"
 LAST_SUCCESS_DIR = OUTPUT_DIR / "_last_success"
 REMOTE_SCRIPT = PROJECT_ROOT / "remote_scripts" / "install_remote.sh"
+REMOTE_PREFLIGHT_SCRIPT = PROJECT_ROOT / "remote_scripts" / "preflight_remote.sh"
 REMOTE_HARDEN_SCRIPT = PROJECT_ROOT / "remote_scripts" / "harden_after_success.sh"
 REMOTE_RESULT_DIR = "/root/3xui-oneclick-result"
 
@@ -34,6 +35,8 @@ class NodeConfig:
 
 REMOTE_OUTPUT_FILES = [
     "result.json",
+    "preflight-result.json",
+    "preflight-report.txt",
     "vless-link.txt",
     "vless-qr.png",
     "subscription-link.txt",
