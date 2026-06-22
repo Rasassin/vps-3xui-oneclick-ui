@@ -193,11 +193,11 @@ python3 scripts/prepare_release.py --allow-dirty
 
 发布包会生成到 `dist/`，并自动排除 `.venv/`、`output/` 真实结果、日志和缓存文件。
 
-`build_release_bundle.py` 会同时生成源码包、GitHub Release 文案草稿、SHA256 校验文件和 release manifest。
+`build_release_bundle.py` 会同时生成源码包、GitHub Release 文案草稿、SHA256 校验文件和 release manifest。manifest 会记录构建时的 Git commit、分支和 dirty 状态，方便追溯发布包来源。
 
 `check_release_ready.py` 会在不连接 VPS 的前提下运行发版前体检；开发中检查未提交改动时可加 `--allow-dirty`。
 
-`check_release_artifacts.py` 会检查 `dist/` 里的发布 zip、Release 文案、SHA256SUMS 和 manifest，确认没有混入本地 `output/` 结果或 `data/profiles.json`。
+`check_release_artifacts.py` 会检查 `dist/` 里的发布 zip、Release 文案、SHA256SUMS 和 manifest，确认没有混入本地 `output/` 结果或 `data/profiles.json`，并验证 manifest 里的源码来源信息。
 
 `check_secret_hygiene.py` 会检查 Git 已跟踪文件，防止误提交 output 结果、profiles、env、日志、私钥和明显的节点链接。
 

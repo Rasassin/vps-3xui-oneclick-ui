@@ -75,6 +75,13 @@ def verify_manifest(manifest_path: Path, version: str) -> None:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     if manifest.get("version") != version:
         raise SystemExit("release artifact check failed: manifest version does not match APP_VERSION.")
+    source = manifest.get("source", {})
+    if not isinstance(source.get("git_commit"), str) or len(source.get("git_commit", "")) < 7:
+        raise SystemExit("release artifact check failed: manifest source git_commit is missing.")
+    if not isinstance(source.get("git_branch"), str) or not source.get("git_branch"):
+        raise SystemExit("release artifact check failed: manifest source git_branch is missing.")
+    if not isinstance(source.get("git_dirty"), bool):
+        raise SystemExit("release artifact check failed: manifest source git_dirty must be boolean.")
     safety = manifest.get("safety", {})
     required_flags = {
         "excludes_output_results",

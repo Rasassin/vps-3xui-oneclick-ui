@@ -426,6 +426,20 @@ Still intentionally not included:
 - Uploading artifacts to GitHub.
 - Running any VPS deployment test.
 
+## v1.17 Release Manifest Provenance
+
+Implemented scope:
+
+- Add source provenance to `release-manifest-vX.Y.Z.json`.
+- Record Git commit, branch, and dirty-worktree state when building release bundles.
+- Validate manifest provenance in `scripts/check_release_artifacts.py`.
+
+Still intentionally not included:
+
+- Signing release artifacts.
+- Uploading release artifacts to GitHub.
+- Running any VPS deployment test.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

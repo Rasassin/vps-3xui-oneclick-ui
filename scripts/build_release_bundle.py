@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -32,6 +33,30 @@ def write_sha256sums(files: list[Path], version: str) -> Path:
     return sums_path
 
 
+def git_output(args: list[str], default: str = "unknown") -> str:
+    result = subprocess.run(
+        ["git", *args],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        return default
+    return result.stdout.strip() or default
+
+
+def git_dirty() -> bool:
+    result = subprocess.run(
+        ["git", "status", "--porcelain"],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        return True
+    return bool(result.stdout.strip())
+
+
 def write_manifest(files: list[Path], checksums_path: Path, version: str) -> Path:
     manifest_path = PROJECT_ROOT / "dist" / f"release-manifest-v{version}.json"
     artifacts = []
@@ -47,6 +72,11 @@ def write_manifest(files: list[Path], checksums_path: Path, version: str) -> Pat
         "project": "vps-3xui-oneclick-ui",
         "version": version,
         "generated_at": datetime.now(timezone.utc).isoformat(),
+        "source": {
+            "git_commit": git_output(["rev-parse", "HEAD"]),
+            "git_branch": git_output(["branch", "--show-current"]),
+            "git_dirty": git_dirty(),
+        },
         "artifacts": artifacts,
         "safety": {
             "excludes_output_results": True,

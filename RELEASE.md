@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.16 also includes open-source readiness checks.
+v1.17 also includes release manifest source provenance.
 
 ## Build Locally
 
@@ -17,6 +17,8 @@ The release artifacts are written to `dist/`:
 - `GITHUB_RELEASE_vX.Y.Z.md`
 - `SHA256SUMS_vX.Y.Z.txt`
 - `release-manifest-vX.Y.Z.json`
+
+The release manifest includes the source Git commit, branch, and dirty-worktree state used when the bundle was generated.
 
 The zip intentionally excludes:
 

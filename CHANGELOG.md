@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.17.0
+
+- Added Git source provenance to release manifests.
+- Added release manifest validation for git commit, branch, and dirty state.
+- Kept provenance checks local-only with no VPS connection.
+
 ## v1.16.0
 
 - Added scripts/check_open_source_ready.py.
