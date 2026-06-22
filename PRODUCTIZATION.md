@@ -468,6 +468,20 @@ Still intentionally not included:
 - Uploading release artifacts from the UI.
 - Signing release artifacts.
 
+## v1.20 Command-Line Dirty Release Warning
+
+Implemented scope:
+
+- Add a dirty-worktree check to `scripts/prepare_release.py`.
+- Warn when `--allow-dirty` generated artifacts come from an uncommitted worktree.
+- Keep the warning local-only; it does not upload artifacts, create tags, or connect to a VPS.
+
+Still intentionally not included:
+
+- Blocking intentionally dirty local test builds.
+- Uploading release artifacts.
+- Signing release artifacts.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

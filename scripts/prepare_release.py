@@ -23,6 +23,18 @@ def artifact_paths(version: str) -> list[Path]:
     ]
 
 
+def worktree_is_dirty() -> bool:
+    result = subprocess.run(
+        ["git", "status", "--porcelain"],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        return True
+    return bool(result.stdout.strip())
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Prepare local release artifacts without tagging, uploading, or connecting to a VPS.")
     parser.add_argument("--allow-dirty", action="store_true", help="Allow a dirty git worktree for local release preparation.")
@@ -34,6 +46,8 @@ def main() -> None:
     subprocess.run(command, cwd=PROJECT_ROOT, check=True)
 
     print(f"\nrelease prepared: v{APP_VERSION}")
+    if args.allow_dirty and worktree_is_dirty():
+        print("WARNING: worktree is dirty. Use these artifacts for local testing only; do not publish them as a formal GitHub Release.")
     print("Upload these files to GitHub Releases:")
     for path in artifact_paths(APP_VERSION):
         if not path.exists() or path.stat().st_size == 0:

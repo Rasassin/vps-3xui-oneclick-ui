@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.20.0
+
+- Added a dirty-worktree warning to scripts/prepare_release.py.
+- Kept dirty release warnings local-only with no upload or VPS connection.
+- Documented the command-line dirty artifact warning.
+
 ## v1.19.0
 
 - Added a sidebar warning for release artifacts built from a dirty worktree.

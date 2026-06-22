@@ -209,7 +209,7 @@ python3 scripts/prepare_release.py --allow-dirty
 
 `doctor.py` 是本地项目体检入口，会聚合密钥检查、语法检查、桌面打包输入检查和 Streamlit 首屏检查；加 `--release` 会额外执行完整发版检查。
 
-`prepare_release.py` 会运行发版体检并列出需要上传到 GitHub Release 的四个产物；它不会创建 tag、不会上传文件，也不会连接 VPS。
+`prepare_release.py` 会运行发版体检并列出需要上传到 GitHub Release 的四个产物；它不会创建 tag、不会上传文件，也不会连接 VPS。使用 `--allow-dirty` 生成本地测试产物时，如果工作区未提交，会输出正式发布警告。
 
 `bump_version.py` 会更新本地版本号、CHANGELOG 和 RELEASE 当前版本说明；它不会创建 tag、不会上传文件，也不会连接 VPS。
 
