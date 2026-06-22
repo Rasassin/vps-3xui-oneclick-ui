@@ -1,0 +1,6 @@
+interface:
+  display_name: "3x-ui Oneclick"
+  short_description: "Build and troubleshoot one-click 3x-ui Reality deployment"
+  default_prompt: "Use $3x-ui-oneclick to modify or troubleshoot the VPS 3x-ui one-click deployment workflow."
+policy:
+  allow_implicit_invocation: true
