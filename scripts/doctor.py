@@ -39,6 +39,7 @@ def python_files() -> list[str]:
 
 def quick_checks() -> list[Check]:
     return [
+        Check("version consistency", [sys.executable, "scripts/check_version_consistency.py"]),
         Check("tracked-file secret hygiene", [sys.executable, "scripts/check_secret_hygiene.py"]),
         Check("Python syntax", [sys.executable, "-m", "py_compile", *python_files()]),
         Check("remote preflight Bash syntax", ["bash", "-n", "remote_scripts/preflight_remote.sh"]),

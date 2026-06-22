@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.11.0
+
+- Added `scripts/check_version_consistency.py`.
+- Added version consistency checks to release readiness.
+- Included version consistency checks in the local project doctor and packaging checks.
+
 ## v1.10.0
 
 - Added `scripts/check_release_artifacts.py` as a standalone release artifact verifier.

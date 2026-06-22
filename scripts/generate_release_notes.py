@@ -42,6 +42,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - No-VPS Streamlit UI smoke test in release readiness.
 - One-command local project doctor for health checks.
 - Standalone release artifact verifier for source zip, checksums, and manifest.
+- Version consistency check for release metadata.
 
 ## Download
 
@@ -109,6 +110,7 @@ bash -n desktop/build_macos_app.sh
 python3 scripts/check_streamlit_app.py
 python3 scripts/check_release_ready.py
 python3 scripts/check_release_artifacts.py
+python3 scripts/check_version_consistency.py
 python3 scripts/doctor.py --release
 python3 desktop/check_desktop_package.py --release-zip dist/vps-3xui-oneclick-ui-v{version}.zip
 ```

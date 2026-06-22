@@ -337,6 +337,21 @@ Still intentionally not included:
 - Signing or notarizing desktop binaries.
 - Real VPS deployment during release checks.
 
+## v1.11 Version Consistency Check
+
+Implemented scope:
+
+- Add `scripts/check_version_consistency.py`.
+- Validate `APP_VERSION` format and current changelog heading.
+- Run version consistency checks during release readiness and local doctor checks.
+- Include the script in release and desktop packaging checks.
+
+Still intentionally not included:
+
+- Automatic version bumping.
+- Automatic changelog generation.
+- Tag creation or GitHub Release publishing.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

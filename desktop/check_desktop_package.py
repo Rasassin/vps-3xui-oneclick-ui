@@ -34,6 +34,7 @@ REQUIRED_RELEASE_FILES = {
     "scripts/check_release_artifacts.py",
     "scripts/check_release_ready.py",
     "scripts/check_streamlit_app.py",
+    "scripts/check_version_consistency.py",
     "scripts/doctor.py",
     "scripts/install_git_hooks.py",
     "scripts/generate_release_notes.py",

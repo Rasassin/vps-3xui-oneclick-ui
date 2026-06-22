@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.10 also includes a standalone release artifact verifier.
+v1.11 also includes a version consistency check for release metadata.
 
 ## Build Locally
 
@@ -58,6 +58,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Confirm `CHANGELOG.md` has an entry for `APP_VERSION`.
 - Run `python3 scripts/check_secret_hygiene.py`.
 - Run `python3 scripts/check_streamlit_app.py`.
+- Run `python3 scripts/check_version_consistency.py`.
 - Run `python3 scripts/check_release_artifacts.py` after building the release bundle.
 - Run `python3 scripts/doctor.py --release`.
 - Optionally run `python3 scripts/install_git_hooks.py` to enable pre-commit checks locally.
