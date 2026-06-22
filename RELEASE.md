@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.12 also includes a local release preparation command.
+v1.13 also includes a sidebar release package status panel.
 
 ## Build Locally
 

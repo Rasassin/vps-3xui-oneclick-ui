@@ -367,6 +367,21 @@ Still intentionally not included:
 - Uploading artifacts to GitHub Releases.
 - Running any VPS deployment test.
 
+## v1.13 Release Package Status Panel
+
+Implemented scope:
+
+- Add `deployer/release_status.py`.
+- Read expected release artifact paths for the current `APP_VERSION`.
+- Show release package readiness in the Streamlit sidebar.
+- Keep the check local-only; it does not build, upload, tag, or connect to a VPS.
+
+Still intentionally not included:
+
+- Creating GitHub Releases from the UI.
+- Uploading release artifacts from the UI.
+- Running a real VPS deployment as a release check.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.13.0
+
+- Added local release artifact status helpers.
+- Added a Streamlit sidebar release package status panel.
+- Kept release status checks local-only, with no VPS connection or upload.
+
 ## v1.12.0
 
 - Added `scripts/prepare_release.py`.

@@ -20,6 +20,7 @@ from deployer.deploy_service import (
 from deployer.export_service import build_export_zip
 from deployer.profile_service import delete_profile, load_profiles, upsert_profile
 from deployer.qr_service import regenerate_output_qrs
+from deployer.release_status import collect_release_artifacts, release_artifacts_ready
 from deployer.result_parser import load_results
 from deployer.ssh_runner import DeploymentError, redact
 
@@ -174,6 +175,15 @@ def render_sidebar() -> None:
 """
             )
             st.caption("完整说明见 docs/privacy.md。")
+        with st.expander("发布包状态"):
+            artifacts = collect_release_artifacts()
+            if release_artifacts_ready():
+                st.success("当前版本发布产物已生成。")
+            else:
+                st.info("需要发布时运行：python3 scripts/prepare_release.py --allow-dirty")
+            for artifact in artifacts:
+                status = "已生成" if artifact.exists else "未生成"
+                st.caption(f"{status} · {artifact.label} · {artifact.display_size}")
         st.divider()
         render_profiles_sidebar()
         st.divider()

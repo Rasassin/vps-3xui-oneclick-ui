@@ -124,6 +124,7 @@ Reality 入站端口不一定必须是 `443`。`443` 更像普通 HTTPS，通常
 - 可选的部署前检测结果、远程状态刷新、远程结果重新下载、远程结果备份和本地二维码重建
 - 侧边栏本地自检和公开诊断包，方便开源 issue 排查
 - 侧边栏本地配置档，保存常用 VPS 和节点参数，但不保存 VPS 密码
+- 侧边栏发布包状态，显示当前版本的 GitHub Release 产物是否已生成
 - 本地桌面化启动器 `desktop_launcher.py`，用于后续 App 打包探索
 - 当前状态总览、部署前快速确认和失败恢复提示，减少误操作
 - 部署报告
@@ -251,6 +252,7 @@ vps-3xui-oneclick-ui/
 │   ├── ssh_runner.py
 │   ├── deploy_service.py
 │   ├── qr_service.py
+│   ├── release_status.py
 │   └── result_parser.py
 ├── remote_scripts/
 │   ├── install_remote.sh
