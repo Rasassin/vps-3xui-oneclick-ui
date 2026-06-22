@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.8.0
+
+- Added `scripts/check_streamlit_app.py` for a no-VPS Streamlit UI smoke test.
+- Integrated the Streamlit UI smoke test into release readiness.
+- Included the UI smoke test in release and desktop packaging checks.
+
 ## v1.7.0
 
 - Added `docs/privacy.md` for local data, VPS data, diagnostics, and release-check boundaries.

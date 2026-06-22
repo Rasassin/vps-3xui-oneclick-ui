@@ -39,6 +39,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Tracked-file secret hygiene checks for release safety.
 - Optional pre-commit hook for tracked-file secret hygiene.
 - Privacy and data-boundary documentation for local files, SSH actions, and diagnostics.
+- No-VPS Streamlit UI smoke test in release readiness.
 
 ## Download
 
@@ -103,6 +104,7 @@ bash -n remote_scripts/preflight_remote.sh
 bash -n remote_scripts/install_remote.sh
 bash -n remote_scripts/harden_after_success.sh
 bash -n desktop/build_macos_app.sh
+python3 scripts/check_streamlit_app.py
 python3 scripts/check_release_ready.py
 python3 desktop/check_desktop_package.py --release-zip dist/vps-3xui-oneclick-ui-v{version}.zip
 ```

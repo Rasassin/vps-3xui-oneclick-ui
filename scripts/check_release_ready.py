@@ -131,6 +131,7 @@ def main() -> None:
     run(["bash", "-n", "remote_scripts/harden_after_success.sh"])
     run(["bash", "-n", "desktop/build_macos_app.sh"])
     run(["bash", "-n", ".githooks/pre-commit"])
+    run([sys.executable, "scripts/check_streamlit_app.py"])
 
     build_release_bundle(APP_VERSION)
     zip_path = PROJECT_ROOT / "dist" / f"vps-3xui-oneclick-ui-v{APP_VERSION}.zip"

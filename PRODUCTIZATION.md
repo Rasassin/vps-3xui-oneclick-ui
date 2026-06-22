@@ -293,6 +293,20 @@ Still intentionally not included:
 - External telemetry.
 - Automatic upload of diagnostics.
 
+## v1.8 Streamlit UI Smoke Test
+
+Implemented scope:
+
+- Add `scripts/check_streamlit_app.py` to render the Streamlit app once with AppTest.
+- Run the UI smoke test during release readiness.
+- Include the UI smoke test script in release and desktop packaging checks.
+
+Still intentionally not included:
+
+- Real VPS deployment during tests.
+- Clicking deployment buttons in automated checks.
+- Browser automation against the remote 3x-ui panel.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

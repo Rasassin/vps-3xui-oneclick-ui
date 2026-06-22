@@ -32,6 +32,7 @@ REQUIRED_RELEASE_FILES = {
     "requirements-desktop.txt",
     "scripts/build_release_bundle.py",
     "scripts/check_release_ready.py",
+    "scripts/check_streamlit_app.py",
     "scripts/install_git_hooks.py",
     "scripts/generate_release_notes.py",
     "output/.gitkeep",

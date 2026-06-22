@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.7 also includes a privacy and data-boundary document for users and contributors.
+v1.8 also includes a no-VPS Streamlit UI smoke test in release readiness.
 
 ## Build Locally
 
@@ -55,6 +55,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Confirm `APP_VERSION` in `deployer/config.py`.
 - Confirm `CHANGELOG.md` has an entry for `APP_VERSION`.
 - Run `python3 scripts/check_secret_hygiene.py`.
+- Run `python3 scripts/check_streamlit_app.py`.
 - Optionally run `python3 scripts/install_git_hooks.py` to enable pre-commit checks locally.
 - Confirm `PRODUCTIZATION.md` reflects the shipped scope.
 - Confirm `docs/privacy.md` reflects current password, output, diagnostics, and VPS data handling.
