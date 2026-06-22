@@ -18,6 +18,7 @@ from deployer.deploy_service import (
     preflight,
 )
 from deployer.export_service import build_export_zip
+from deployer.profile_service import delete_profile, load_profiles, upsert_profile
 from deployer.qr_service import regenerate_output_qrs
 from deployer.result_parser import load_results
 from deployer.ssh_runner import DeploymentError, redact
@@ -30,13 +31,25 @@ def init_state() -> None:
     st.session_state.setdefault("logs", [])
     st.session_state.setdefault("last_results", load_results(OUTPUT_DIR))
     st.session_state.setdefault("is_running", False)
+    st.session_state.setdefault("host_value", "")
+    st.session_state.setdefault("ssh_port_value", 22)
+    st.session_state.setdefault("ssh_user_value", "root")
+    st.session_state.setdefault("node_name_value", "auto-reality")
     st.session_state.setdefault("reality_port_value", 443)
+    st.session_state.setdefault("sni_value", "www.microsoft.com")
+    st.session_state.setdefault("target_value", "www.microsoft.com:443")
+    st.session_state.setdefault("fingerprint_value", "chrome")
+    st.session_state.setdefault("panel_port_value", 2053)
+    st.session_state.setdefault("generate_ssh_key_value", True)
+    st.session_state.setdefault("run_hardening_value", False)
     st.session_state.setdefault("confirm_redeploy", False)
     st.session_state.setdefault("last_preflight", load_results(OUTPUT_DIR).get("preflight", {}))
     st.session_state.setdefault("export_zip_path", "")
     st.session_state.setdefault("last_remote_backup", "")
     st.session_state.setdefault("local_diagnostics", {})
     st.session_state.setdefault("diagnostics_zip_path", "")
+    st.session_state.setdefault("profile_name_input", "")
+    st.session_state.setdefault("selected_profile_name", "")
 
 
 def append_log(message: str, password: str = "") -> None:
@@ -66,6 +79,8 @@ def render_sidebar() -> None:
         st.subheader("产品信息")
         st.caption(f"版本：v{APP_VERSION}")
         st.link_button("GitHub 仓库", "https://github.com/Rasassin/vps-3xui-oneclick-ui", use_container_width=True)
+        st.divider()
+        render_profiles_sidebar()
         st.divider()
         st.subheader("本地诊断")
         if st.button("运行本地自检", use_container_width=True):
@@ -101,6 +116,77 @@ def render_sidebar() -> None:
                 mime="application/zip",
                 use_container_width=True,
             )
+
+
+def current_profile_from_state() -> dict:
+    return {
+        "host": st.session_state.get("host_value", "").strip(),
+        "ssh_port": int(st.session_state.get("ssh_port_value", 22)),
+        "ssh_user": st.session_state.get("ssh_user_value", "root").strip(),
+        "node_name": st.session_state.get("node_name_value", "auto-reality").strip() or "auto-reality",
+        "reality_port": int(st.session_state.get("reality_port_value", 443)),
+        "sni": st.session_state.get("sni_value", "www.microsoft.com").strip(),
+        "target": st.session_state.get("target_value", "www.microsoft.com:443").strip(),
+        "fingerprint": st.session_state.get("fingerprint_value", "chrome"),
+        "panel_port": int(st.session_state.get("panel_port_value", 2053)),
+        "generate_ssh_key": bool(st.session_state.get("generate_ssh_key_value", True)),
+        "run_hardening": bool(st.session_state.get("run_hardening_value", False)),
+    }
+
+
+def apply_profile_to_state(profile: dict) -> None:
+    field_to_key = {
+        "host": "host_value",
+        "ssh_port": "ssh_port_value",
+        "ssh_user": "ssh_user_value",
+        "node_name": "node_name_value",
+        "reality_port": "reality_port_value",
+        "sni": "sni_value",
+        "target": "target_value",
+        "fingerprint": "fingerprint_value",
+        "panel_port": "panel_port_value",
+        "generate_ssh_key": "generate_ssh_key_value",
+        "run_hardening": "run_hardening_value",
+    }
+    for field, state_key in field_to_key.items():
+        if field in profile:
+            st.session_state[state_key] = profile[field]
+
+
+def render_profiles_sidebar() -> None:
+    st.subheader("本地配置档")
+    profiles = load_profiles()
+    profile_names = sorted(profiles)
+    options = [""] + profile_names
+    if st.session_state.selected_profile_name not in options:
+        st.session_state.selected_profile_name = ""
+    selected = st.selectbox(
+        "选择配置档",
+        options,
+        format_func=lambda item: item or "未选择",
+        key="selected_profile_name",
+    )
+
+    col_load, col_delete = st.columns(2)
+    if col_load.button("载入", disabled=not selected, use_container_width=True):
+        apply_profile_to_state(profiles[selected])
+        st.toast(f"已载入配置档：{selected}")
+        st.rerun()
+    if col_delete.button("删除", disabled=not selected, use_container_width=True):
+        delete_profile(selected)
+        st.session_state.selected_profile_name = ""
+        st.toast(f"已删除配置档：{selected}")
+        st.rerun()
+
+    st.text_input("配置档名称", key="profile_name_input", placeholder="例如：my-vps")
+    if st.button("保存当前配置", use_container_width=True):
+        try:
+            upsert_profile(st.session_state.profile_name_input, current_profile_from_state())
+            st.session_state.selected_profile_name = st.session_state.profile_name_input.strip()
+            st.success("配置档已保存，不包含 VPS 密码。")
+        except ValueError as exc:
+            st.error(str(exc))
+    st.caption("配置档只保存在本机 data/，不会保存 VPS 密码；VPS IP 等环境信息也不会提交到 GitHub。")
 
 
 def build_login_and_config(
@@ -362,13 +448,13 @@ def main() -> None:
         col1, col2 = st.columns(2)
         with col1:
             st.subheader("VPS 登录信息")
-            host = st.text_input("VPS IP", placeholder="例如：1.2.3.4")
-            ssh_port = st.number_input("SSH 端口", min_value=1, max_value=65535, value=22, step=1)
-            ssh_user = st.text_input("SSH 用户", value="root")
+            host = st.text_input("VPS IP", placeholder="例如：1.2.3.4", key="host_value")
+            ssh_port = st.number_input("SSH 端口", min_value=1, max_value=65535, step=1, key="ssh_port_value")
+            ssh_user = st.text_input("SSH 用户", key="ssh_user_value")
             ssh_password = st.text_input("VPS 密码", type="password")
         with col2:
             st.subheader("节点配置")
-            node_name = st.text_input("节点名称", value="auto-reality")
+            node_name = st.text_input("节点名称", key="node_name_value")
             reality_port = st.number_input(
                 "Reality 入站端口",
                 min_value=1,
@@ -377,14 +463,18 @@ def main() -> None:
                 key="reality_port_value",
             )
             st.caption("如果使用随机端口，请确认 VPS 服务商安全组已放行该 TCP 端口。")
-            sni = st.text_input("SNI", value="www.microsoft.com")
-            target = st.text_input("Target", value="www.microsoft.com:443")
-            fingerprint = st.selectbox("Fingerprint", ["chrome", "firefox", "safari", "ios", "android", "edge", "random"], index=0)
+            sni = st.text_input("SNI", key="sni_value")
+            target = st.text_input("Target", key="target_value")
+            fingerprint = st.selectbox(
+                "Fingerprint",
+                ["chrome", "firefox", "safari", "ios", "android", "edge", "random"],
+                key="fingerprint_value",
+            )
 
         with st.expander("高级选项", expanded=True):
-            panel_port = st.number_input("3x-ui 面板端口", min_value=1, max_value=65535, value=2053, step=1)
-            generate_ssh_key = st.checkbox("安装完成后生成 SSH key", value=True)
-            run_hardening = st.checkbox("执行服务器加固", value=False)
+            panel_port = st.number_input("3x-ui 面板端口", min_value=1, max_value=65535, step=1, key="panel_port_value")
+            generate_ssh_key = st.checkbox("安装完成后生成 SSH key", key="generate_ssh_key_value")
+            run_hardening = st.checkbox("执行服务器加固", key="run_hardening_value")
             st.caption("服务器加固脚本默认不会执行；只有主动勾选时才会运行。第一版不会默认关闭 root 登录、密码登录或 ping。")
 
         col_a, col_b, col_c, col_d, col_e = st.columns([1, 1, 1, 1, 1])

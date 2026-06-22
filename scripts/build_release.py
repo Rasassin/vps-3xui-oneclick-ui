@@ -25,6 +25,7 @@ INCLUDE_FILES = [
     "requirements.txt",
     "start_mac_linux.sh",
     "start_windows.bat",
+    "data/.gitkeep",
     "output/.gitkeep",
 ]
 

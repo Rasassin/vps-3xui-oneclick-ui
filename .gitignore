@@ -1,5 +1,7 @@
 output/*
 !output/.gitkeep
+data/*
+!data/.gitkeep
 *.log
 .env
 secrets*

@@ -9,7 +9,17 @@ from pathlib import Path
 from typing import Any
 from zipfile import ZIP_DEFLATED, ZipFile
 
-from .config import APP_VERSION, OUTPUT_DIR, PROJECT_ROOT, REMOTE_HARDEN_SCRIPT, REMOTE_PREFLIGHT_SCRIPT, REMOTE_SCRIPT
+from .config import (
+    APP_VERSION,
+    DATA_DIR,
+    OUTPUT_DIR,
+    PROFILES_FILE,
+    PROJECT_ROOT,
+    REMOTE_HARDEN_SCRIPT,
+    REMOTE_PREFLIGHT_SCRIPT,
+    REMOTE_SCRIPT,
+)
+from .profile_service import load_profiles
 from .result_parser import load_results
 
 
@@ -131,6 +141,7 @@ def collect_local_diagnostics(output_dir: Path = OUTPUT_DIR) -> dict[str, Any]:
         },
         "paths": {
             "project_root": _display_path(PROJECT_ROOT),
+            "data_dir": _display_path(DATA_DIR),
             "output_dir": _display_path(output_dir),
             "remote_script_exists": REMOTE_SCRIPT.exists(),
             "preflight_script_exists": REMOTE_PREFLIGHT_SCRIPT.exists(),
@@ -139,6 +150,10 @@ def collect_local_diagnostics(output_dir: Path = OUTPUT_DIR) -> dict[str, Any]:
         "dependencies": dependency_status,
         "files": file_status,
         "output_files": output_status,
+        "profiles": {
+            "profiles_file_exists": PROFILES_FILE.exists(),
+            "profile_count": len(load_profiles(PROFILES_FILE)),
+        },
         "result_summary": sanitize_results(results),
     }
 

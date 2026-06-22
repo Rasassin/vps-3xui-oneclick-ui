@@ -15,6 +15,7 @@ The zip intentionally excludes:
 - `.git/`
 - `.venv/`
 - `output/` result files
+- `data/` local profile files except `data/.gitkeep`
 - logs
 - Python cache files
 

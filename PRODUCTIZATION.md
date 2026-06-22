@@ -88,7 +88,17 @@ Implemented scope:
 - Add release checklist documentation.
 - Run release zip build in CI static checks.
 
-## v0.6 Desktop App Exploration
+## v0.6 Local Profiles
+
+Implemented scope:
+
+- Add local non-password profiles for common VPS and node settings.
+- Store profiles under `data/profiles.json`.
+- Ignore local profiles in Git and release zips except `data/.gitkeep`.
+- Allow loading, saving, and deleting profiles from the sidebar.
+- Keep VPS root passwords out of profiles.
+
+## v0.7 Desktop App Exploration
 
 Preferred direction: Tauri frontend plus Python backend.
 
