@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.19.0
+
+- Added a sidebar warning for release artifacts built from a dirty worktree.
+- Added a release source dirty-state helper.
+- Kept dirty provenance warnings local-only with no VPS connection.
+
 ## v1.18.0
 
 - Added release manifest provenance parsing in deployer/release_status.py.

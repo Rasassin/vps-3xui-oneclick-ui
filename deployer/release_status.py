@@ -55,6 +55,10 @@ class ReleaseSourceSummary:
             return "干净"
         return "未知"
 
+    @property
+    def is_dirty(self) -> bool:
+        return self.git_dirty is True
+
 
 def expected_release_artifacts(version: str = APP_VERSION) -> list[tuple[str, Path]]:
     dist_dir = PROJECT_ROOT / "dist"

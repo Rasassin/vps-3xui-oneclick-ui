@@ -454,6 +454,20 @@ Still intentionally not included:
 - Signing release artifacts.
 - Running any VPS deployment test.
 
+## v1.19 Dirty Release Provenance Warning
+
+Implemented scope:
+
+- Add a dirty-state helper to `ReleaseSourceSummary`.
+- Warn in the Streamlit sidebar when generated release artifacts came from a dirty worktree.
+- Keep the warning local-only; it reads generated release manifests and does not connect to a VPS.
+
+Still intentionally not included:
+
+- Blocking local test release bundles.
+- Uploading release artifacts from the UI.
+- Signing release artifacts.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

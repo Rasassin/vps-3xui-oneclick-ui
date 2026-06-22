@@ -50,6 +50,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Open-source metadata readiness checks for docs, issue templates, and workflows.
 - Release manifest source provenance with Git commit, branch, and dirty state.
 - Sidebar release provenance display for generated release artifacts.
+- Sidebar warning for release artifacts built from a dirty worktree.
 
 ## Download
 
