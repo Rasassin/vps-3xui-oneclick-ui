@@ -396,6 +396,21 @@ Still intentionally not included:
 - Creating tags or GitHub Releases from the UI.
 - Running any real VPS deployment during release checks.
 
+## v1.15 Version Bump Helper
+
+Implemented scope:
+
+- Add `scripts/bump_version.py`.
+- Update `APP_VERSION`, `CHANGELOG.md`, and the current `RELEASE.md` note from one local command.
+- Validate semantic version format and release note prefix.
+- Include the helper in desktop packaging checks.
+
+Still intentionally not included:
+
+- Automatic tag creation.
+- Automatic GitHub Release publishing.
+- Running any VPS deployment test.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

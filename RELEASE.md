@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.14 also includes sidebar downloads for generated release artifacts.
+v1.15 also includes a local version bump helper.
 
 ## Build Locally
 
@@ -60,6 +60,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Run `python3 scripts/check_secret_hygiene.py`.
 - Run `python3 scripts/check_streamlit_app.py`.
 - Run `python3 scripts/check_version_consistency.py`.
+- Use `python3 scripts/bump_version.py ...` when preparing a new version.
 - Run `python3 scripts/check_release_artifacts.py` after building the release bundle.
 - Run `python3 scripts/prepare_release.py --allow-dirty` during local release preparation.
 - Run `python3 scripts/doctor.py --release`.

@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.15.0
+
+- Added scripts/bump_version.py.
+- Added a local version bump helper for APP_VERSION, CHANGELOG, and RELEASE metadata.
+- Included the version bump helper in release and desktop packaging checks.
+
 ## v1.14.0
 
 - Added sidebar download buttons for generated release artifacts.

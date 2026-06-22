@@ -207,6 +207,18 @@ python3 scripts/prepare_release.py --allow-dirty
 
 `prepare_release.py` 会运行发版体检并列出需要上传到 GitHub Release 的四个产物；它不会创建 tag、不会上传文件，也不会连接 VPS。
 
+`bump_version.py` 会更新本地版本号、CHANGELOG 和 RELEASE 当前版本说明；它不会创建 tag、不会上传文件，也不会连接 VPS。
+
+## 升级版本号
+
+准备新版本时，可以先运行版本升级工具，再补充产品化文档和发版检查：
+
+```bash
+python3 scripts/bump_version.py X.Y.Z \
+  --release-note "vX.Y also includes ..." \
+  --change "Added ..."
+```
+
 如果你准备参与开发，可以可选安装本地 Git hook，让每次提交前自动运行这项检查：
 
 ```bash
@@ -259,6 +271,7 @@ vps-3xui-oneclick-ui/
 │   └── harden_after_success.sh
 ├── scripts/
 │   ├── check_release_artifacts.py
+│   ├── bump_version.py
 │   ├── check_secret_hygiene.py
 │   ├── check_release_ready.py
 │   ├── check_streamlit_app.py
