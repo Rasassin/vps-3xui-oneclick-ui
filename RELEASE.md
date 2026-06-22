@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v0.8 also includes an experimental desktop launcher, macOS and Windows PyInstaller scaffolds, and a desktop packaging self-check under `desktop/`.
+v0.9 also includes GitHub Release draft generation and desktop smoke test documentation under `docs/release/`.
 
 ## Build Locally
 
@@ -35,7 +35,8 @@ bash -n remote_scripts/install_remote.sh
 bash -n remote_scripts/harden_after_success.sh
 bash -n desktop/build_macos_app.sh
 python3 scripts/build_release.py
-python3 desktop/check_desktop_package.py --release-zip dist/vps-3xui-oneclick-ui-v0.8.0.zip
+python3 scripts/generate_release_notes.py
+python3 desktop/check_desktop_package.py --release-zip dist/vps-3xui-oneclick-ui-v0.9.0.zip
 ```
 
 Then unzip the generated file in a temporary directory and start the app with:
@@ -53,5 +54,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Confirm `PRODUCTIZATION.md` reflects the shipped scope.
 - Confirm the release zip does not contain local `output/` files.
 - Confirm the release zip does not contain local `data/profiles.json`.
+- Generate `dist/GITHUB_RELEASE_vX.Y.Z.md`.
+- Review [docs/release/desktop-smoke-test.md](docs/release/desktop-smoke-test.md).
 - Upload the generated zip to GitHub Releases.
 - Mention that VPS root passwords are never stored by the app.

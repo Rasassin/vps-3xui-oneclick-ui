@@ -36,6 +36,7 @@ INCLUDE_DIRS = [
     ".github",
     "desktop",
     "deployer",
+    "docs",
     "remote_scripts",
     "scripts",
     "skills",

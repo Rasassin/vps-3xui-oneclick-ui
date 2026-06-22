@@ -24,7 +24,10 @@ REQUIRED_RELEASE_FILES = {
     "desktop/build_windows_exe.ps1",
     "desktop/check_desktop_package.py",
     "desktop/vps_3xui_oneclick.spec",
+    "docs/release/desktop-smoke-test.md",
+    "docs/release/github-release-template.md",
     "requirements-desktop.txt",
+    "scripts/generate_release_notes.py",
     "output/.gitkeep",
     "data/.gitkeep",
 }

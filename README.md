@@ -56,6 +56,7 @@ python3 desktop_launcher.py
 - `desktop/build_macos_app.sh`：实验性 macOS `.app` 构建脚本
 - `desktop/build_windows_exe.ps1`：实验性 Windows 构建脚本
 - `desktop/check_desktop_package.py`：不连接 VPS 的桌面打包自检脚本
+- `docs/release/desktop-smoke-test.md`：发版前桌面启动检查清单
 
 ## Codex Skill
 
@@ -167,9 +168,12 @@ python desktop/check_desktop_package.py
 
 ```bash
 python3 scripts/build_release.py
+python3 scripts/generate_release_notes.py
 ```
 
 发布包会生成到 `dist/`，并自动排除 `.venv/`、`output/` 真实结果、日志和缓存文件。
+
+GitHub Release 文案草稿也会生成到 `dist/GITHUB_RELEASE_v版本号.md`。
 
 ## 项目结构
 
@@ -189,6 +193,10 @@ vps-3xui-oneclick-ui/
 │   ├── build_windows_exe.ps1
 │   ├── check_desktop_package.py
 │   └── vps_3xui_oneclick.spec
+├── docs/
+│   └── release/
+│       ├── desktop-smoke-test.md
+│       └── github-release-template.md
 ├── output/
 │   └── .gitkeep
 ├── deployer/

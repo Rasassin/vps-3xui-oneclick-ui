@@ -149,6 +149,23 @@ Still intentionally not included:
 - Auto-login to remote 3x-ui panels.
 - Code signing or notarization.
 
+## v0.9 Release Publishing Workflow
+
+Implemented scope:
+
+- Add GitHub Release draft generation through `scripts/generate_release_notes.py`.
+- Add desktop smoke test checklist under `docs/release/`.
+- Add release publishing template with safety reminders.
+- Include `docs/` in source release zips.
+- Extend CI static checks to validate desktop packaging inputs and release notes generation.
+
+Still intentionally not included:
+
+- Automatic publishing to GitHub Releases.
+- Code signing.
+- Notarized macOS builds.
+- Real VPS deployment during CI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.
