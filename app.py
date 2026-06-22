@@ -74,6 +74,90 @@ def has_success_result(results: dict) -> bool:
     return results.get("status") == "success" and bool(results.get("vless_link"))
 
 
+def has_failed_result(results: dict) -> bool:
+    return bool(results.get("error_code")) or results.get("status") == "failed"
+
+
+def render_readiness_summary(results: dict, existing_success: bool) -> None:
+    st.subheader("当前状态")
+    cols = st.columns(4)
+    if existing_success:
+        cols[0].metric("本地结果", "已有可用节点")
+        cols[1].metric("Reality 端口", results.get("reality_port", "未知"))
+        cols[2].metric("订阅", "已生成" if results.get("subscription_link") else "单节点可用")
+        cols[3].metric("建议操作", "查看结果")
+    elif has_failed_result(results):
+        cols[0].metric("本地结果", "上次失败")
+        cols[1].metric("错误代码", results.get("error_code", "unknown"))
+        cols[2].metric("VLESS", "有链接" if results.get("vless_link") else "未生成")
+        cols[3].metric("建议操作", "看恢复提示")
+    else:
+        cols[0].metric("本地结果", "未部署")
+        cols[1].metric("输入", "IP + 密码")
+        cols[2].metric("预检", "建议先跑")
+        cols[3].metric("下一步", "开始部署")
+
+
+def render_first_run_guide(existing_success: bool) -> None:
+    if existing_success:
+        return
+    with st.expander("部署前快速确认", expanded=True):
+        st.markdown(
+            """
+- 你只需要填写 VPS IP 和 VPS 密码；密码不会保存到项目文件、日志或 output。
+- 建议先点“刷新远程状态”，它只读取服务器状态，不会安装软件或修改配置。
+- Reality 端口默认 443；如果被占用，可以点“随机 Reality 端口”，并在 VPS 服务商安全组放行对应 TCP 端口。
+- 服务器加固默认不执行；只有你主动勾选时才会运行。
+"""
+        )
+
+
+def recovery_hint(error_code: str) -> str:
+    hints = {
+        "PORT_IN_USE": "换一个 Reality 入站端口，然后重新部署；如果使用随机端口，记得在 VPS 服务商安全组放行对应 TCP 端口。",
+        "SSH_SESSION_LOST": "先不要反复点部署。通常是 VPS 网络到软件源不稳定或 SSH 会话中断；可稍后重试，或先点“重新下载结果”确认远程是否已经生成结果。",
+        "XUI_API_FAILED": "3x-ui 已可能安装成功但 API 未完成配置。建议先点“刷新远程状态”，再尝试“重新下载结果”；仍失败时再重新部署。",
+        "INBOUND_CREATE_FAILED": "Reality 入站创建失败。可换 Reality 端口，确认 SNI/Target 没有带 http:// 或 https://，再重新部署。",
+        "DOWNLOAD_FAILED": "远程可能部署完成但本地下载失败。请点“重新下载结果”，不会重新安装或修改服务器。",
+        "GITHUB_DOWNLOAD_FAILED": "VPS 到 GitHub 网络不稳定。稍后重试，或换 VPS 网络环境。",
+        "APT_INSTALL_FAILED": "VPS 到 Ubuntu/Debian 软件源网络不稳定。稍后重试，或换软件源/镜像质量更好的 VPS。",
+        "UNSUPPORTED_OS": "当前 VPS 系统不在支持范围；只支持 Ubuntu 22.04、Ubuntu 24.04、Debian 12。",
+    }
+    return hints.get(error_code, "先查看部署报告和实时日志；如果远程可能已生成结果，可以先点“重新下载结果”，避免不必要的重复部署。")
+
+
+def render_failure_recovery(results: dict) -> None:
+    if not has_failed_result(results):
+        return
+    error_code = str(results.get("error_code") or "UNKNOWN")
+    error_message = str(results.get("error_message") or ERROR_HINTS.get(error_code, "上次部署没有完成。"))
+    with st.container(border=True):
+        st.subheader("失败恢复")
+        st.error(f"{error_code}：{error_message}")
+        st.info(recovery_hint(error_code))
+        action_cols = st.columns(3)
+        if action_cols[0].button("为下一次部署随机端口", use_container_width=True, disabled=st.session_state.is_running):
+            st.session_state.reality_port_value = generate_random_reality_port()
+            st.toast(f"已生成端口：{st.session_state.reality_port_value}")
+            st.rerun()
+        action_cols[1].caption("可在表单里点“刷新远程状态”，只读检测服务器。")
+        action_cols[2].caption("可在表单里点“重新下载结果”，不会重新部署。")
+
+
+def validate_form_ready(host: str, ssh_user: str, ssh_password: str, action: str) -> bool:
+    missing = []
+    if not host.strip():
+        missing.append("VPS IP")
+    if not ssh_user.strip():
+        missing.append("SSH 用户")
+    if not ssh_password:
+        missing.append("VPS 密码")
+    if missing:
+        st.error(f"{action}前请先填写：{', '.join(missing)}。")
+        return False
+    return True
+
+
 def render_sidebar() -> None:
     with st.sidebar:
         st.subheader("产品信息")
@@ -417,6 +501,10 @@ def main() -> None:
     existing_success = has_success_result(current_results)
     existing_port = current_results.get("reality_port", "")
 
+    render_readiness_summary(current_results, existing_success)
+    render_first_run_guide(existing_success)
+    render_failure_recovery(current_results)
+
     if existing_success:
         st.info(
             f"检测到已有成功部署结果，Reality 端口：{existing_port or '未知'}。"
@@ -498,6 +586,12 @@ def main() -> None:
     render_logs(log_placeholder)
 
     if check:
+        if not validate_form_ready(host, ssh_user, ssh_password, "刷新远程状态"):
+            render_preflight(st.session_state.last_preflight or (st.session_state.last_results or {}).get("preflight", {}))
+            results = st.session_state.last_results or load_results(OUTPUT_DIR)
+            if results.get("vless_link") or results.get("panel_login") or (OUTPUT_DIR / "result.json").exists():
+                render_results(results)
+            return
         st.session_state.is_running = True
         st.session_state.logs = []
         login, config = build_login_and_config(
@@ -538,6 +632,12 @@ def main() -> None:
             render_logs(log_placeholder)
 
     if redownload:
+        if not validate_form_ready(host, ssh_user, ssh_password, "重新下载结果"):
+            render_preflight(st.session_state.last_preflight or (st.session_state.last_results or {}).get("preflight", {}))
+            results = st.session_state.last_results or load_results(OUTPUT_DIR)
+            if results.get("vless_link") or results.get("panel_login") or (OUTPUT_DIR / "result.json").exists():
+                render_results(results)
+            return
         st.session_state.is_running = True
         st.session_state.logs = []
         login = VPSLogin(host=host.strip(), port=int(ssh_port), username=ssh_user.strip(), password=ssh_password)
@@ -565,6 +665,12 @@ def main() -> None:
             render_logs(log_placeholder)
 
     if backup_remote:
+        if not validate_form_ready(host, ssh_user, ssh_password, "远程备份结果"):
+            render_preflight(st.session_state.last_preflight or (st.session_state.last_results or {}).get("preflight", {}))
+            results = st.session_state.last_results or load_results(OUTPUT_DIR)
+            if results.get("vless_link") or results.get("panel_login") or (OUTPUT_DIR / "result.json").exists():
+                render_results(results)
+            return
         st.session_state.is_running = True
         st.session_state.logs = []
         login = VPSLogin(host=host.strip(), port=int(ssh_port), username=ssh_user.strip(), password=ssh_password)
@@ -591,6 +697,12 @@ def main() -> None:
             render_logs(log_placeholder)
 
     if start:
+        if not validate_form_ready(host, ssh_user, ssh_password, "开始部署"):
+            render_preflight(st.session_state.last_preflight or (st.session_state.last_results or {}).get("preflight", {}))
+            results = st.session_state.last_results or load_results(OUTPUT_DIR)
+            if results.get("vless_link") or results.get("panel_login") or (OUTPUT_DIR / "result.json").exists():
+                render_results(results)
+            return
         if existing_success and int(reality_port) == int(existing_port or 0):
             st.warning("你正在使用上一轮成功部署相同的 Reality 端口，若服务器上已有入站监听，可能会提示端口占用。")
         st.session_state.is_running = True

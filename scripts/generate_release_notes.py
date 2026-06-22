@@ -31,6 +31,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Public diagnostics package that excludes node links, QR images, panel credentials, and VPS root passwords.
 - Local non-secret profiles for common VPS and node settings.
 - Experimental desktop launcher and PyInstaller packaging scaffolds.
+- Current-state summary, first-run checklist, and failure recovery guidance.
 
 ## Download
 

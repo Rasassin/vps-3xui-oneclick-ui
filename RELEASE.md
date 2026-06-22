@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v0.9 also includes GitHub Release draft generation and desktop smoke test documentation under `docs/release/`.
+v1.0 also includes user-experience stabilization: current-state summary, first-run checklist, and failure recovery guidance.
 
 ## Build Locally
 
@@ -36,7 +36,8 @@ bash -n remote_scripts/harden_after_success.sh
 bash -n desktop/build_macos_app.sh
 python3 scripts/build_release.py
 python3 scripts/generate_release_notes.py
-python3 desktop/check_desktop_package.py --release-zip dist/vps-3xui-oneclick-ui-v0.9.0.zip
+VERSION="$(python3 -c 'from deployer.config import APP_VERSION; print(APP_VERSION)')"
+python3 desktop/check_desktop_package.py --release-zip "dist/vps-3xui-oneclick-ui-v${VERSION}.zip"
 ```
 
 Then unzip the generated file in a temporary directory and start the app with:

@@ -166,6 +166,23 @@ Still intentionally not included:
 - Notarized macOS builds.
 - Real VPS deployment during CI.
 
+## v1.0 UX Stabilization
+
+Implemented scope:
+
+- Add current-state summary cards so users can tell whether they already have a usable result.
+- Add first-run deployment checklist without requiring manual SSH or panel login.
+- Add failure recovery guidance for common errors such as port conflicts, SSH session loss, API failures, and result download failures.
+- Add a no-SSH guard when required local form fields are missing.
+- Preserve the existing deployment form fields and password handling model.
+
+Still intentionally not included:
+
+- Automatic remote uninstall/reset.
+- Browser automation into the 3x-ui panel.
+- Password persistence.
+- Real VPS deployment in CI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.
