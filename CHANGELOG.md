@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.18.0
+
+- Added release manifest provenance parsing in deployer/release_status.py.
+- Displayed release source commit, branch, and dirty state in the Streamlit sidebar.
+- Kept provenance display local-only with no VPS connection.
+
 ## v1.17.0
 
 - Added Git source provenance to release manifests.

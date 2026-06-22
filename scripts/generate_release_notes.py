@@ -49,6 +49,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Local version bump helper for APP_VERSION, CHANGELOG, and RELEASE metadata.
 - Open-source metadata readiness checks for docs, issue templates, and workflows.
 - Release manifest source provenance with Git commit, branch, and dirty state.
+- Sidebar release provenance display for generated release artifacts.
 
 ## Download
 

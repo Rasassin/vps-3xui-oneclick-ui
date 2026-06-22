@@ -440,6 +440,20 @@ Still intentionally not included:
 - Uploading release artifacts to GitHub.
 - Running any VPS deployment test.
 
+## v1.18 Release Provenance UI
+
+Implemented scope:
+
+- Parse release manifest source provenance in `deployer/release_status.py`.
+- Show release source branch, commit, and dirty-worktree state in the Streamlit sidebar.
+- Keep provenance display local-only; it reads generated `dist/` files and does not connect to a VPS.
+
+Still intentionally not included:
+
+- Uploading release artifacts from the UI.
+- Signing release artifacts.
+- Running any VPS deployment test.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

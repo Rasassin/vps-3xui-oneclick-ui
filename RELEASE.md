@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.17 also includes release manifest source provenance.
+v1.18 also shows release manifest provenance in the UI.
 
 ## Build Locally
 

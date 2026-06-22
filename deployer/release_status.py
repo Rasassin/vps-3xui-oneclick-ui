@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -34,6 +35,27 @@ class ReleaseArtifact:
         return "text/plain"
 
 
+@dataclass(frozen=True)
+class ReleaseSourceSummary:
+    git_commit: str
+    git_branch: str
+    git_dirty: bool | None
+
+    @property
+    def short_commit(self) -> str:
+        if not self.git_commit or self.git_commit == "unknown":
+            return "unknown"
+        return self.git_commit[:7]
+
+    @property
+    def dirty_label(self) -> str:
+        if self.git_dirty is True:
+            return "有未提交改动"
+        if self.git_dirty is False:
+            return "干净"
+        return "未知"
+
+
 def expected_release_artifacts(version: str = APP_VERSION) -> list[tuple[str, Path]]:
     dist_dir = PROJECT_ROOT / "dist"
     return [
@@ -61,3 +83,22 @@ def collect_release_artifacts(version: str = APP_VERSION) -> list[ReleaseArtifac
 
 def release_artifacts_ready(version: str = APP_VERSION) -> bool:
     return all(artifact.exists for artifact in collect_release_artifacts(version))
+
+
+def load_release_source_summary(version: str = APP_VERSION) -> ReleaseSourceSummary | None:
+    manifest_path = PROJECT_ROOT / "dist" / f"release-manifest-v{version}.json"
+    if not manifest_path.exists() or not manifest_path.is_file():
+        return None
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    source = manifest.get("source")
+    if not isinstance(source, dict):
+        return None
+    git_dirty = source.get("git_dirty")
+    return ReleaseSourceSummary(
+        git_commit=str(source.get("git_commit") or "unknown"),
+        git_branch=str(source.get("git_branch") or "unknown"),
+        git_dirty=git_dirty if isinstance(git_dirty, bool) else None,
+    )

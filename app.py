@@ -20,7 +20,7 @@ from deployer.deploy_service import (
 from deployer.export_service import build_export_zip
 from deployer.profile_service import delete_profile, load_profiles, upsert_profile
 from deployer.qr_service import regenerate_output_qrs
-from deployer.release_status import collect_release_artifacts, release_artifacts_ready
+from deployer.release_status import collect_release_artifacts, load_release_source_summary, release_artifacts_ready
 from deployer.result_parser import load_results
 from deployer.ssh_runner import DeploymentError, redact
 
@@ -181,6 +181,11 @@ def render_sidebar() -> None:
                 st.success("当前版本发布产物已生成。")
             else:
                 st.info("需要发布时运行：python3 scripts/prepare_release.py --allow-dirty")
+            source = load_release_source_summary()
+            if source:
+                st.caption(
+                    f"来源：{source.git_branch} · {source.short_commit} · 工作区{source.dirty_label}"
+                )
             for artifact in artifacts:
                 status = "已生成" if artifact.exists else "未生成"
                 st.caption(f"{status} · {artifact.label} · {artifact.display_size}")
