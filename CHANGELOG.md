@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.9.0
+
+- Added `scripts/doctor.py` as a one-command local project health check.
+- Added optional `scripts/doctor.py --release` mode to run release readiness with dirty-worktree allowance.
+- Included the doctor script in release and desktop packaging checks.
+
 ## v1.8.0
 
 - Added `scripts/check_streamlit_app.py` for a no-VPS Streamlit UI smoke test.

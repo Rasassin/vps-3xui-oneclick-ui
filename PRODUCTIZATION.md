@@ -307,6 +307,21 @@ Still intentionally not included:
 - Clicking deployment buttons in automated checks.
 - Browser automation against the remote 3x-ui panel.
 
+## v1.9 Project Doctor
+
+Implemented scope:
+
+- Add `scripts/doctor.py` as a one-command local health check.
+- Aggregate secret hygiene, Python syntax, Bash syntax, desktop packaging inputs, and Streamlit UI smoke tests.
+- Add `--release` mode to run full release readiness with dirty-worktree allowance.
+- Include the doctor script in release and desktop packaging checks.
+
+Still intentionally not included:
+
+- Installing missing dependencies.
+- Connecting to a VPS.
+- Running remote deployment actions.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

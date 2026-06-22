@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.8 also includes a no-VPS Streamlit UI smoke test in release readiness.
+v1.9 also includes a one-command local project doctor for health checks.
 
 ## Build Locally
 
@@ -35,6 +35,7 @@ Before publishing a release:
 
 ```bash
 python3 scripts/check_release_ready.py
+python3 scripts/doctor.py --release
 VERSION="$(python3 -c 'from deployer.config import APP_VERSION; print(APP_VERSION)')"
 python3 desktop/check_desktop_package.py --release-zip "dist/vps-3xui-oneclick-ui-v${VERSION}.zip"
 test -s "dist/SHA256SUMS_v${VERSION}.txt"
@@ -56,6 +57,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Confirm `CHANGELOG.md` has an entry for `APP_VERSION`.
 - Run `python3 scripts/check_secret_hygiene.py`.
 - Run `python3 scripts/check_streamlit_app.py`.
+- Run `python3 scripts/doctor.py --release`.
 - Optionally run `python3 scripts/install_git_hooks.py` to enable pre-commit checks locally.
 - Confirm `PRODUCTIZATION.md` reflects the shipped scope.
 - Confirm `docs/privacy.md` reflects current password, output, diagnostics, and VPS data handling.

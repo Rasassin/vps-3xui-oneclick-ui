@@ -168,6 +168,7 @@ bash -n remote_scripts/harden_after_success.sh
 bash -n desktop/build_macos_app.sh
 python scripts/check_streamlit_app.py
 python desktop/check_desktop_package.py
+python scripts/doctor.py
 ```
 
 ## 构建发布包
@@ -179,6 +180,7 @@ python3 scripts/build_release_bundle.py
 python3 scripts/check_release_ready.py
 python3 scripts/check_secret_hygiene.py
 python3 scripts/check_streamlit_app.py
+python3 scripts/doctor.py --release
 ```
 
 发布包会生成到 `dist/`，并自动排除 `.venv/`、`output/` 真实结果、日志和缓存文件。
@@ -190,6 +192,8 @@ python3 scripts/check_streamlit_app.py
 `check_secret_hygiene.py` 会检查 Git 已跟踪文件，防止误提交 output 结果、profiles、env、日志、私钥和明显的节点链接。
 
 `check_streamlit_app.py` 会在不连接 VPS 的前提下渲染一次本地页面，用来提前发现 Streamlit 组件 ID、导入错误和首屏异常。
+
+`doctor.py` 是本地项目体检入口，会聚合密钥检查、语法检查、桌面打包输入检查和 Streamlit 首屏检查；加 `--release` 会额外执行完整发版检查。
 
 如果你准备参与开发，可以可选安装本地 Git hook，让每次提交前自动运行这项检查：
 
@@ -244,6 +248,7 @@ vps-3xui-oneclick-ui/
 │   ├── check_secret_hygiene.py
 │   ├── check_release_ready.py
 │   ├── check_streamlit_app.py
+│   ├── doctor.py
 │   └── install_git_hooks.py
 └── .agents/
     └── skills/
