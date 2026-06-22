@@ -11,6 +11,8 @@ about.
 - The application keeps the VPS password only in the active Streamlit session.
 - Deployment logs must redact the VPS password and API tokens.
 - `output/` is ignored by Git except for `output/.gitkeep`.
+- `scripts/check_secret_hygiene.py` checks tracked files before release so
+  ignored local result files do not accidentally become part of the repository.
 
 ## Supported Targets
 

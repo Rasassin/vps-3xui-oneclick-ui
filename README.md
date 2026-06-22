@@ -174,6 +174,7 @@ python3 scripts/build_release.py
 python3 scripts/generate_release_notes.py
 python3 scripts/build_release_bundle.py
 python3 scripts/check_release_ready.py
+python3 scripts/check_secret_hygiene.py
 ```
 
 发布包会生成到 `dist/`，并自动排除 `.venv/`、`output/` 真实结果、日志和缓存文件。
@@ -181,6 +182,8 @@ python3 scripts/check_release_ready.py
 `build_release_bundle.py` 会同时生成源码包、GitHub Release 文案草稿、SHA256 校验文件和 release manifest。
 
 `check_release_ready.py` 会在不连接 VPS 的前提下运行发版前体检；开发中检查未提交改动时可加 `--allow-dirty`。
+
+`check_secret_hygiene.py` 会检查 Git 已跟踪文件，防止误提交 output 结果、profiles、env、日志、私钥和明显的节点链接。
 
 如果要让 GitHub Actions 自动发布 Release，请参考 [docs/release/tagged-release.md](docs/release/tagged-release.md)。
 

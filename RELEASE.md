@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.4 also includes changelog tracking and changelog validation in release readiness checks.
+v1.5 also includes tracked-file secret hygiene checks in release readiness.
 
 ## Build Locally
 
@@ -54,6 +54,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 
 - Confirm `APP_VERSION` in `deployer/config.py`.
 - Confirm `CHANGELOG.md` has an entry for `APP_VERSION`.
+- Run `python3 scripts/check_secret_hygiene.py`.
 - Confirm `PRODUCTIZATION.md` reflects the shipped scope.
 - Confirm the release zip does not contain local `output/` files.
 - Confirm the release zip does not contain local `data/profiles.json`.

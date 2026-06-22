@@ -124,6 +124,7 @@ def main() -> None:
     verify_version(APP_VERSION)
     verify_changelog(APP_VERSION)
     ensure_clean_worktree(args.allow_dirty)
+    run([sys.executable, "scripts/check_secret_hygiene.py"])
     run([sys.executable, "-m", "py_compile", "app.py", *[str(path) for path in sorted((PROJECT_ROOT / "deployer").glob("*.py"))], *[str(path) for path in sorted((PROJECT_ROOT / "scripts").glob("*.py"))], "desktop_launcher.py", "desktop/check_desktop_package.py"])
     run(["bash", "-n", "remote_scripts/preflight_remote.sh"])
     run(["bash", "-n", "remote_scripts/install_remote.sh"])

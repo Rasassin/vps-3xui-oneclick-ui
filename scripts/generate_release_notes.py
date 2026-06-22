@@ -36,6 +36,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Tag-triggered GitHub Release publishing workflow.
 - One-command release readiness checks before tagging.
 - Changelog validation in release readiness checks.
+- Tracked-file secret hygiene checks for release safety.
 
 ## Download
 

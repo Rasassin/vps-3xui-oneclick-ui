@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.5.0
+
+- Added `scripts/check_secret_hygiene.py`.
+- Added tracked-file checks for accidental commits of output files, profiles, env files, logs, private keys, and obvious node links.
+- Integrated secret hygiene checks into release readiness.
+
 ## v1.4.0
 
 - Added this changelog as a release history source.

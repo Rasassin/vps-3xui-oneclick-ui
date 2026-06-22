@@ -249,6 +249,21 @@ Still intentionally not included:
 - Conventional commits enforcement.
 - Real VPS deployment in CI.
 
+## v1.5 Secret Hygiene Checks
+
+Implemented scope:
+
+- Add `scripts/check_secret_hygiene.py`.
+- Check Git-tracked files for forbidden `output/`, `data/`, `dist/`, `.env`, log, secret, and private key paths.
+- Scan tracked file contents for private keys, real-looking `vless://UUID@` links, and token-like assignments.
+- Run secret hygiene checks during release readiness.
+
+Still intentionally not included:
+
+- Scanning ignored local files under `output/`.
+- Uploading diagnostics to any external service.
+- Real VPS deployment in CI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.
