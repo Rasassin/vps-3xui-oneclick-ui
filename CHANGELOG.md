@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.14.0
+
+- Added sidebar download buttons for generated release artifacts.
+- Added release artifact MIME metadata for local downloads.
+- Kept release downloads local-only, with no GitHub upload or VPS connection.
+
 ## v1.13.0
 
 - Added local release artifact status helpers.

@@ -184,6 +184,15 @@ def render_sidebar() -> None:
             for artifact in artifacts:
                 status = "已生成" if artifact.exists else "未生成"
                 st.caption(f"{status} · {artifact.label} · {artifact.display_size}")
+                if artifact.exists:
+                    st.download_button(
+                        f"下载{artifact.label}",
+                        data=artifact.path.read_bytes(),
+                        file_name=artifact.path.name,
+                        mime=artifact.mime_type,
+                        key=f"release_artifact_{artifact.path.name}",
+                        use_container_width=True,
+                    )
         st.divider()
         render_profiles_sidebar()
         st.divider()

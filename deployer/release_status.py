@@ -23,6 +23,16 @@ class ReleaseArtifact:
             return f"{self.size_bytes / 1024:.1f} KB"
         return f"{self.size_bytes / 1024 / 1024:.1f} MB"
 
+    @property
+    def mime_type(self) -> str:
+        if self.path.suffix == ".zip":
+            return "application/zip"
+        if self.path.suffix == ".md":
+            return "text/markdown"
+        if self.path.suffix == ".json":
+            return "application/json"
+        return "text/plain"
+
 
 def expected_release_artifacts(version: str = APP_VERSION) -> list[tuple[str, Path]]:
     dist_dir = PROJECT_ROOT / "dist"

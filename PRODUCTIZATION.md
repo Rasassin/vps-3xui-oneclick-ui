@@ -382,6 +382,20 @@ Still intentionally not included:
 - Uploading release artifacts from the UI.
 - Running a real VPS deployment as a release check.
 
+## v1.14 Release Artifact Downloads
+
+Implemented scope:
+
+- Add local MIME metadata for release artifacts.
+- Show download buttons for generated release zip, GitHub Release notes, SHA256SUMS, and manifest.
+- Keep downloads local-only; the UI does not upload files or publish a GitHub Release.
+
+Still intentionally not included:
+
+- Uploading release artifacts to GitHub from the UI.
+- Creating tags or GitHub Releases from the UI.
+- Running any real VPS deployment during release checks.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

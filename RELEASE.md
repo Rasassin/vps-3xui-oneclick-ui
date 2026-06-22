@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.13 also includes a sidebar release package status panel.
+v1.14 also includes sidebar downloads for generated release artifacts.
 
 ## Build Locally
 

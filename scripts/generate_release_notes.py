@@ -45,6 +45,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Version consistency check for release metadata.
 - Local release preparation command that prints upload artifacts.
 - Sidebar release package status panel for local release readiness visibility.
+- Sidebar download buttons for generated release artifacts.
 
 ## Download
 
