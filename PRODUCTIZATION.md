@@ -132,6 +132,23 @@ Still experimental:
 - Auto-update.
 - OS keychain integration.
 
+## v0.8 Desktop Packaging Release UX
+
+Implemented scope:
+
+- Improve `desktop_launcher.py` startup checks for missing Python dependencies.
+- Write local launcher logs to `output/desktop-launcher.log`.
+- Add experimental Windows PyInstaller build script.
+- Add desktop packaging self-check that does not connect to a VPS.
+- Validate release zips do not contain local profiles, output files, QR images, node links, or panel files.
+
+Still intentionally not included:
+
+- Real VPS smoke tests during packaging checks.
+- Password persistence.
+- Auto-login to remote 3x-ui panels.
+- Code signing or notarization.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

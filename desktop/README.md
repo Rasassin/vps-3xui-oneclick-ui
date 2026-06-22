@@ -40,7 +40,40 @@ Then run:
 ./desktop/build_macos_app.sh
 ```
 
-The output app is experimental. The current production-safe start path remains:
+## Windows Build Experiment
+
+On Windows PowerShell, install packaging tools:
+
+```powershell
+python -m pip install -r requirements-desktop.txt
+```
+
+Then run:
+
+```powershell
+.\desktop\build_windows_exe.ps1
+```
+
+The PyInstaller output is written to `dist/`.
+
+## Packaging Check
+
+Run the non-VPS packaging check from the project root:
+
+```bash
+python desktop/check_desktop_package.py
+```
+
+After building a source release zip:
+
+```bash
+python scripts/build_release.py
+python desktop/check_desktop_package.py --release-zip dist/vps-3xui-oneclick-ui-v0.8.0.zip
+```
+
+The check confirms desktop packaging files exist and verifies that release zips do not contain local profiles, result files, QR images, panel credentials, or node links.
+
+The desktop output is experimental. The current production-safe start path remains:
 
 ```bash
 ./start_mac_linux.sh

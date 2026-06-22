@@ -8,11 +8,13 @@ import time
 import urllib.error
 import urllib.request
 import webbrowser
+from importlib.util import find_spec
 from pathlib import Path
 
 
 APP_NAME = "VPS 3x-ui Oneclick"
 DEFAULT_PORT = 8501
+LAUNCH_LOG = "desktop-launcher.log"
 
 
 def resource_root() -> Path:
@@ -68,11 +70,31 @@ def build_streamlit_command(root: Path, port: int) -> list[str]:
     ]
 
 
+def check_runtime_dependencies() -> list[str]:
+    missing = []
+    for module_name in ["streamlit", "paramiko", "qrcode", "PIL"]:
+        if find_spec(module_name) is None:
+            missing.append(module_name)
+    return missing
+
+
+def launcher_log_path(root: Path) -> Path:
+    output_dir = root / "output"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    return output_dir / LAUNCH_LOG
+
+
 def main() -> int:
     root = resource_root()
     app_path = root / "app.py"
     if not app_path.exists():
         print(f"{APP_NAME} 启动失败：找不到 app.py。")
+        return 1
+
+    missing = check_runtime_dependencies()
+    if missing:
+        print(f"{APP_NAME} 启动失败：缺少 Python 依赖：{', '.join(missing)}")
+        print("请先执行：python -m pip install -r requirements.txt")
         return 1
 
     port = find_free_port()
@@ -81,15 +103,20 @@ def main() -> int:
     env["STREAMLIT_BROWSER_GATHER_USAGE_STATS"] = "false"
 
     command = build_streamlit_command(root, port)
-    process = subprocess.Popen(command, cwd=str(root), env=env)
+    log_path = launcher_log_path(root)
+    log_file = log_path.open("a", encoding="utf-8")
+    log_file.write(f"\n[{time.strftime('%Y-%m-%d %H:%M:%S')}] starting {APP_NAME}\n")
+    log_file.flush()
+    process = subprocess.Popen(command, cwd=str(root), env=env, stdout=log_file, stderr=subprocess.STDOUT)
     url = f"http://127.0.0.1:{port}"
 
     try:
         if wait_for_streamlit(port):
             print(f"{APP_NAME} 已启动：{url}")
+            print(f"启动日志：{log_path}")
             webbrowser.open(url)
         else:
-            print(f"{APP_NAME} 启动超时，请查看终端输出。")
+            print(f"{APP_NAME} 启动超时，请查看日志：{log_path}")
             return process.poll() or 1
 
         while process.poll() is None:
@@ -103,6 +130,8 @@ def main() -> int:
         except subprocess.TimeoutExpired:
             process.kill()
         return 0
+    finally:
+        log_file.close()
 
 
 if __name__ == "__main__":

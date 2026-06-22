@@ -51,6 +51,12 @@ python3 desktop_launcher.py
 
 实验性的 macOS 打包说明在 [desktop/README.md](desktop/README.md)。普通用户仍建议优先使用 `start_windows.bat` 或 `start_mac_linux.sh`。
 
+桌面打包相关文件：
+
+- `desktop/build_macos_app.sh`：实验性 macOS `.app` 构建脚本
+- `desktop/build_windows_exe.ps1`：实验性 Windows 构建脚本
+- `desktop/check_desktop_package.py`：不连接 VPS 的桌面打包自检脚本
+
 ## Codex Skill
 
 这个仓库同时沉淀了一个 Codex Skill：
@@ -149,11 +155,12 @@ Reality 入站端口不一定必须是 `443`。`443` 更像普通 HTTPS，通常
 
 ```bash
 python -m py_compile app.py deployer/*.py scripts/*.py
-python -m py_compile desktop_launcher.py
+python -m py_compile desktop_launcher.py desktop/check_desktop_package.py
 bash -n remote_scripts/preflight_remote.sh
 bash -n remote_scripts/install_remote.sh
 bash -n remote_scripts/harden_after_success.sh
 bash -n desktop/build_macos_app.sh
+python desktop/check_desktop_package.py
 ```
 
 ## 构建发布包
@@ -179,6 +186,8 @@ vps-3xui-oneclick-ui/
 ├── desktop/
 │   ├── README.md
 │   ├── build_macos_app.sh
+│   ├── build_windows_exe.ps1
+│   ├── check_desktop_package.py
 │   └── vps_3xui_oneclick.spec
 ├── output/
 │   └── .gitkeep
