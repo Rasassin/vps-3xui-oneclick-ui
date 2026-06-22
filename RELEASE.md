@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.5 also includes tracked-file secret hygiene checks in release readiness.
+v1.6 also includes an optional pre-commit hook for tracked-file secret hygiene checks.
 
 ## Build Locally
 
@@ -55,6 +55,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Confirm `APP_VERSION` in `deployer/config.py`.
 - Confirm `CHANGELOG.md` has an entry for `APP_VERSION`.
 - Run `python3 scripts/check_secret_hygiene.py`.
+- Optionally run `python3 scripts/install_git_hooks.py` to enable pre-commit checks locally.
 - Confirm `PRODUCTIZATION.md` reflects the shipped scope.
 - Confirm the release zip does not contain local `output/` files.
 - Confirm the release zip does not contain local `data/profiles.json`.

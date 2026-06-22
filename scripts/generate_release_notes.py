@@ -37,6 +37,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - One-command release readiness checks before tagging.
 - Changelog validation in release readiness checks.
 - Tracked-file secret hygiene checks for release safety.
+- Optional pre-commit hook for tracked-file secret hygiene.
 
 ## Download
 

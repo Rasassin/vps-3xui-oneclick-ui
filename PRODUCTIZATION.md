@@ -264,6 +264,21 @@ Still intentionally not included:
 - Uploading diagnostics to any external service.
 - Real VPS deployment in CI.
 
+## v1.6 Optional Git Hook
+
+Implemented scope:
+
+- Add `.githooks/pre-commit` to run tracked-file secret hygiene checks before commits.
+- Add `scripts/install_git_hooks.py` so contributors can enable the hook on demand.
+- Include `.githooks/pre-commit` in source release zips.
+- Validate the hook syntax during release readiness checks.
+
+Still intentionally not included:
+
+- Automatic hook installation for every clone.
+- Scanning ignored local `output/` deployment results.
+- Any network or VPS connection during hook execution.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

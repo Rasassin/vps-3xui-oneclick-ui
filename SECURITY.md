@@ -13,6 +13,8 @@ about.
 - `output/` is ignored by Git except for `output/.gitkeep`.
 - `scripts/check_secret_hygiene.py` checks tracked files before release so
   ignored local result files do not accidentally become part of the repository.
+- `scripts/install_git_hooks.py` can optionally install a local pre-commit hook
+  that runs the same tracked-file secret hygiene check before each commit.
 
 ## Supported Targets
 

@@ -185,6 +185,14 @@ python3 scripts/check_secret_hygiene.py
 
 `check_secret_hygiene.py` 会检查 Git 已跟踪文件，防止误提交 output 结果、profiles、env、日志、私钥和明显的节点链接。
 
+如果你准备参与开发，可以可选安装本地 Git hook，让每次提交前自动运行这项检查：
+
+```bash
+python3 scripts/install_git_hooks.py
+```
+
+这个 hook 不会连接 VPS，也不会扫描被 Git 忽略的真实 `output/` 结果文件。
+
 如果要让 GitHub Actions 自动发布 Release，请参考 [docs/release/tagged-release.md](docs/release/tagged-release.md)。
 
 ## 项目结构
@@ -200,6 +208,8 @@ vps-3xui-oneclick-ui/
 ├── app.py
 ├── desktop_launcher.py
 ├── .gitignore
+├── .githooks/
+│   └── pre-commit
 ├── desktop/
 │   ├── README.md
 │   ├── build_macos_app.sh
@@ -223,6 +233,10 @@ vps-3xui-oneclick-ui/
 ├── remote_scripts/
 │   ├── install_remote.sh
 │   └── harden_after_success.sh
+├── scripts/
+│   ├── check_secret_hygiene.py
+│   ├── check_release_ready.py
+│   └── install_git_hooks.py
 └── .agents/
     └── skills/
         └── 3x-ui-oneclick/

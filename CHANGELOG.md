@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.6.0
+
+- Added optional `.githooks/pre-commit` secret hygiene hook.
+- Added `scripts/install_git_hooks.py` to enable local Git hooks on demand.
+- Included hook validation in release readiness and source release zips.
+
 ## v1.5.0
 
 - Added `scripts/check_secret_hygiene.py`.

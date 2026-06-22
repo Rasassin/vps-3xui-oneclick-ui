@@ -18,6 +18,7 @@ FORBIDDEN_RELEASE_FILES = {
     "output/subscription-qr.png",
 }
 REQUIRED_RELEASE_FILES = {
+    ".githooks/pre-commit",
     "desktop_launcher.py",
     "desktop/README.md",
     "desktop/build_macos_app.sh",
@@ -30,6 +31,7 @@ REQUIRED_RELEASE_FILES = {
     "requirements-desktop.txt",
     "scripts/build_release_bundle.py",
     "scripts/check_release_ready.py",
+    "scripts/install_git_hooks.py",
     "scripts/generate_release_notes.py",
     "output/.gitkeep",
     "data/.gitkeep",

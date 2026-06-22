@@ -34,6 +34,7 @@ INCLUDE_FILES = [
 
 INCLUDE_DIRS = [
     ".agents",
+    ".githooks",
     ".github",
     "desktop",
     "deployer",
