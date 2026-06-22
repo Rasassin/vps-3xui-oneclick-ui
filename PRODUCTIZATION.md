@@ -116,6 +116,22 @@ Candidate modules:
 - local secrets: OS keychain only if password persistence is ever added
 - QR: existing qrcode/pillow logic
 
+Implemented exploration scope:
+
+- Add `desktop_launcher.py` as a local desktop-style launcher.
+- Start Streamlit on `127.0.0.1` with a free local port.
+- Open the local app page automatically.
+- Add `desktop/` with macOS PyInstaller build notes and spec file.
+- Keep desktop packaging separate from the Codex Skill.
+- Keep the launcher passive: it never connects to a VPS by itself and never stores passwords.
+
+Still experimental:
+
+- A polished signed `.app` or Windows `.exe`.
+- Native Tauri UI.
+- Auto-update.
+- OS keychain integration.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

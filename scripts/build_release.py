@@ -22,7 +22,9 @@ INCLUDE_FILES = [
     "RELEASE.md",
     "SECURITY.md",
     "app.py",
+    "desktop_launcher.py",
     "requirements.txt",
+    "requirements-desktop.txt",
     "start_mac_linux.sh",
     "start_windows.bat",
     "data/.gitkeep",
@@ -32,6 +34,7 @@ INCLUDE_FILES = [
 INCLUDE_DIRS = [
     ".agents",
     ".github",
+    "desktop",
     "deployer",
     "remote_scripts",
     "scripts",

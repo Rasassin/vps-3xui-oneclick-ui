@@ -39,6 +39,18 @@ chmod +x start_mac_linux.sh
 ./start_mac_linux.sh
 ```
 
+## 桌面 App 雏形
+
+v0.7 开始提供一个独立的桌面化启动层，和 Codex Skill 分开维护：
+
+```bash
+python3 desktop_launcher.py
+```
+
+它会在本机寻找可用端口，启动 Streamlit，并自动打开本地页面。这个启动器不会主动连接 VPS，也不会保存 VPS 密码。
+
+实验性的 macOS 打包说明在 [desktop/README.md](desktop/README.md)。普通用户仍建议优先使用 `start_windows.bat` 或 `start_mac_linux.sh`。
+
 ## Codex Skill
 
 这个仓库同时沉淀了一个 Codex Skill：
@@ -103,6 +115,7 @@ Reality 入站端口不一定必须是 `443`。`443` 更像普通 HTTPS，通常
 - 可选的部署前检测结果、远程状态刷新、远程结果重新下载、远程结果备份和本地二维码重建
 - 侧边栏本地自检和公开诊断包，方便开源 issue 排查
 - 侧边栏本地配置档，保存常用 VPS 和节点参数，但不保存 VPS 密码
+- 本地桌面化启动器 `desktop_launcher.py`，用于后续 App 打包探索
 - 部署报告
 
 所有结果也会自动保存到本地 `output/` 目录，包括：
@@ -136,9 +149,11 @@ Reality 入站端口不一定必须是 `443`。`443` 更像普通 HTTPS，通常
 
 ```bash
 python -m py_compile app.py deployer/*.py scripts/*.py
+python -m py_compile desktop_launcher.py
 bash -n remote_scripts/preflight_remote.sh
 bash -n remote_scripts/install_remote.sh
 bash -n remote_scripts/harden_after_success.sh
+bash -n desktop/build_macos_app.sh
 ```
 
 ## 构建发布包
@@ -159,7 +174,12 @@ vps-3xui-oneclick-ui/
 ├── start_windows.bat
 ├── start_mac_linux.sh
 ├── app.py
+├── desktop_launcher.py
 ├── .gitignore
+├── desktop/
+│   ├── README.md
+│   ├── build_macos_app.sh
+│   └── vps_3xui_oneclick.spec
 ├── output/
 │   └── .gitkeep
 ├── deployer/
