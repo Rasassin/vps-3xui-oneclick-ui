@@ -12,6 +12,8 @@ Use `scripts/generate_release_notes.py` for the concrete versioned draft. This t
 
 Automated releases are published by `.github/workflows/release.yml` when a matching `vX.Y.Z` tag is pushed.
 
+Confirm `CHANGELOG.md` has an entry for the release before tagging.
+
 ## Required Warnings
 
 - Do not upload local `output/` result files.

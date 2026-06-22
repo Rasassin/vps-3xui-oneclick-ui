@@ -15,6 +15,7 @@ from deployer.config import APP_VERSION, PROJECT_ROOT
 INCLUDE_FILES = [
     ".gitignore",
     "AGENTS.md",
+    "CHANGELOG.md",
     "CONTRIBUTING.md",
     "LICENSE",
     "PRODUCTIZATION.md",

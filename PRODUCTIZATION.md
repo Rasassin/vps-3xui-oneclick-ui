@@ -234,6 +234,21 @@ Still intentionally not included:
 - Automatic tag creation.
 - Code signing.
 
+## v1.4 Changelog Discipline
+
+Implemented scope:
+
+- Add `CHANGELOG.md`.
+- Include changelog in source release zips.
+- Add changelog validation to `scripts/check_release_ready.py`.
+- Require a `## vX.Y.Z` entry matching `APP_VERSION` before release checks pass.
+
+Still intentionally not included:
+
+- Automatic changelog generation from commits.
+- Conventional commits enforcement.
+- Real VPS deployment in CI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

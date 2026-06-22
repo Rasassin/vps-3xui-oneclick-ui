@@ -35,6 +35,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - SHA256 checksum and release manifest generation for release integrity.
 - Tag-triggered GitHub Release publishing workflow.
 - One-command release readiness checks before tagging.
+- Changelog validation in release readiness checks.
 
 ## Download
 
@@ -82,6 +83,10 @@ python3 desktop_launcher.py
 - Local `data/profiles.json` contains non-password profile settings and is excluded from Git and release zips.
 - Server hardening remains opt-in.
 - The first version does not default-disable root login, password login, or ping.
+
+## Changelog
+
+See `CHANGELOG.md` in the release zip for the project history.
 
 ## Release Validation
 

@@ -5,6 +5,7 @@ This project can publish GitHub Releases automatically when a version tag is pus
 ## Before Tagging
 
 - Confirm `APP_VERSION` in `deployer/config.py`.
+- Confirm `CHANGELOG.md` has a `## vX.Y.Z` entry matching `APP_VERSION`.
 - Run the local release readiness check:
 
 ```bash

@@ -45,6 +45,15 @@ def verify_version(version: str) -> None:
         raise SystemExit(f"release readiness failed: APP_VERSION is not X.Y.Z: {version}")
 
 
+def verify_changelog(version: str) -> None:
+    changelog_path = PROJECT_ROOT / "CHANGELOG.md"
+    if not changelog_path.exists():
+        raise SystemExit("release readiness failed: CHANGELOG.md is missing.")
+    changelog = changelog_path.read_text(encoding="utf-8")
+    if f"## v{version}" not in changelog:
+        raise SystemExit(f"release readiness failed: CHANGELOG.md is missing ## v{version}.")
+
+
 def verify_zip_contents(zip_path: Path) -> None:
     with ZipFile(zip_path) as archive:
         names = set(archive.namelist())
@@ -113,6 +122,7 @@ def main() -> None:
     args = parser.parse_args()
 
     verify_version(APP_VERSION)
+    verify_changelog(APP_VERSION)
     ensure_clean_worktree(args.allow_dirty)
     run([sys.executable, "-m", "py_compile", "app.py", *[str(path) for path in sorted((PROJECT_ROOT / "deployer").glob("*.py"))], *[str(path) for path in sorted((PROJECT_ROOT / "scripts").glob("*.py"))], "desktop_launcher.py", "desktop/check_desktop_package.py"])
     run(["bash", "-n", "remote_scripts/preflight_remote.sh"])

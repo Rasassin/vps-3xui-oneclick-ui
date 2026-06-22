@@ -4,6 +4,8 @@
 
 这是一个本地可视化的一键部署工具。你只需要准备海外 VPS 的 IP、root 用户名和 root 密码，在本地网页里填写后点击“开始一键部署”。工具会自动通过 SSH 登录 VPS、安装 3x-ui、创建 VLESS + TCP + Reality 节点，并在网页里直接显示可扫码导入客户端的二维码和链接。
 
+版本历史见 [CHANGELOG.md](CHANGELOG.md)。
+
 ## 你需要准备什么
 
 - 一台 Ubuntu 22.04 / Ubuntu 24.04 / Debian 12 VPS
@@ -187,6 +189,7 @@ python3 scripts/check_release_ready.py
 ```text
 vps-3xui-oneclick-ui/
 ├── README.md
+├── CHANGELOG.md
 ├── AGENTS.md
 ├── requirements.txt
 ├── start_windows.bat

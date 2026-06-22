@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.3 also includes a local release readiness checker.
+v1.4 also includes changelog tracking and changelog validation in release readiness checks.
 
 ## Build Locally
 
@@ -53,6 +53,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 ## GitHub Release Checklist
 
 - Confirm `APP_VERSION` in `deployer/config.py`.
+- Confirm `CHANGELOG.md` has an entry for `APP_VERSION`.
 - Confirm `PRODUCTIZATION.md` reflects the shipped scope.
 - Confirm the release zip does not contain local `output/` files.
 - Confirm the release zip does not contain local `data/profiles.json`.
