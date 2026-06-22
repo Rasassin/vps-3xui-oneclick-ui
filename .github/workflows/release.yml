@@ -28,15 +28,10 @@ jobs:
           fi
       - name: Static checks
         run: |
-          python -m py_compile app.py deployer/*.py scripts/*.py desktop_launcher.py desktop/check_desktop_package.py
-          bash -n remote_scripts/preflight_remote.sh
-          bash -n remote_scripts/install_remote.sh
-          bash -n remote_scripts/harden_after_success.sh
-          bash -n desktop/build_macos_app.sh
+          python scripts/check_release_ready.py
       - name: Build release bundle
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          python scripts/build_release_bundle.py --version "$VERSION"
           python desktop/check_desktop_package.py --release-zip "dist/vps-3xui-oneclick-ui-v${VERSION}.zip"
           test -s "dist/GITHUB_RELEASE_v${VERSION}.md"
           test -s "dist/SHA256SUMS_v${VERSION}.txt"

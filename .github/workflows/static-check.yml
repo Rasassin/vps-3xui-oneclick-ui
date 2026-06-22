@@ -24,7 +24,7 @@ jobs:
           bash -n desktop/build_macos_app.sh
       - name: Build source release zip
         run: |
-          python scripts/build_release_bundle.py
+          python scripts/check_release_ready.py
           VERSION="$(python -c 'from deployer.config import APP_VERSION; print(APP_VERSION)')"
           python desktop/check_desktop_package.py --release-zip "dist/vps-3xui-oneclick-ui-v${VERSION}.zip"
           test -s "dist/GITHUB_RELEASE_v${VERSION}.md"

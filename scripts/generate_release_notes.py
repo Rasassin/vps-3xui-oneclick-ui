@@ -34,6 +34,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Current-state summary, first-run checklist, and failure recovery guidance.
 - SHA256 checksum and release manifest generation for release integrity.
 - Tag-triggered GitHub Release publishing workflow.
+- One-command release readiness checks before tagging.
 
 ## Download
 
@@ -93,7 +94,7 @@ bash -n remote_scripts/preflight_remote.sh
 bash -n remote_scripts/install_remote.sh
 bash -n remote_scripts/harden_after_success.sh
 bash -n desktop/build_macos_app.sh
-python3 scripts/build_release_bundle.py
+python3 scripts/check_release_ready.py
 python3 desktop/check_desktop_package.py --release-zip dist/vps-3xui-oneclick-ui-v{version}.zip
 ```
 

@@ -5,19 +5,13 @@ This project can publish GitHub Releases automatically when a version tag is pus
 ## Before Tagging
 
 - Confirm `APP_VERSION` in `deployer/config.py`.
-- Run the local release checks:
+- Run the local release readiness check:
 
 ```bash
-python3 -m py_compile app.py deployer/*.py scripts/*.py
-python3 -m py_compile desktop_launcher.py desktop/check_desktop_package.py
-bash -n remote_scripts/preflight_remote.sh
-bash -n remote_scripts/install_remote.sh
-bash -n remote_scripts/harden_after_success.sh
-bash -n desktop/build_macos_app.sh
-python3 scripts/build_release_bundle.py
-VERSION="$(python3 -c 'from deployer.config import APP_VERSION; print(APP_VERSION)')"
-python3 desktop/check_desktop_package.py --release-zip "dist/vps-3xui-oneclick-ui-v${VERSION}.zip"
+python3 scripts/check_release_ready.py
 ```
+
+During local development, before committing the release changes, use `python3 scripts/check_release_ready.py --allow-dirty`.
 
 ## Publish
 

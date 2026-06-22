@@ -29,6 +29,7 @@ REQUIRED_RELEASE_FILES = {
     "docs/release/tagged-release.md",
     "requirements-desktop.txt",
     "scripts/build_release_bundle.py",
+    "scripts/check_release_ready.py",
     "scripts/generate_release_notes.py",
     "output/.gitkeep",
     "data/.gitkeep",

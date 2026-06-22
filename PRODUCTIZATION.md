@@ -216,6 +216,24 @@ Still intentionally not included:
 - Binary notarization.
 - Real VPS deployment in CI.
 
+## v1.3 Release Readiness Checker
+
+Implemented scope:
+
+- Add `scripts/check_release_ready.py`.
+- Validate `APP_VERSION` format.
+- Refuse release checks on a dirty worktree unless `--allow-dirty` is used.
+- Run Python and Bash syntax checks.
+- Build release bundle.
+- Verify release zip exclusions, SHA256SUMS, and manifest safety flags.
+- Use the readiness checker in CI and release workflow.
+
+Still intentionally not included:
+
+- Real VPS deployment in CI.
+- Automatic tag creation.
+- Code signing.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.
