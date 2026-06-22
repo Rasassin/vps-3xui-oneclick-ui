@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.21 also warns when local release artifacts were built from an older Git commit.
+v1.22 also checks stale release artifact provenance from the command line.
 
 ## Build Locally
 

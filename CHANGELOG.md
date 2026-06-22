@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.22.0
+
+- Added stale release source validation to scripts/check_release_artifacts.py.
+- Refused old-commit release artifacts by default while allowing explicit historical checks.
+- Documented command-line stale artifact validation.
+
 ## v1.21.0
 
 - Added a sidebar stale-release warning when generated release artifacts come from an older Git commit.

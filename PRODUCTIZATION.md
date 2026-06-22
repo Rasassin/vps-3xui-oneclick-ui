@@ -496,6 +496,20 @@ Still intentionally not included:
 - Uploading release artifacts.
 - Signing release artifacts.
 
+## v1.22 Command-Line Stale Artifact Check
+
+Implemented scope:
+
+- Validate release manifest source commit in `scripts/check_release_artifacts.py`.
+- Refuse stale release artifacts by default when the manifest commit differs from local Git `HEAD`.
+- Add `--allow-stale-source` for explicit historical artifact checks.
+
+Still intentionally not included:
+
+- Automatically rebuilding stale artifacts.
+- Uploading release artifacts.
+- Signing release artifacts.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

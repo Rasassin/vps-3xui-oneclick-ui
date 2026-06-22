@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import subprocess
 import sys
 from pathlib import Path
 from zipfile import ZipFile
@@ -71,7 +72,35 @@ def verify_checksums(sums_path: Path) -> None:
             raise SystemExit(f"release artifact check failed: checksum mismatch for {file_name}")
 
 
-def verify_manifest(manifest_path: Path, version: str) -> None:
+def current_git_commit() -> str:
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        return "unknown"
+    return result.stdout.strip() or "unknown"
+
+
+def verify_manifest_source_current(source: dict, allow_stale_source: bool) -> None:
+    if allow_stale_source:
+        return
+    manifest_commit = str(source.get("git_commit") or "unknown")
+    local_commit = current_git_commit()
+    if manifest_commit == "unknown" or local_commit == "unknown":
+        return
+    if manifest_commit != local_commit:
+        raise SystemExit(
+            "release artifact check failed: release manifest was built from "
+            f"{manifest_commit[:7]}, but local HEAD is {local_commit[:7]}. "
+            "Rebuild artifacts with python3 scripts/prepare_release.py --allow-dirty, "
+            "or pass --allow-stale-source for a historical artifact check."
+        )
+
+
+def verify_manifest(manifest_path: Path, version: str, allow_stale_source: bool) -> None:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     if manifest.get("version") != version:
         raise SystemExit("release artifact check failed: manifest version does not match APP_VERSION.")
@@ -82,6 +111,7 @@ def verify_manifest(manifest_path: Path, version: str) -> None:
         raise SystemExit("release artifact check failed: manifest source git_branch is missing.")
     if not isinstance(source.get("git_dirty"), bool):
         raise SystemExit("release artifact check failed: manifest source git_dirty must be boolean.")
+    verify_manifest_source_current(source, allow_stale_source)
     safety = manifest.get("safety", {})
     required_flags = {
         "excludes_output_results",
@@ -97,6 +127,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Verify release artifacts without connecting to a VPS.")
     parser.add_argument("--version", default=APP_VERSION)
     parser.add_argument("--dist-dir", type=Path, default=PROJECT_ROOT / "dist")
+    parser.add_argument(
+        "--allow-stale-source",
+        action="store_true",
+        help="Allow artifacts whose manifest source commit differs from local HEAD.",
+    )
     args = parser.parse_args()
 
     zip_path = args.dist_dir / f"vps-3xui-oneclick-ui-v{args.version}.zip"
@@ -107,7 +142,7 @@ def main() -> None:
     check_release_zip(zip_path)
     verify_zip_contents(zip_path)
     verify_checksums(sums_path)
-    verify_manifest(manifest_path, args.version)
+    verify_manifest(manifest_path, args.version, args.allow_stale_source)
     print(f"release artifact check ok: v{args.version}")
 
 
