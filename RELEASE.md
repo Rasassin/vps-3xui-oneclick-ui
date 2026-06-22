@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.20 also warns about dirty release artifacts in prepare_release.py.
+v1.21 also warns when local release artifacts were built from an older Git commit.
 
 ## Build Locally
 

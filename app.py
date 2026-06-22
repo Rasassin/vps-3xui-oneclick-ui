@@ -188,6 +188,12 @@ def render_sidebar() -> None:
                 )
                 if source.is_dirty:
                     st.warning("当前发布产物来自未提交工作区，只建议本地测试，不建议作为正式 GitHub Release 发布。")
+                if source.is_stale:
+                    st.warning(
+                        "当前发布产物来自旧代码："
+                        f"{source.short_commit}，本地当前代码是 {source.current_short_commit}。"
+                        "正式发布前请重新运行 python3 scripts/prepare_release.py --allow-dirty。"
+                    )
             for artifact in artifacts:
                 status = "已生成" if artifact.exists else "未生成"
                 st.caption(f"{status} · {artifact.label} · {artifact.display_size}")

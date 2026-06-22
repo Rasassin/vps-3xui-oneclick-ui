@@ -52,6 +52,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Sidebar release provenance display for generated release artifacts.
 - Sidebar warning for release artifacts built from a dirty worktree.
 - Command-line warning when preparing release artifacts from a dirty worktree.
+- Sidebar warning for release artifacts built from an older Git commit.
 
 ## Download
 

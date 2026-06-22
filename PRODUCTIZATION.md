@@ -482,6 +482,20 @@ Still intentionally not included:
 - Uploading release artifacts.
 - Signing release artifacts.
 
+## v1.21 Stale Release Artifact Warning
+
+Implemented scope:
+
+- Compare release manifest provenance with the current local Git `HEAD`.
+- Warn in the Streamlit sidebar when generated release artifacts came from an older commit.
+- Keep the stale artifact warning local-only; it reads local `dist/` files and local Git metadata only.
+
+Still intentionally not included:
+
+- Automatically rebuilding release artifacts from the UI.
+- Uploading release artifacts.
+- Signing release artifacts.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

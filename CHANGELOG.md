@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.21.0
+
+- Added a sidebar stale-release warning when generated release artifacts come from an older Git commit.
+- Compared release manifest provenance with the current local HEAD without connecting to a VPS.
+- Documented the stale release artifact warning.
+
 ## v1.20.0
 
 - Added a dirty-worktree warning to scripts/prepare_release.py.

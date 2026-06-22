@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -40,12 +41,19 @@ class ReleaseSourceSummary:
     git_commit: str
     git_branch: str
     git_dirty: bool | None
+    current_git_commit: str
 
     @property
     def short_commit(self) -> str:
         if not self.git_commit or self.git_commit == "unknown":
             return "unknown"
         return self.git_commit[:7]
+
+    @property
+    def current_short_commit(self) -> str:
+        if not self.current_git_commit or self.current_git_commit == "unknown":
+            return "unknown"
+        return self.current_git_commit[:7]
 
     @property
     def dirty_label(self) -> str:
@@ -58,6 +66,16 @@ class ReleaseSourceSummary:
     @property
     def is_dirty(self) -> bool:
         return self.git_dirty is True
+
+    @property
+    def is_stale(self) -> bool:
+        return (
+            bool(self.git_commit)
+            and bool(self.current_git_commit)
+            and self.git_commit != "unknown"
+            and self.current_git_commit != "unknown"
+            and self.git_commit != self.current_git_commit
+        )
 
 
 def expected_release_artifacts(version: str = APP_VERSION) -> list[tuple[str, Path]]:
@@ -89,6 +107,18 @@ def release_artifacts_ready(version: str = APP_VERSION) -> bool:
     return all(artifact.exists for artifact in collect_release_artifacts(version))
 
 
+def current_git_commit() -> str:
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        return "unknown"
+    return result.stdout.strip() or "unknown"
+
+
 def load_release_source_summary(version: str = APP_VERSION) -> ReleaseSourceSummary | None:
     manifest_path = PROJECT_ROOT / "dist" / f"release-manifest-v{version}.json"
     if not manifest_path.exists() or not manifest_path.is_file():
@@ -105,4 +135,5 @@ def load_release_source_summary(version: str = APP_VERSION) -> ReleaseSourceSumm
         git_commit=str(source.get("git_commit") or "unknown"),
         git_branch=str(source.get("git_branch") or "unknown"),
         git_dirty=git_dirty if isinstance(git_dirty, bool) else None,
+        current_git_commit=current_git_commit(),
     )
