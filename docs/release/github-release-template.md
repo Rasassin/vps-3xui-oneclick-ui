@@ -5,6 +5,9 @@ Use `scripts/generate_release_notes.py` for the concrete versioned draft. This t
 ## Required Assets
 
 - `vps-3xui-oneclick-ui-vX.Y.Z.zip`
+- `GITHUB_RELEASE_vX.Y.Z.md`
+- `SHA256SUMS_vX.Y.Z.txt`
+- `release-manifest-vX.Y.Z.json`
 - Optional experimental desktop artifacts, if manually built and tested
 
 ## Required Warnings

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.1.0"
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = PROJECT_ROOT / "output"
 DATA_DIR = PROJECT_ROOT / "data"

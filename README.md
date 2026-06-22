@@ -170,11 +170,12 @@ python desktop/check_desktop_package.py
 ```bash
 python3 scripts/build_release.py
 python3 scripts/generate_release_notes.py
+python3 scripts/build_release_bundle.py
 ```
 
 发布包会生成到 `dist/`，并自动排除 `.venv/`、`output/` 真实结果、日志和缓存文件。
 
-GitHub Release 文案草稿也会生成到 `dist/GITHUB_RELEASE_v版本号.md`。
+`build_release_bundle.py` 会同时生成源码包、GitHub Release 文案草稿、SHA256 校验文件和 release manifest。
 
 ## 项目结构
 

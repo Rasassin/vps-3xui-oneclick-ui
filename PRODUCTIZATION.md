@@ -183,6 +183,22 @@ Still intentionally not included:
 - Password persistence.
 - Real VPS deployment in CI.
 
+## v1.1 Release Integrity Bundle
+
+Implemented scope:
+
+- Add `scripts/build_release_bundle.py`.
+- Generate the source zip, GitHub Release draft, SHA256 checksum file, and release manifest together.
+- Add checksum and manifest validation to CI static checks.
+- Document which artifacts should be uploaded to GitHub Releases.
+
+Still intentionally not included:
+
+- Automatic GitHub Release publishing.
+- Code signing.
+- Binary notarization.
+- Real VPS deployment in CI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

@@ -4,11 +4,12 @@ Use this checklist for release validation. It must not require a real VPS unless
 
 ## Source Zip
 
-- Build the source zip with `python3 scripts/build_release.py`.
+- Build the release bundle with `python3 scripts/build_release_bundle.py`.
 - Run `python3 desktop/check_desktop_package.py --release-zip dist/vps-3xui-oneclick-ui-vX.Y.Z.zip`.
 - Confirm the zip contains `output/.gitkeep` only under `output/`.
 - Confirm the zip contains `data/.gitkeep` only under `data/`.
 - Confirm the zip does not contain node links, subscription links, QR images, panel credentials, or local profiles.
+- Confirm `SHA256SUMS_vX.Y.Z.txt` and `release-manifest-vX.Y.Z.json` exist in `dist/`.
 
 ## macOS
 
@@ -38,6 +39,6 @@ Use this checklist for release validation. It must not require a real VPS unless
 ## GitHub Release
 
 - Generate the release draft with `python3 scripts/generate_release_notes.py`.
-- Attach the source zip.
+- Attach the source zip, release draft, SHA256SUMS file, and release manifest.
 - Mention that the desktop packaging layer is experimental.
 - Mention that VPS root passwords are never stored by the app.

@@ -69,7 +69,8 @@ After building a source release zip:
 ```bash
 python scripts/build_release.py
 python scripts/generate_release_notes.py
-python desktop/check_desktop_package.py --release-zip dist/vps-3xui-oneclick-ui-v1.0.0.zip
+python scripts/build_release_bundle.py
+python desktop/check_desktop_package.py --release-zip dist/vps-3xui-oneclick-ui-v1.1.0.zip
 ```
 
 The check confirms desktop packaging files exist and verifies that release zips do not contain local profiles, result files, QR images, panel credentials, or node links.
