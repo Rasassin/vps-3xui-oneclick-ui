@@ -1,0 +1,68 @@
+# Privacy And Data Boundaries
+
+This project runs locally first. It only connects to a VPS when you explicitly
+start a remote action from the UI.
+
+## What Stays In Memory
+
+- VPS root password
+- Current Streamlit form password value
+
+The VPS password is used for the active SSH session only. It is not saved to
+project files, logs, profiles, diagnostics, release zips, or Git.
+
+## What May Be Saved Locally
+
+The `output/` directory can contain sensitive deployment results:
+
+- `vless://` node link
+- VLESS QR image
+- subscription link
+- subscription QR image
+- 3x-ui panel address, account, and password
+- deployment report
+
+Treat `output/` and exported result zips as private. These files are ignored by
+Git except for `output/.gitkeep`.
+
+The `data/` directory stores optional local profiles. Profiles may contain VPS
+IP, SSH port, SSH username, node name, Reality port, SNI, target, fingerprint,
+and panel port. Profiles never store the VPS password.
+
+## What Is Sent To The VPS
+
+When you click deployment or management actions that use SSH, the app may send:
+
+- SSH username, SSH port, and password for login
+- selected node configuration
+- remote installer scripts
+- optional hardening script if you explicitly enable hardening
+
+The app does not use browser automation to operate the remote 3x-ui panel.
+
+## What Public Diagnostics Exclude
+
+The public diagnostics zip excludes:
+
+- VPS root password
+- node links
+- subscription links
+- QR images
+- 3x-ui panel credentials
+- full result files from `output/`
+
+It may include app version, Python version, local dependency status, required
+file presence, output file names and sizes, and sanitized result summaries.
+
+## What Release Checks Guard
+
+Release and secret hygiene checks are local-only. They do not connect to a VPS.
+They help prevent accidental commits of:
+
+- real output files
+- local profiles
+- env files
+- logs
+- private keys
+- obvious live node links
+

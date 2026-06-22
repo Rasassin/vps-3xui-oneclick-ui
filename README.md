@@ -153,6 +153,8 @@ Reality 入站端口不一定必须是 `443`。`443` 更像普通 HTTPS，通常
 
 部署完成后，请尽快修改 VPS root 密码，或切换为 SSH key 登录。
 
+更完整的数据边界说明见 [docs/privacy.md](docs/privacy.md)。
+
 ## 本地静态检查
 
 开发或修改后可运行：
@@ -217,6 +219,7 @@ vps-3xui-oneclick-ui/
 │   ├── check_desktop_package.py
 │   └── vps_3xui_oneclick.spec
 ├── docs/
+│   ├── privacy.md
 │   └── release/
 │       ├── desktop-smoke-test.md
 │       ├── github-release-template.md

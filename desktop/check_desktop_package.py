@@ -28,6 +28,7 @@ REQUIRED_RELEASE_FILES = {
     "docs/release/desktop-smoke-test.md",
     "docs/release/github-release-template.md",
     "docs/release/tagged-release.md",
+    "docs/privacy.md",
     "requirements-desktop.txt",
     "scripts/build_release_bundle.py",
     "scripts/check_release_ready.py",

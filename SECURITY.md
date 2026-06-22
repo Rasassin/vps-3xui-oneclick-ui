@@ -15,6 +15,8 @@ about.
   ignored local result files do not accidentally become part of the repository.
 - `scripts/install_git_hooks.py` can optionally install a local pre-commit hook
   that runs the same tracked-file secret hygiene check before each commit.
+- `docs/privacy.md` documents what stays in memory, what is saved locally, what
+  is sent to the VPS, and what public diagnostics exclude.
 
 ## Supported Targets
 

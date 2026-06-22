@@ -38,6 +38,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Changelog validation in release readiness checks.
 - Tracked-file secret hygiene checks for release safety.
 - Optional pre-commit hook for tracked-file secret hygiene.
+- Privacy and data-boundary documentation for local files, SSH actions, and diagnostics.
 
 ## Download
 
@@ -83,6 +84,7 @@ python3 desktop_launcher.py
 - VPS root passwords are not written to project files, logs, release zips, Git, or `output/`.
 - Local `output/` files can contain node links, QR images, subscription links, and panel information. Treat exported result zips as sensitive.
 - Local `data/profiles.json` contains non-password profile settings and is excluded from Git and release zips.
+- See `docs/privacy.md` for local data, VPS data, diagnostics, and release-check boundaries.
 - Server hardening remains opt-in.
 - The first version does not default-disable root login, password login, or ping.
 

@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.7.0
+
+- Added `docs/privacy.md` for local data, VPS data, diagnostics, and release-check boundaries.
+- Added a sidebar privacy summary in the Streamlit UI.
+- Included the privacy document in desktop packaging checks and release zips.
+
 ## v1.6.0
 
 - Added optional `.githooks/pre-commit` secret hygiene hook.

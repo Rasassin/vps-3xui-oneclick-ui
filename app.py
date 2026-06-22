@@ -163,6 +163,17 @@ def render_sidebar() -> None:
         st.subheader("产品信息")
         st.caption(f"版本：v{APP_VERSION}")
         st.link_button("GitHub 仓库", "https://github.com/Rasassin/vps-3xui-oneclick-ui", use_container_width=True)
+        with st.expander("隐私与数据边界"):
+            st.markdown(
+                """
+- VPS 密码只保存在当前页面会话内存，不写入日志、配置档、诊断包或 output。
+- `output/` 可能包含节点链接、二维码、订阅链接和面板信息，请当作敏感文件。
+- 本地配置档只保存常用参数，不保存 VPS 密码。
+- 公开诊断包会排除节点链接、二维码、订阅链接、面板账号密码和 VPS root 密码。
+- 只有点击部署、预检、重新下载或远程备份这类按钮时，才会通过 SSH 连接 VPS。
+"""
+            )
+            st.caption("完整说明见 docs/privacy.md。")
         st.divider()
         render_profiles_sidebar()
         st.divider()

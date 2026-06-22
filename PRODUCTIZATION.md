@@ -279,6 +279,20 @@ Still intentionally not included:
 - Scanning ignored local `output/` deployment results.
 - Any network or VPS connection during hook execution.
 
+## v1.7 Privacy And Data Boundaries
+
+Implemented scope:
+
+- Add `docs/privacy.md` to document local memory, local files, SSH/VPS data, diagnostics, and release-check boundaries.
+- Add a sidebar privacy summary in the Streamlit UI.
+- Include the privacy document in release and desktop packaging checks.
+
+Still intentionally not included:
+
+- Password persistence.
+- External telemetry.
+- Automatic upload of diagnostics.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

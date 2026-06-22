@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.6 also includes an optional pre-commit hook for tracked-file secret hygiene checks.
+v1.7 also includes a privacy and data-boundary document for users and contributors.
 
 ## Build Locally
 
@@ -57,6 +57,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Run `python3 scripts/check_secret_hygiene.py`.
 - Optionally run `python3 scripts/install_git_hooks.py` to enable pre-commit checks locally.
 - Confirm `PRODUCTIZATION.md` reflects the shipped scope.
+- Confirm `docs/privacy.md` reflects current password, output, diagnostics, and VPS data handling.
 - Confirm the release zip does not contain local `output/` files.
 - Confirm the release zip does not contain local `data/profiles.json`.
 - Generate `dist/GITHUB_RELEASE_vX.Y.Z.md`.
