@@ -5,7 +5,7 @@ output/*
 secrets*
 **pycache**/
 .venv/
+dist/
 __pycache__/
 *.pyc
 .DS_Store
-

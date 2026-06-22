@@ -77,7 +77,18 @@ Implemented scope:
 - Add a public diagnostics zip for issue reporting.
 - Exclude node links, subscription links, QR images, panel credentials, and VPS root passwords from public diagnostics.
 
-## v0.5 Desktop App Exploration
+## v0.5 Release And Open Source Workflow
+
+Implemented scope:
+
+- Add GitHub issue templates for bug reports and feature requests.
+- Guide users to attach public diagnostics instead of secrets.
+- Add a local source release zip builder.
+- Exclude `.venv/`, `output/`, logs, cache files, and local secrets from release zips.
+- Add release checklist documentation.
+- Run release zip build in CI static checks.
+
+## v0.6 Desktop App Exploration
 
 Preferred direction: Tauri frontend plus Python backend.
 

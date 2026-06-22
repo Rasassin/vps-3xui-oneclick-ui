@@ -1,0 +1,50 @@
+name: Bug report
+description: Report a problem with deployment, UI, diagnostics, or packaging.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Do not paste VPS root passwords, node links, subscription links, QR images, panel credentials, or server IPs.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the problem and what you expected to happen.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Local UI
+        - SSH connection
+        - Remote install
+        - 3x-ui API
+        - VLESS Reality node
+        - Subscription/QR
+        - Packaging/release
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: public-diagnostics
+    attributes:
+      label: Public diagnostics
+      description: Attach or paste the public diagnostics bundle generated from the sidebar. It excludes node links, QR images, subscription links, panel credentials, and VPS root passwords.
+      placeholder: Drag the public diagnostics zip here, or paste diagnostics.json.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Redacted logs
+      description: Paste only logs with secrets removed.
+      render: text
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety checklist
+      options:
+        - label: I removed VPS passwords, panel credentials, node links, subscription links, QR images, and server IPs.
+          required: true

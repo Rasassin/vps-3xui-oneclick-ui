@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: https://github.com/Rasassin/vps-3xui-oneclick-ui/security
+    about: Please report sensitive security issues privately when possible.

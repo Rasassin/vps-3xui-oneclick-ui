@@ -18,9 +18,10 @@ Thanks for improving `vps-3xui-oneclick-ui`.
 Run these before opening a pull request:
 
 ```bash
-python3 -m py_compile app.py deployer/*.py
+python3 -m py_compile app.py deployer/*.py scripts/*.py
 bash -n remote_scripts/install_remote.sh
 bash -n remote_scripts/harden_after_success.sh
+python3 scripts/build_release.py
 ```
 
 If you have the Codex skill creator validator installed, also validate:

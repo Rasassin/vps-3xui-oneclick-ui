@@ -133,10 +133,19 @@ Reality 入站端口不一定必须是 `443`。`443` 更像普通 HTTPS，通常
 开发或修改后可运行：
 
 ```bash
-python -m py_compile app.py deployer/*.py
+python -m py_compile app.py deployer/*.py scripts/*.py
+bash -n remote_scripts/preflight_remote.sh
 bash -n remote_scripts/install_remote.sh
 bash -n remote_scripts/harden_after_success.sh
 ```
+
+## 构建发布包
+
+```bash
+python3 scripts/build_release.py
+```
+
+发布包会生成到 `dist/`，并自动排除 `.venv/`、`output/` 真实结果、日志和缓存文件。
 
 ## 项目结构
 
