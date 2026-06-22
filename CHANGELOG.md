@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.16.0
+
+- Added scripts/check_open_source_ready.py.
+- Added open-source metadata checks for docs, issue templates, and workflows.
+- Included open-source readiness in doctor and release checks.
+
 ## v1.15.0
 
 - Added scripts/bump_version.py.

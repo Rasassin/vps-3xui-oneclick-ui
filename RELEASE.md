@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.15 also includes a local version bump helper.
+v1.16 also includes open-source readiness checks.
 
 ## Build Locally
 

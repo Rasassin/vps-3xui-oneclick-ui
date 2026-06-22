@@ -169,6 +169,7 @@ bash -n remote_scripts/harden_after_success.sh
 bash -n desktop/build_macos_app.sh
 python scripts/check_streamlit_app.py
 python scripts/check_version_consistency.py
+python scripts/check_open_source_ready.py
 python desktop/check_desktop_package.py
 python scripts/doctor.py
 python scripts/prepare_release.py --allow-dirty
@@ -185,6 +186,7 @@ python3 scripts/check_release_ready.py
 python3 scripts/check_secret_hygiene.py
 python3 scripts/check_streamlit_app.py
 python3 scripts/check_version_consistency.py
+python3 scripts/check_open_source_ready.py
 python3 scripts/doctor.py --release
 python3 scripts/prepare_release.py --allow-dirty
 ```
@@ -202,6 +204,8 @@ python3 scripts/prepare_release.py --allow-dirty
 `check_streamlit_app.py` 会在不连接 VPS 的前提下渲染一次本地页面，用来提前发现 Streamlit 组件 ID、导入错误和首屏异常。
 
 `check_version_consistency.py` 会检查 `APP_VERSION`、CHANGELOG 和发版文档中的当前版本引用是否一致。
+
+`check_open_source_ready.py` 会检查开源项目必备文件、issue 模板、GitHub Actions 和 release 文档是否存在。
 
 `doctor.py` 是本地项目体检入口，会聚合密钥检查、语法检查、桌面打包输入检查和 Streamlit 首屏检查；加 `--release` 会额外执行完整发版检查。
 
@@ -272,6 +276,7 @@ vps-3xui-oneclick-ui/
 ├── scripts/
 │   ├── check_release_artifacts.py
 │   ├── bump_version.py
+│   ├── check_open_source_ready.py
 │   ├── check_secret_hygiene.py
 │   ├── check_release_ready.py
 │   ├── check_streamlit_app.py

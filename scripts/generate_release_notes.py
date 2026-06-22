@@ -47,6 +47,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Sidebar release package status panel for local release readiness visibility.
 - Sidebar download buttons for generated release artifacts.
 - Local version bump helper for APP_VERSION, CHANGELOG, and RELEASE metadata.
+- Open-source metadata readiness checks for docs, issue templates, and workflows.
 
 ## Download
 
@@ -115,6 +116,7 @@ python3 scripts/check_streamlit_app.py
 python3 scripts/check_release_ready.py
 python3 scripts/check_release_artifacts.py
 python3 scripts/check_version_consistency.py
+python3 scripts/check_open_source_ready.py
 python3 scripts/doctor.py --release
 python3 scripts/prepare_release.py --allow-dirty
 python3 desktop/check_desktop_package.py --release-zip dist/vps-3xui-oneclick-ui-v{version}.zip

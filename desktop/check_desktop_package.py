@@ -32,6 +32,7 @@ REQUIRED_RELEASE_FILES = {
     "requirements-desktop.txt",
     "scripts/bump_version.py",
     "scripts/build_release_bundle.py",
+    "scripts/check_open_source_ready.py",
     "scripts/check_release_artifacts.py",
     "scripts/check_release_ready.py",
     "scripts/check_streamlit_app.py",

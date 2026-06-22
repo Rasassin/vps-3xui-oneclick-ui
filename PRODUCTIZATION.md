@@ -411,6 +411,21 @@ Still intentionally not included:
 - Automatic GitHub Release publishing.
 - Running any VPS deployment test.
 
+## v1.16 Open-Source Readiness Check
+
+Implemented scope:
+
+- Add `scripts/check_open_source_ready.py`.
+- Check required open-source docs, issue templates, GitHub workflows, privacy docs, and release docs.
+- Run open-source metadata checks from local doctor and release readiness.
+- Include the check in desktop packaging validation.
+
+Still intentionally not included:
+
+- Creating GitHub issues or releases.
+- Uploading artifacts to GitHub.
+- Running any VPS deployment test.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.
