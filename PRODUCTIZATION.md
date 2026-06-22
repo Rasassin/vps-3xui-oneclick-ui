@@ -199,6 +199,23 @@ Still intentionally not included:
 - Binary notarization.
 - Real VPS deployment in CI.
 
+## v1.2 Tagged GitHub Release Automation
+
+Implemented scope:
+
+- Add `.github/workflows/release.yml`.
+- Publish GitHub Releases automatically on `vX.Y.Z` tags.
+- Verify tag version matches `APP_VERSION` before publishing.
+- Build and upload the release zip, notes, SHA256SUMS, and release manifest.
+- Add tagged release documentation under `docs/release/`.
+
+Still intentionally not included:
+
+- Automatic tag creation.
+- Code signing.
+- Binary notarization.
+- Real VPS deployment in CI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

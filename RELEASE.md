@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.1 also includes release bundle integrity files: SHA256 checksums and a machine-readable release manifest.
+v1.2 also includes a tag-triggered GitHub Release workflow.
 
 ## Build Locally
 
@@ -65,5 +65,6 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Generate `dist/SHA256SUMS_vX.Y.Z.txt`.
 - Generate `dist/release-manifest-vX.Y.Z.json`.
 - Review [docs/release/desktop-smoke-test.md](docs/release/desktop-smoke-test.md).
+- For automated publishing, follow [docs/release/tagged-release.md](docs/release/tagged-release.md).
 - Upload the generated zip, release notes, SHA256SUMS, and manifest to GitHub Releases.
 - Mention that VPS root passwords are never stored by the app.

@@ -10,6 +10,8 @@ Use `scripts/generate_release_notes.py` for the concrete versioned draft. This t
 - `release-manifest-vX.Y.Z.json`
 - Optional experimental desktop artifacts, if manually built and tested
 
+Automated releases are published by `.github/workflows/release.yml` when a matching `vX.Y.Z` tag is pushed.
+
 ## Required Warnings
 
 - Do not upload local `output/` result files.

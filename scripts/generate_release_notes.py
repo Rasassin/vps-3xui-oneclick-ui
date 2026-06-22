@@ -33,6 +33,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Experimental desktop launcher and PyInstaller packaging scaffolds.
 - Current-state summary, first-run checklist, and failure recovery guidance.
 - SHA256 checksum and release manifest generation for release integrity.
+- Tag-triggered GitHub Release publishing workflow.
 
 ## Download
 

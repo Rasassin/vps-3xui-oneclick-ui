@@ -26,6 +26,7 @@ REQUIRED_RELEASE_FILES = {
     "desktop/vps_3xui_oneclick.spec",
     "docs/release/desktop-smoke-test.md",
     "docs/release/github-release-template.md",
+    "docs/release/tagged-release.md",
     "requirements-desktop.txt",
     "scripts/build_release_bundle.py",
     "scripts/generate_release_notes.py",

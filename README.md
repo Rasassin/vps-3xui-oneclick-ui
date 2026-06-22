@@ -177,6 +177,8 @@ python3 scripts/build_release_bundle.py
 
 `build_release_bundle.py` 会同时生成源码包、GitHub Release 文案草稿、SHA256 校验文件和 release manifest。
 
+如果要让 GitHub Actions 自动发布 Release，请参考 [docs/release/tagged-release.md](docs/release/tagged-release.md)。
+
 ## 项目结构
 
 ```text
@@ -198,7 +200,8 @@ vps-3xui-oneclick-ui/
 ├── docs/
 │   └── release/
 │       ├── desktop-smoke-test.md
-│       └── github-release-template.md
+│       ├── github-release-template.md
+│       └── tagged-release.md
 ├── output/
 │   └── .gitkeep
 ├── deployer/

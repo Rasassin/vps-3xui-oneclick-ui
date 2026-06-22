@@ -40,5 +40,6 @@ Use this checklist for release validation. It must not require a real VPS unless
 
 - Generate the release draft with `python3 scripts/generate_release_notes.py`.
 - Attach the source zip, release draft, SHA256SUMS file, and release manifest.
+- For automated publishing, push a matching `vX.Y.Z` tag after local checks pass.
 - Mention that the desktop packaging layer is experimental.
 - Mention that VPS root passwords are never stored by the app.
