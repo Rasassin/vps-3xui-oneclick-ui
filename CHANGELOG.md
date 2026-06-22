@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.12.0
+
+- Added `scripts/prepare_release.py`.
+- Added a local release preparation command that runs release readiness and prints upload artifacts.
+- Included the release preparation script in packaging checks.
+
 ## v1.11.0
 
 - Added `scripts/check_version_consistency.py`.

@@ -43,6 +43,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - One-command local project doctor for health checks.
 - Standalone release artifact verifier for source zip, checksums, and manifest.
 - Version consistency check for release metadata.
+- Local release preparation command that prints upload artifacts.
 
 ## Download
 
@@ -112,6 +113,7 @@ python3 scripts/check_release_ready.py
 python3 scripts/check_release_artifacts.py
 python3 scripts/check_version_consistency.py
 python3 scripts/doctor.py --release
+python3 scripts/prepare_release.py --allow-dirty
 python3 desktop/check_desktop_package.py --release-zip dist/vps-3xui-oneclick-ui-v{version}.zip
 ```
 

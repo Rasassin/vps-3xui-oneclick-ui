@@ -352,6 +352,21 @@ Still intentionally not included:
 - Automatic changelog generation.
 - Tag creation or GitHub Release publishing.
 
+## v1.12 Release Preparation Command
+
+Implemented scope:
+
+- Add `scripts/prepare_release.py`.
+- Run release readiness from one local command.
+- Print the release zip, GitHub Release notes, SHA256SUMS, and manifest paths to upload.
+- Include the script in release and desktop packaging checks.
+
+Still intentionally not included:
+
+- Creating Git tags.
+- Uploading artifacts to GitHub Releases.
+- Running any VPS deployment test.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

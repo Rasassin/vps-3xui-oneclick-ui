@@ -170,6 +170,7 @@ python scripts/check_streamlit_app.py
 python scripts/check_version_consistency.py
 python desktop/check_desktop_package.py
 python scripts/doctor.py
+python scripts/prepare_release.py --allow-dirty
 ```
 
 ## 构建发布包
@@ -184,6 +185,7 @@ python3 scripts/check_secret_hygiene.py
 python3 scripts/check_streamlit_app.py
 python3 scripts/check_version_consistency.py
 python3 scripts/doctor.py --release
+python3 scripts/prepare_release.py --allow-dirty
 ```
 
 发布包会生成到 `dist/`，并自动排除 `.venv/`、`output/` 真实结果、日志和缓存文件。
@@ -201,6 +203,8 @@ python3 scripts/doctor.py --release
 `check_version_consistency.py` 会检查 `APP_VERSION`、CHANGELOG 和发版文档中的当前版本引用是否一致。
 
 `doctor.py` 是本地项目体检入口，会聚合密钥检查、语法检查、桌面打包输入检查和 Streamlit 首屏检查；加 `--release` 会额外执行完整发版检查。
+
+`prepare_release.py` 会运行发版体检并列出需要上传到 GitHub Release 的四个产物；它不会创建 tag、不会上传文件，也不会连接 VPS。
 
 如果你准备参与开发，可以可选安装本地 Git hook，让每次提交前自动运行这项检查：
 
@@ -258,7 +262,8 @@ vps-3xui-oneclick-ui/
 │   ├── check_streamlit_app.py
 │   ├── check_version_consistency.py
 │   ├── doctor.py
-│   └── install_git_hooks.py
+│   ├── install_git_hooks.py
+│   └── prepare_release.py
 └── .agents/
     └── skills/
         └── 3x-ui-oneclick/

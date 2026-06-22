@@ -38,6 +38,7 @@ REQUIRED_RELEASE_FILES = {
     "scripts/doctor.py",
     "scripts/install_git_hooks.py",
     "scripts/generate_release_notes.py",
+    "scripts/prepare_release.py",
     "output/.gitkeep",
     "data/.gitkeep",
 }

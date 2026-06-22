@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.11 also includes a version consistency check for release metadata.
+v1.12 also includes a local release preparation command.
 
 ## Build Locally
 
@@ -35,6 +35,7 @@ Before publishing a release:
 
 ```bash
 python3 scripts/check_release_ready.py
+python3 scripts/prepare_release.py --allow-dirty
 python3 scripts/doctor.py --release
 VERSION="$(python3 -c 'from deployer.config import APP_VERSION; print(APP_VERSION)')"
 python3 scripts/check_release_artifacts.py
@@ -60,6 +61,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Run `python3 scripts/check_streamlit_app.py`.
 - Run `python3 scripts/check_version_consistency.py`.
 - Run `python3 scripts/check_release_artifacts.py` after building the release bundle.
+- Run `python3 scripts/prepare_release.py --allow-dirty` during local release preparation.
 - Run `python3 scripts/doctor.py --release`.
 - Optionally run `python3 scripts/install_git_hooks.py` to enable pre-commit checks locally.
 - Confirm `PRODUCTIZATION.md` reflects the shipped scope.
