@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.25.0
+
+- Added scripts/check_product_readiness.py for local productization gate checks.
+- Separated open-source MVP readiness from desktop product gaps.
+- Included product readiness checks in doctor and release readiness.
+
 ## v1.24.0
 
 - Added release manifest project and generated_at validation.

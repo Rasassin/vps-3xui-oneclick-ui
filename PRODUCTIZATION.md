@@ -538,6 +538,22 @@ Still intentionally not included:
 - Uploading release artifacts.
 - Running real VPS validation during release checks.
 
+## v1.25 Product Readiness Checker
+
+Implemented scope:
+
+- Add `scripts/check_product_readiness.py`.
+- Gate the open-source MVP product baseline across UI, deployment, privacy, release, and desktop scaffolding.
+- Print remaining product gaps separately from release-blocking checks.
+- Include product readiness in local doctor and release readiness checks.
+
+Still intentionally not included:
+
+- Signed native installers.
+- Automatic updates.
+- Native Tauri UI.
+- CI-based real VPS deployment tests.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

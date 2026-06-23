@@ -60,6 +60,7 @@ def main() -> None:
     ensure_clean_worktree(args.allow_dirty)
     run([sys.executable, "scripts/check_version_consistency.py"])
     run([sys.executable, "scripts/check_open_source_ready.py"])
+    run([sys.executable, "scripts/check_product_readiness.py"])
     run([sys.executable, "scripts/check_secret_hygiene.py"])
     run([sys.executable, "-m", "py_compile", "app.py", *[str(path) for path in sorted((PROJECT_ROOT / "deployer").glob("*.py"))], *[str(path) for path in sorted((PROJECT_ROOT / "scripts").glob("*.py"))], "desktop_launcher.py", "desktop/check_desktop_package.py"])
     run(["bash", "-n", "remote_scripts/preflight_remote.sh"])

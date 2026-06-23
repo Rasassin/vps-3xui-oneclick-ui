@@ -56,6 +56,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Command-line stale release artifact validation against local Git HEAD.
 - Release manifest artifact size and checksum validation.
 - Release manifest project, timestamp, and safety metadata validation.
+- Product readiness checker for open-source MVP gates and remaining desktop product gaps.
 
 ## Download
 
@@ -125,6 +126,7 @@ python3 scripts/check_release_ready.py
 python3 scripts/check_release_artifacts.py
 python3 scripts/check_version_consistency.py
 python3 scripts/check_open_source_ready.py
+python3 scripts/check_product_readiness.py
 python3 scripts/doctor.py --release
 python3 scripts/prepare_release.py --allow-dirty
 python3 desktop/check_desktop_package.py --release-zip dist/vps-3xui-oneclick-ui-v{version}.zip

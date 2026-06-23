@@ -170,6 +170,7 @@ bash -n desktop/build_macos_app.sh
 python scripts/check_streamlit_app.py
 python scripts/check_version_consistency.py
 python scripts/check_open_source_ready.py
+python scripts/check_product_readiness.py
 python desktop/check_desktop_package.py
 python scripts/doctor.py
 python scripts/prepare_release.py --allow-dirty
@@ -187,6 +188,7 @@ python3 scripts/check_secret_hygiene.py
 python3 scripts/check_streamlit_app.py
 python3 scripts/check_version_consistency.py
 python3 scripts/check_open_source_ready.py
+python3 scripts/check_product_readiness.py
 python3 scripts/doctor.py --release
 python3 scripts/prepare_release.py --allow-dirty
 ```
@@ -206,6 +208,8 @@ python3 scripts/prepare_release.py --allow-dirty
 `check_version_consistency.py` 会检查 `APP_VERSION`、CHANGELOG 和发版文档中的当前版本引用是否一致。
 
 `check_open_source_ready.py` 会检查开源项目必备文件、issue 模板、GitHub Actions 和 release 文档是否存在。
+
+`check_product_readiness.py` 会检查本地产品化基础门槛，不连接 VPS。它会通过“开源 MVP”所需的 UI、部署、隐私、发版和桌面打包脚手架，同时列出签名安装包、原生 UI、自动更新等仍未完成的产品级缺口。
 
 `doctor.py` 是本地项目体检入口，会聚合密钥检查、语法检查、桌面打包输入检查和 Streamlit 首屏检查；加 `--release` 会额外执行完整发版检查。
 
