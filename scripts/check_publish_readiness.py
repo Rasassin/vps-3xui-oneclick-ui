@@ -28,7 +28,7 @@ def sanitize(text: str) -> str:
     for prefix in ("https://", "http://"):
         if prefix in cleaned:
             cleaned = cleaned.replace("://", "://", 1)
-    return cleaned[:500] if cleaned else "no output"
+    return cleaned[:500]
 
 
 def run_command(args: list[str], timeout: int = 12) -> tuple[int, str]:
@@ -95,7 +95,7 @@ def check_git_remote_reachable() -> PublishCheck:
     code, output = run_command(["git", "ls-remote", "--exit-code", "origin", "HEAD"], timeout=15)
     if code == 0:
         return PublishCheck("GitHub remote reachability", "pass", "origin HEAD is reachable.")
-    return PublishCheck("GitHub remote reachability", "pending", output)
+    return PublishCheck("GitHub remote reachability", "pending", output or "no output")
 
 
 def check_gh_auth() -> PublishCheck:
@@ -104,7 +104,7 @@ def check_gh_auth() -> PublishCheck:
     code, output = run_command(["gh", "auth", "status"], timeout=15)
     if code == 0:
         return PublishCheck("GitHub CLI auth", "pass", "gh auth status succeeded.")
-    return PublishCheck("GitHub CLI auth", "pending", output)
+    return PublishCheck("GitHub CLI auth", "pending", output or "no output")
 
 
 def check_release_commands(version: str) -> PublishCheck:
