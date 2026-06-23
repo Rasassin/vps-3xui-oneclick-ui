@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.34 strengthens desktop build artifact validation.
+v1.35 adds cross-platform product CI.
 
 ## Build Locally
 
@@ -76,6 +76,15 @@ chmod +x start_mac_linux.sh
 
 Do not test against a real VPS unless that is the explicit release validation goal.
 
+## GitHub Actions Gate
+
+`.github/workflows/static-check.yml` runs on push, pull request, and manual dispatch:
+
+- `linux-release-gate` runs the full local release readiness path and uploads checked release artifacts as a CI artifact.
+- `platform-smoke` runs local-only product, secret, launcher, desktop-package-input, and Streamlit smoke checks on Ubuntu, macOS, and Windows.
+
+`.github/workflows/release.yml` runs on version tags, verifies the tag matches `APP_VERSION`, reruns release artifact checks, validates the portable product package, and publishes the GitHub Release assets.
+
 ## GitHub Release Checklist
 
 - Confirm `APP_VERSION` in `deployer/config.py`.
@@ -101,6 +110,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Generate `dist/vps-3xui-oneclick-ui-portable-vX.Y.Z.zip`.
 - Generate `dist/PRODUCT_READINESS_vX.Y.Z.md`.
 - Review [docs/release/desktop-smoke-test.md](docs/release/desktop-smoke-test.md).
+- Confirm the latest GitHub Actions product CI run is green.
 - For automated publishing, follow [docs/release/tagged-release.md](docs/release/tagged-release.md).
 - Upload the generated zip, release notes, SHA256SUMS, and manifest to GitHub Releases.
 - Mention that VPS root passwords are never stored by the app.

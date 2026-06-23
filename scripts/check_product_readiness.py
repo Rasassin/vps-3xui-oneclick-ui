@@ -41,8 +41,8 @@ OPEN_SOURCE_ITEMS = [
     RequiredItem("CHANGELOG.md", ("All notable product changes",)),
     RequiredItem("PRODUCTIZATION.md", ("Product Safety Rules",)),
     RequiredItem("docs/privacy.md", ("VPS root password",)),
-    RequiredItem(".github/workflows/static-check.yml", ("check_release_ready.py",)),
-    RequiredItem(".github/workflows/release.yml", ("gh release create",)),
+    RequiredItem(".github/workflows/static-check.yml", ("check_release_ready.py", "platform-smoke", "actions/upload-artifact")),
+    RequiredItem(".github/workflows/release.yml", ("gh release create", "check_portable_user_package.py")),
 ]
 
 DESKTOP_ITEMS = [

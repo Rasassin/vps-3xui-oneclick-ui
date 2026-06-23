@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.35.0
+
+- Expanded GitHub Actions into a cross-platform product CI matrix for Ubuntu, macOS, and Windows.
+- Uploaded checked release artifacts from CI for easier product validation.
+- Documented the CI release gate and product readiness expectations.
+
 ## v1.34.0
 
 - Strengthened desktop artifact validation for PyInstaller app and exe outputs.

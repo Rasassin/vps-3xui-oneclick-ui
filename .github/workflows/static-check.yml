@@ -3,9 +3,10 @@ name: Static checks
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 jobs:
-  syntax:
+  linux-release-gate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -36,3 +37,52 @@ jobs:
           test -s "dist/vps-3xui-oneclick-ui-portable-v${VERSION}.zip"
           test -s "dist/PRODUCT_READINESS_v${VERSION}.md"
           python scripts/check_portable_user_package.py
+      - name: Upload checked release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: checked-release-artifacts
+          if-no-files-found: error
+          path: |
+            dist/vps-3xui-oneclick-ui-v*.zip
+            dist/vps-3xui-oneclick-ui-portable-v*.zip
+            dist/GITHUB_RELEASE_v*.md
+            dist/SHA256SUMS_v*.txt
+            dist/release-manifest-v*.json
+            dist/PRODUCT_READINESS_v*.md
+
+  platform-smoke:
+    name: Platform smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Python dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -r requirements.txt
+      - name: Python syntax check
+        run: python -m py_compile app.py deployer/*.py scripts/*.py desktop_launcher.py desktop/check_desktop_package.py
+        shell: bash
+      - name: Local product checks
+        run: |
+          python scripts/check_version_consistency.py
+          python scripts/check_open_source_ready.py
+          python scripts/check_product_readiness.py
+          python scripts/check_secret_hygiene.py
+          python scripts/check_portable_launchers.py
+          python desktop/check_desktop_package.py
+          python scripts/check_streamlit_app.py
+        shell: bash
+      - name: Bash syntax check
+        if: runner.os != 'Windows'
+        run: |
+          bash -n remote_scripts/preflight_remote.sh
+          bash -n remote_scripts/install_remote.sh
+          bash -n remote_scripts/harden_after_success.sh
+          bash -n start_mac_linux.sh
+          bash -n start_macos.command
+          bash -n desktop/build_macos_app.sh

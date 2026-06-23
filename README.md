@@ -236,11 +236,13 @@ python3 scripts/prepare_release.py --allow-dirty
 
 `check_product_readiness.py` 会检查本地产品化基础门槛，不连接 VPS。它会通过“开源 MVP”所需的 UI、部署、隐私、发版和桌面打包脚手架，同时列出签名安装包、原生 UI、自动更新等仍未完成的产品级缺口。
 
+`.github/workflows/static-check.yml` 会在 GitHub 上运行产品 CI：Linux job 执行完整 release gate 并上传已检查的发布产物，Ubuntu/macOS/Windows matrix 执行本地启动、安全、产品和 Streamlit 首屏检查。这个 CI 不会连接 VPS。
+
 `check_portable_launchers.py` 会检查 Windows、macOS、Linux 的 portable 启动入口，确认它们包含依赖安装、本地产品自检、失败提示和“不连接 VPS”的启动边界。
 
 `doctor.py` 是本地项目体检入口，会聚合密钥检查、语法检查、桌面打包输入检查和 Streamlit 首屏检查；加 `--release` 会额外执行完整发版检查。
 
-`prepare_release.py` 会运行发版体检并列出需要上传到 GitHub Release 的四个产物；它不会创建 tag、不会上传文件，也不会连接 VPS。使用 `--allow-dirty` 生成本地测试产物时，如果工作区未提交，会输出正式发布警告。
+`prepare_release.py` 会运行发版体检并列出需要上传到 GitHub Release 的全部产物；它不会创建 tag、不会上传文件，也不会连接 VPS。使用 `--allow-dirty` 生成本地测试产物时，如果工作区未提交，会输出正式发布警告。
 
 `bump_version.py` 会更新本地版本号、CHANGELOG 和 RELEASE 当前版本说明；它不会创建 tag、不会上传文件，也不会连接 VPS。
 

@@ -67,6 +67,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Chinese portable quick-start guide through `START_HERE.zh-CN.md`.
 - Extracted portable package acceptance check that simulates a downloaded user package.
 - Stronger PyInstaller desktop artifact validation after macOS and Windows builds.
+- Cross-platform GitHub Actions product CI for Ubuntu, macOS, and Windows.
 
 ## Download
 
@@ -161,6 +162,7 @@ python3 desktop/check_desktop_package.py --built-artifact "dist/VPS 3x-ui Onecli
 ```
 
 Do not run a real VPS deployment during release validation unless that is the explicit test goal.
+Confirm the latest GitHub Actions `Static checks` run is green before publishing a formal GitHub Release.
 """
 
 

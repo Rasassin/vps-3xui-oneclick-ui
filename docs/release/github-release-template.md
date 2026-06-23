@@ -8,11 +8,13 @@ Use `scripts/generate_release_notes.py` for the concrete versioned draft. This t
 - `GITHUB_RELEASE_vX.Y.Z.md`
 - `SHA256SUMS_vX.Y.Z.txt`
 - `release-manifest-vX.Y.Z.json`
+- `PRODUCT_READINESS_vX.Y.Z.md`
 - Optional experimental desktop artifacts, if manually built and tested
 
 Automated releases are published by `.github/workflows/release.yml` when a matching `vX.Y.Z` tag is pushed.
 
 Confirm `CHANGELOG.md` has an entry for the release before tagging.
+Confirm the latest `Static checks` workflow is green before publishing or tagging.
 
 ## Required Warnings
 

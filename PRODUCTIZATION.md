@@ -700,6 +700,23 @@ Still intentionally not included:
 - Automatic updates.
 - Native Tauri UI.
 
+## v1.35 Cross-Platform Product CI
+
+Implemented scope:
+
+- Expand `.github/workflows/static-check.yml` into a product CI gate.
+- Run a full Linux release gate and upload checked release artifacts from CI.
+- Run local-only product, secret, launcher, desktop-package-input, and Streamlit smoke checks on Ubuntu, macOS, and Windows.
+- Strengthen tagged release publishing by rerunning release artifact, product package, and extracted portable package checks.
+- Document the CI gate in README and release docs.
+
+Still intentionally not included:
+
+- Real VPS deployment in CI.
+- Publishing signed desktop installers.
+- Automatic update channels.
+- Native Tauri UI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.
