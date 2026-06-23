@@ -84,6 +84,11 @@ Go-live readiness reports only summarize the status of generated release reports
 They do not include VPS credentials, node links, QR images, subscription links,
 panel credentials, signing passwords, or certificate private keys.
 
+Release command checklists only contain local publish commands, Git state, tag
+names, and artifact file names. They do not include VPS credentials, node links,
+QR images, subscription links, panel credentials, signing passwords, or
+certificate private keys.
+
 ## What Release Checks Guard
 
 Release and secret hygiene checks are local-only. They do not connect to a VPS.

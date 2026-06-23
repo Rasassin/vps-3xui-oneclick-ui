@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.48.0
+
+- Added generated release command checklists for final publish steps.
+- Included release command checklists in release bundles, checksums, manifest validation, and sidebar downloads.
+- Documented Git push, tag, and optional GitHub CLI upload commands without storing secrets.
+
 ## v1.47.0
 
 - Added local Git sync status to go-live readiness reports.

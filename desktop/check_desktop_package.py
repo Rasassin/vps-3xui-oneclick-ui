@@ -38,6 +38,7 @@ REQUIRED_RELEASE_FILES = {
     "start_macos.command",
     "scripts/bump_version.py",
     "scripts/build_release_bundle.py",
+    "scripts/build_release_commands.py",
     "scripts/build_product_package.py",
     "scripts/build_update_manifest.py",
     "scripts/build_vps_test_report.py",

@@ -63,6 +63,7 @@ DESKTOP_ITEMS = [
 
 RELEASE_ITEMS = [
     RequiredItem("scripts/build_product_package.py", ("Build local product package artifacts",)),
+    RequiredItem("scripts/build_release_commands.py", ("Release Commands", "git push origin main")),
     RequiredItem("scripts/build_update_manifest.py", ("automatic_install", "requires_user_download")),
     RequiredItem("scripts/build_vps_test_report.py", ("VPS Compatibility Test Report",)),
     RequiredItem("scripts/check_release_ready.py", ("without connecting to a VPS",)),
