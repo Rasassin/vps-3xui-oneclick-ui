@@ -55,8 +55,10 @@ DESKTOP_ITEMS = [
 ]
 
 RELEASE_ITEMS = [
+    RequiredItem("scripts/build_product_package.py", ("Build local product package artifacts",)),
     RequiredItem("scripts/check_release_ready.py", ("without connecting to a VPS",)),
     RequiredItem("scripts/check_release_artifacts.py", ("Verify release artifacts",)),
+    RequiredItem("scripts/check_product_package.py", ("Check product package artifacts",)),
     RequiredItem("scripts/check_secret_hygiene.py"),
     RequiredItem("scripts/check_streamlit_app.py"),
     RequiredItem("scripts/doctor.py"),

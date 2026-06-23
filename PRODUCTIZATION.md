@@ -554,6 +554,23 @@ Still intentionally not included:
 - Native Tauri UI.
 - CI-based real VPS deployment tests.
 
+## v1.26 Portable Product Package
+
+Implemented scope:
+
+- Add `scripts/build_product_package.py`.
+- Add `scripts/check_product_package.py`.
+- Generate `vps-3xui-oneclick-ui-portable-vX.Y.Z.zip` with `START_HERE.md`.
+- Generate `PRODUCT_READINESS_vX.Y.Z.md` as a product status report.
+- Include product package generation and validation in release readiness and GitHub Release publishing.
+
+Still intentionally not included:
+
+- Signed native installers.
+- Automatic updates.
+- Bundled Python runtime.
+- Native Tauri UI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

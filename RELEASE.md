@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.25 also adds a product readiness checker.
+v1.26 also prepares portable product packages.
 
 ## Build Locally
 
@@ -14,9 +14,11 @@ python3 scripts/check_release_ready.py
 The release artifacts are written to `dist/`:
 
 - `vps-3xui-oneclick-ui-vX.Y.Z.zip`
+- `vps-3xui-oneclick-ui-portable-vX.Y.Z.zip`
 - `GITHUB_RELEASE_vX.Y.Z.md`
 - `SHA256SUMS_vX.Y.Z.txt`
 - `release-manifest-vX.Y.Z.json`
+- `PRODUCT_READINESS_vX.Y.Z.md`
 
 The release manifest includes the source Git commit, branch, and dirty-worktree state used when the bundle was generated.
 
@@ -41,9 +43,12 @@ python3 scripts/prepare_release.py --allow-dirty
 python3 scripts/doctor.py --release
 VERSION="$(python3 -c 'from deployer.config import APP_VERSION; print(APP_VERSION)')"
 python3 scripts/check_release_artifacts.py
+python3 scripts/check_product_package.py
 python3 desktop/check_desktop_package.py --release-zip "dist/vps-3xui-oneclick-ui-v${VERSION}.zip"
 test -s "dist/SHA256SUMS_v${VERSION}.txt"
 test -s "dist/release-manifest-v${VERSION}.json"
+test -s "dist/vps-3xui-oneclick-ui-portable-v${VERSION}.zip"
+test -s "dist/PRODUCT_READINESS_v${VERSION}.md"
 ```
 
 Then unzip the generated file in a temporary directory and start the app with:
@@ -74,6 +79,8 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Generate `dist/GITHUB_RELEASE_vX.Y.Z.md`.
 - Generate `dist/SHA256SUMS_vX.Y.Z.txt`.
 - Generate `dist/release-manifest-vX.Y.Z.json`.
+- Generate `dist/vps-3xui-oneclick-ui-portable-vX.Y.Z.zip`.
+- Generate `dist/PRODUCT_READINESS_vX.Y.Z.md`.
 - Review [docs/release/desktop-smoke-test.md](docs/release/desktop-smoke-test.md).
 - For automated publishing, follow [docs/release/tagged-release.md](docs/release/tagged-release.md).
 - Upload the generated zip, release notes, SHA256SUMS, and manifest to GitHub Releases.

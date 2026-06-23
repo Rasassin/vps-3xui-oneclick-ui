@@ -36,6 +36,8 @@ jobs:
           test -s "dist/GITHUB_RELEASE_v${VERSION}.md"
           test -s "dist/SHA256SUMS_v${VERSION}.txt"
           test -s "dist/release-manifest-v${VERSION}.json"
+          test -s "dist/vps-3xui-oneclick-ui-portable-v${VERSION}.zip"
+          test -s "dist/PRODUCT_READINESS_v${VERSION}.md"
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -43,8 +45,10 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           gh release create "$GITHUB_REF_NAME" \
             "dist/vps-3xui-oneclick-ui-v${VERSION}.zip" \
+            "dist/vps-3xui-oneclick-ui-portable-v${VERSION}.zip" \
             "dist/GITHUB_RELEASE_v${VERSION}.md" \
             "dist/SHA256SUMS_v${VERSION}.txt" \
             "dist/release-manifest-v${VERSION}.json" \
+            "dist/PRODUCT_READINESS_v${VERSION}.md" \
             --title "$GITHUB_REF_NAME" \
             --notes-file "dist/GITHUB_RELEASE_v${VERSION}.md"

@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.26.0
+
+- Added a product package builder for portable user-facing zip artifacts.
+- Added product package validation for launch files, start-here guidance, and sensitive file exclusions.
+- Documented the product package workflow alongside release readiness.
+
 ## v1.25.0
 
 - Added scripts/check_product_readiness.py for local productization gate checks.

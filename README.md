@@ -171,6 +171,8 @@ python scripts/check_streamlit_app.py
 python scripts/check_version_consistency.py
 python scripts/check_open_source_ready.py
 python scripts/check_product_readiness.py
+python scripts/build_product_package.py
+python scripts/check_product_package.py
 python desktop/check_desktop_package.py
 python scripts/doctor.py
 python scripts/prepare_release.py --allow-dirty
@@ -189,6 +191,8 @@ python3 scripts/check_streamlit_app.py
 python3 scripts/check_version_consistency.py
 python3 scripts/check_open_source_ready.py
 python3 scripts/check_product_readiness.py
+python3 scripts/build_product_package.py
+python3 scripts/check_product_package.py
 python3 scripts/doctor.py --release
 python3 scripts/prepare_release.py --allow-dirty
 ```
@@ -197,9 +201,13 @@ python3 scripts/prepare_release.py --allow-dirty
 
 `build_release_bundle.py` 会同时生成源码包、GitHub Release 文案草稿、SHA256 校验文件和 release manifest。manifest 会记录构建时的 Git commit、分支和 dirty 状态，方便追溯发布包来源；页面侧边栏会提示 dirty 或旧 commit 构建的发布产物。
 
+`build_product_package.py` 会生成面向普通用户的 portable zip 和 `PRODUCT_READINESS` 报告。portable zip 内置 `START_HERE.md`，会告诉用户 Windows/macOS/Linux 应该先运行哪个启动文件。这个包仍然不会包含本地真实 `output/` 结果或 `data/profiles.json`。
+
 `check_release_ready.py` 会在不连接 VPS 的前提下运行发版前体检；开发中检查未提交改动时可加 `--allow-dirty`。
 
 `check_release_artifacts.py` 会检查 `dist/` 里的发布 zip、Release 文案、SHA256SUMS 和 manifest，确认没有混入本地 `output/` 结果或 `data/profiles.json`，并验证 manifest 里的项目元数据、源码来源信息、artifact 文件名、大小和 SHA256。默认会拒绝旧 commit 构建的发布产物；如果只是检查历史产物，可显式添加 `--allow-stale-source`。
+
+`check_product_package.py` 会检查 portable product zip，确认包含 `START_HERE.md`、启动脚本、产品就绪报告，并排除节点链接、二维码、订阅链接、面板信息和本地配置档。
 
 `check_secret_hygiene.py` 会检查 Git 已跟踪文件，防止误提交 output 结果、profiles、env、日志、私钥和明显的节点链接。
 
