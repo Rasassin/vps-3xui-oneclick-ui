@@ -34,6 +34,7 @@ from deployer.qr_service import regenerate_output_qrs
 from deployer.release_status import collect_release_artifacts, load_release_source_summary, release_artifacts_ready
 from deployer.result_parser import load_results
 from deployer.ssh_runner import DeploymentError, redact
+from deployer.update_manifest import collect_update_manifest_checks, update_manifest_overall_status
 from deployer.update_service import check_latest_release
 
 
@@ -64,6 +65,7 @@ def init_state() -> None:
     st.session_state.setdefault("local_diagnostics", {})
     st.session_state.setdefault("diagnostics_zip_path", "")
     st.session_state.setdefault("update_status", {})
+    st.session_state.setdefault("update_manifest_checks", [])
     st.session_state.setdefault("publish_checks", [])
     st.session_state.setdefault("publish_steps", [])
     st.session_state.setdefault("ci_checks", [])
@@ -201,6 +203,22 @@ def render_sidebar() -> None:
             else:
                 latest = update_status.get("latest_version") or f"v{APP_VERSION}"
                 st.info(f"当前已是最新版本：{latest}")
+        with st.expander("更新通道"):
+            st.caption("只校验本地 update manifest 和下载资产信息；不会自动下载、安装、连接 VPS 或保存凭据。")
+            if st.button("校验更新 manifest", use_container_width=True):
+                st.session_state.update_manifest_checks = collect_update_manifest_checks()
+            update_manifest_checks = st.session_state.get("update_manifest_checks", [])
+            if update_manifest_checks:
+                overall = update_manifest_overall_status(update_manifest_checks)
+                if overall == "pass":
+                    st.success("本地更新 manifest 通过。")
+                else:
+                    st.error("本地更新 manifest 需要修复。")
+                for check in update_manifest_checks:
+                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(check.status, check.status)
+                    st.caption(f"{label} · {check.name} · {check.detail}")
+            else:
+                st.info("点击后会核对 update-manifest、资产大小、SHA256 和安全边界。")
         with st.expander("隐私与数据边界"):
             st.markdown(
                 """

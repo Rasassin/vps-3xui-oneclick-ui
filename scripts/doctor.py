@@ -42,6 +42,7 @@ def quick_checks() -> list[Check]:
         Check("version consistency", [sys.executable, "scripts/check_version_consistency.py"]),
         Check("open-source metadata", [sys.executable, "scripts/check_open_source_ready.py"]),
         Check("product readiness", [sys.executable, "scripts/check_product_readiness.py"]),
+        Check("update manifest", [sys.executable, "scripts/check_update_manifest.py", "--strict"]),
         Check("portable launchers", [sys.executable, "scripts/check_portable_launchers.py"]),
         Check("tracked-file secret hygiene", [sys.executable, "scripts/check_secret_hygiene.py"]),
         Check("Python syntax", [sys.executable, "-m", "py_compile", *python_files()]),

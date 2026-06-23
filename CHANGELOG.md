@@ -10,6 +10,7 @@ All notable product changes are tracked here. This project keeps product history
 - Add a local publish plan assistant with worktree, artifact, connectivity, authentication, push, tag, and Release upload steps.
 - Fix generated release command checklists so they include every expected release artifact.
 - Add a local VPS compatibility evidence recorder that writes ignored `data/` results and feeds the compatibility report.
+- Add local update manifest validation and expose update-channel checks in the Streamlit sidebar.
 
 ## v1.54.0
 

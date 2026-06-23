@@ -1029,6 +1029,7 @@ Implemented scope:
 - Generate `PUBLISH_PLAN_vX.Y.Z.md` and show the publish plan in the Streamlit sidebar.
 - Fix generated release command checklists to derive from the canonical release artifact list.
 - Add a local VPS compatibility evidence recorder under `data/` and feed recorded results into the compatibility report.
+- Add local update manifest validation and a sidebar update-channel check.
 
 Still intentionally not included:
 
@@ -1037,6 +1038,7 @@ Still intentionally not included:
 - Creating tags or uploading GitHub Release assets from the app.
 - Fixing the user's global VPN/proxy configuration.
 - Claiming real VPS compatibility until the supported-system/provider rows have been manually tested.
+- Automatic update download or installation.
 
 ## Product Safety Rules
 

@@ -72,6 +72,10 @@ contains version, release URL, artifact names, sizes, and checksums. It does not
 contain VPS passwords, node links, QR images, subscription links, panel
 credentials, or local diagnostics.
 
+Update manifest validation reads local `dist/` files and compares asset sizes
+and SHA256 checksums. It does not download updates, install updates, connect to
+a VPS, upload diagnostics, or store credentials.
+
 Signing readiness reports list whether expected signing tools and environment
 variables are present. They do not print signing passwords, certificate contents,
 Apple app-specific passwords, VPS credentials, node links, or panel credentials.

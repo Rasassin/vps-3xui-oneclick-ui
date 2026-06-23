@@ -27,7 +27,7 @@ def collect_maturity_gates() -> list[MaturityGate]:
         MaturityGate("Desktop packaging scaffold", 7, 10, "partial", "PyInstaller, Windows installer scaffold, signing scripts, and desktop icons exist, but binaries are still experimental."),
         MaturityGate("Signed and notarized binaries", 0, 8, "pending", "macOS notarization and Windows code signing are scaffolded but not producing trusted public binaries yet."),
         MaturityGate("Real VPS compatibility matrix", 2, 8, "partial", "The worksheet and local evidence recorder exist, but supported-provider VPS tests are still manual and not completed as release evidence."),
-        MaturityGate("Native app and update channel", 0, 3, "pending", "The update manifest exists, but automatic updates and a native Tauri-style UI are not implemented."),
+        MaturityGate("Native app and update channel", 1, 3, "partial", "The update manifest has local validation and UI visibility, but automatic updates and a native Tauri-style UI are not implemented."),
     ]
 
 

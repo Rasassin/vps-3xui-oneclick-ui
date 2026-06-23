@@ -138,6 +138,7 @@ Reality 入站端口不一定必须是 `443`。`443` 更像普通 HTTPS，通常
 - 可选的部署前检测结果、远程状态刷新、远程结果重新下载、远程结果备份和本地二维码重建
 - 侧边栏本地自检和公开诊断包，方便开源 issue 排查
 - 侧边栏“检查更新”，只读取 GitHub Release 信息，不连接 VPS、不上传诊断、不自动执行更新
+- 侧边栏“更新通道”，校验本地 update manifest、资产大小、SHA256 和安全边界；它不会自动下载或安装
 - 侧边栏本地配置档，保存常用 VPS 和节点参数，但不保存 VPS 密码
 - 侧边栏“GitHub 连接修复”，用于诊断 `SSL_ERROR_SYSCALL`、`CONNECT 503`、DNS/代理和 GitHub CLI 凭据问题；它不会真实 push，也不会显示 token
 - 侧边栏“发布向导”，把 worktree、release artifacts、GitHub 连接、登录、push、tag 和 Release 上传拆成可执行步骤；它只生成计划，不会替你发布
@@ -200,6 +201,7 @@ python scripts/check_open_source_ready.py
 python scripts/check_product_readiness.py
 python scripts/check_github_connectivity.py --skip-dry-run
 python scripts/check_publish_plan.py --write-report
+python scripts/check_update_manifest.py --strict
 python scripts/check_portable_launchers.py
 python scripts/build_product_package.py
 python scripts/check_product_package.py
@@ -257,6 +259,8 @@ python3 scripts/build_vps_test_report.py
 记录器会拒绝明显的密码、私钥、节点链接或订阅链接。
 
 发布包也会生成 `update-manifest-vX.Y.Z.json`，记录版本号、Release URL、核心下载资产、大小和 SHA256。它是未来自动更新通道的基础，但当前版本仍然只提示用户手动下载，不会自动安装。
+
+`check_update_manifest.py` 会校验本地 update manifest 的项目、版本、tag、安全边界、资产大小和 SHA256。页面侧边栏“更新通道”也可以执行同样的只读检查。
 
 发布包还会生成 `SIGNING_READINESS_vX.Y.Z.md`，用于维护者检查 macOS 签名/公证和 Windows 签名所需的本地工具、证书路径与环境变量；报告不会包含证书密码、Apple app-specific password 或 VPS 凭据。
 
