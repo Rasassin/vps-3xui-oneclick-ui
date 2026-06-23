@@ -23,6 +23,7 @@ from deployer.qr_service import regenerate_output_qrs
 from deployer.release_status import collect_release_artifacts, load_release_source_summary, release_artifacts_ready
 from deployer.result_parser import load_results
 from deployer.ssh_runner import DeploymentError, redact
+from deployer.update_service import check_latest_release
 
 
 st.set_page_config(page_title="VPS 3x-ui 一键部署器", page_icon="🚀", layout="wide")
@@ -49,6 +50,7 @@ def init_state() -> None:
     st.session_state.setdefault("last_remote_backup", "")
     st.session_state.setdefault("local_diagnostics", {})
     st.session_state.setdefault("diagnostics_zip_path", "")
+    st.session_state.setdefault("update_status", {})
     st.session_state.setdefault("profile_name_input", "")
     st.session_state.setdefault("selected_profile_name", "")
 
@@ -164,6 +166,22 @@ def render_sidebar() -> None:
         st.subheader("产品信息")
         st.caption(f"版本：v{APP_VERSION}")
         st.link_button("GitHub 仓库", "https://github.com/Rasassin/vps-3xui-oneclick-ui", use_container_width=True)
+        update_cols = st.columns([1, 1])
+        if update_cols[0].button("检查更新", use_container_width=True):
+            st.session_state.update_status = check_latest_release().to_dict()
+        update_cols[1].caption("只访问 GitHub，不连接 VPS。")
+        update_status = st.session_state.get("update_status", {})
+        if update_status:
+            if update_status.get("error"):
+                st.warning(update_status["error"])
+            elif update_status.get("is_newer"):
+                st.success(f"发现新版本：{update_status.get('latest_version')}")
+                release_url = update_status.get("release_url", "")
+                if release_url:
+                    st.link_button("打开最新版 Release", release_url, use_container_width=True)
+            else:
+                latest = update_status.get("latest_version") or f"v{APP_VERSION}"
+                st.info(f"当前已是最新版本：{latest}")
         with st.expander("隐私与数据边界"):
             st.markdown(
                 """
@@ -171,6 +189,7 @@ def render_sidebar() -> None:
 - `output/` 可能包含节点链接、二维码、订阅链接和面板信息，请当作敏感文件。
 - 本地配置档只保存常用参数，不保存 VPS 密码。
 - 公开诊断包会排除节点链接、二维码、订阅链接、面板账号密码和 VPS root 密码。
+- “检查更新”只访问 GitHub Release 信息，不连接 VPS，也不上传本地诊断。
 - 只有点击部署、预检、重新下载或远程备份这类按钮时，才会通过 SSH 连接 VPS。
 """
             )

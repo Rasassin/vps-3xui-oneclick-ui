@@ -54,6 +54,12 @@ The public diagnostics zip excludes:
 It may include app version, Python version, local dependency status, required
 file presence, output file names and sizes, and sanitized result summaries.
 
+## What Update Checks Do
+
+The sidebar update checker only requests the latest GitHub Release metadata for
+this project. It does not connect to a VPS, does not send VPS credentials, does
+not upload diagnostics, and does not auto-install updates.
+
 ## What Release Checks Guard
 
 Release and secret hygiene checks are local-only. They do not connect to a VPS.
@@ -65,4 +71,3 @@ They help prevent accidental commits of:
 - logs
 - private keys
 - obvious live node links
-

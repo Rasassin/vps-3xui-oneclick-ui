@@ -734,6 +734,22 @@ Still intentionally not included:
 - Automatic updates.
 - Native Tauri UI.
 
+## v1.37 In-App Update Checking
+
+Implemented scope:
+
+- Add `deployer/update_service.py` for explicit GitHub Release update checks.
+- Show a sidebar “检查更新” action with current-version and latest-release feedback.
+- Keep update checks read-only: no auto-download, no auto-install, no VPS connection, and no diagnostics upload.
+- Document update-check privacy boundaries for product packaging.
+
+Still intentionally not included:
+
+- Automatic update installation.
+- Signed and notarized macOS app bundle.
+- Signed Windows installer.
+- Native Tauri UI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

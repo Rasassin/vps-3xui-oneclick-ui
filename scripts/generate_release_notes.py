@@ -69,6 +69,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Stronger PyInstaller desktop artifact validation after macOS and Windows builds.
 - Cross-platform GitHub Actions product CI for Ubuntu, macOS, and Windows.
 - Experimental unsigned macOS and Windows desktop artifacts through GitHub Actions.
+- Sidebar GitHub Release update checker that is explicit, read-only, and does not connect to a VPS.
 
 ## Download
 
@@ -127,6 +128,7 @@ python3 desktop_launcher.py
 - Local `output/` files can contain node links, QR images, subscription links, and panel information. Treat exported result zips as sensitive.
 - Local `data/profiles.json` contains non-password profile settings and is excluded from Git and release zips.
 - See `docs/privacy.md` for local data, VPS data, diagnostics, and release-check boundaries.
+- The update checker only reads GitHub Release metadata and does not upload diagnostics or install updates.
 - Server hardening remains opt-in.
 - The first version does not default-disable root login, password login, or ping.
 

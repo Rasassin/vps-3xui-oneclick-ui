@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.36 adds experimental desktop build artifacts.
+v1.37 adds in-app update checking
 
 ## Build Locally
 

@@ -24,6 +24,7 @@ FOUNDATION_ITEMS = [
     RequiredItem("deployer/deploy_service.py", ("SSHRunner", "download_remote_results")),
     RequiredItem("deployer/ssh_runner.py", ("paramiko", "redact")),
     RequiredItem("deployer/qr_service.py"),
+    RequiredItem("deployer/update_service.py", ("LATEST_RELEASE_API", "check_latest_release")),
     RequiredItem("remote_scripts/install_remote.sh", ("set -Eeuo pipefail", "ONECLICK_REALITY_PORT")),
     RequiredItem("remote_scripts/preflight_remote.sh", ("set -Eeuo pipefail",)),
     RequiredItem("remote_scripts/harden_after_success.sh", ("set -Eeuo pipefail",)),

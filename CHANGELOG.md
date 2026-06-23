@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.37.0
+
+- Added a sidebar GitHub Release update checker for source and desktop-style distributions.
+- Kept update checks explicit, read-only, and separate from any VPS SSH action.
+- Documented update-check privacy boundaries for product packaging.
+
 ## v1.36.0
 
 - Added a GitHub Actions desktop build workflow for unsigned macOS and Windows PyInstaller artifacts.
