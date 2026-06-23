@@ -38,6 +38,22 @@ jobs:
           test -s "dist/release-manifest-v${VERSION}.json"
           test -s "dist/vps-3xui-oneclick-ui-portable-v${VERSION}.zip"
           test -s "dist/PRODUCT_READINESS_v${VERSION}.md"
+          test -s "dist/PRODUCT_MATURITY_v${VERSION}.md"
+          test -s "dist/VPS_COMPATIBILITY_TEST_v${VERSION}.md"
+          test -s "dist/update-manifest-v${VERSION}.json"
+          test -s "dist/SIGNING_READINESS_v${VERSION}.md"
+          test -s "dist/SIGNED_ARTIFACT_VALIDATION_v${VERSION}.md"
+          test -s "dist/GO_LIVE_READINESS_v${VERSION}.md"
+          test -s "dist/RELEASE_COMMANDS_v${VERSION}.md"
+          test -s "dist/PUBLISH_READINESS_v${VERSION}.md"
+          test -s "dist/PUBLISH_PLAN_v${VERSION}.md"
+          test -s "dist/GITHUB_CONNECTIVITY_v${VERSION}.md"
+          test -s "dist/CI_READINESS_v${VERSION}.md"
+          test -s "dist/GO_LIVE_DASHBOARD_v${VERSION}.md"
+          test -s "dist/RELEASE_CANDIDATE_v${VERSION}.md"
+          test -s "dist/DESKTOP_ARTIFACTS_v${VERSION}.md"
+          test -s "dist/EXTERNAL_RELEASE_INPUTS_v${VERSION}.md"
+          test -s "dist/RELEASE_CHANNELS_v${VERSION}.md"
           python scripts/check_release_artifacts.py
           python scripts/check_product_package.py
           python scripts/check_portable_user_package.py
@@ -53,5 +69,21 @@ jobs:
             "dist/SHA256SUMS_v${VERSION}.txt" \
             "dist/release-manifest-v${VERSION}.json" \
             "dist/PRODUCT_READINESS_v${VERSION}.md" \
+            "dist/PRODUCT_MATURITY_v${VERSION}.md" \
+            "dist/VPS_COMPATIBILITY_TEST_v${VERSION}.md" \
+            "dist/update-manifest-v${VERSION}.json" \
+            "dist/SIGNING_READINESS_v${VERSION}.md" \
+            "dist/SIGNED_ARTIFACT_VALIDATION_v${VERSION}.md" \
+            "dist/GO_LIVE_READINESS_v${VERSION}.md" \
+            "dist/RELEASE_COMMANDS_v${VERSION}.md" \
+            "dist/PUBLISH_READINESS_v${VERSION}.md" \
+            "dist/PUBLISH_PLAN_v${VERSION}.md" \
+            "dist/GITHUB_CONNECTIVITY_v${VERSION}.md" \
+            "dist/CI_READINESS_v${VERSION}.md" \
+            "dist/GO_LIVE_DASHBOARD_v${VERSION}.md" \
+            "dist/RELEASE_CANDIDATE_v${VERSION}.md" \
+            "dist/DESKTOP_ARTIFACTS_v${VERSION}.md" \
+            "dist/EXTERNAL_RELEASE_INPUTS_v${VERSION}.md" \
+            "dist/RELEASE_CHANNELS_v${VERSION}.md" \
             --title "$GITHUB_REF_NAME" \
             --notes-file "dist/GITHUB_RELEASE_v${VERSION}.md"
