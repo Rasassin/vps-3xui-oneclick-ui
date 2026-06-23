@@ -82,6 +82,17 @@ python3 desktop/check_desktop_package.py --built-artifact "dist/VPS-3x-ui-Onecli
 
 The zip remains unsigned until the signing and notarization flow is completed.
 
+The same packaging helper also wraps Windows artifacts when they exist under
+`dist/`:
+
+```bash
+python3 scripts/package_desktop_artifacts.py --skip-macos
+python3 desktop/check_desktop_package.py --built-artifact "dist/VPS-3x-ui-Oneclick-Windows-vX.Y.Z-unsigned.zip"
+python3 desktop/check_desktop_package.py --built-artifact "dist/VPS-3x-ui-Oneclick-Windows-Setup-vX.Y.Z-unsigned.zip"
+```
+
+Windows zips remain unsigned until Windows code signing is implemented.
+
 ## macOS Signing And Notarization Experiment
 
 On a prepared macOS release machine, after building the `.app`, set the required Apple signing variables and run the script:

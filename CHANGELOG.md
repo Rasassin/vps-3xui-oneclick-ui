@@ -16,6 +16,7 @@ All notable product changes are tracked here. This project keeps product history
 - Build and validate a local unsigned macOS desktop artifact, and add desktop artifact reports to release evidence.
 - Add unsigned desktop artifact packaging and zip validation for manual Release uploads.
 - Add a one-command local product release preparation script that builds, packages, checks, and reports without publishing or connecting to a VPS.
+- Extend desktop artifact packaging to cover existing Windows executable and installer outputs with explicit unsigned zip names.
 
 ## v1.54.0
 

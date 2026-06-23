@@ -34,17 +34,35 @@ def default_macos_app() -> Path:
     return PROJECT_ROOT / "dist" / "VPS 3x-ui Oneclick.app"
 
 
+def default_windows_exe() -> Path:
+    return PROJECT_ROOT / "dist" / "VPS 3x-ui Oneclick.exe"
+
+
+def default_windows_installer(version: str) -> Path:
+    return PROJECT_ROOT / "dist" / f"VPS-3x-ui-Oneclick-Windows-Setup-{version}-unsigned.exe"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Package local unsigned desktop artifacts for manual release upload.")
     parser.add_argument("--version", default=APP_VERSION)
     parser.add_argument("--macos-app", type=Path, default=default_macos_app())
+    parser.add_argument("--windows-exe", type=Path, default=default_windows_exe())
+    parser.add_argument("--windows-installer", type=Path, default=None)
     parser.add_argument("--skip-macos", action="store_true", help="Skip macOS .app packaging.")
+    parser.add_argument("--skip-windows", action="store_true", help="Skip Windows executable and installer packaging.")
     args = parser.parse_args()
 
     built: list[Path] = []
     if not args.skip_macos and args.macos_app.exists():
         destination = PROJECT_ROOT / "dist" / f"VPS-3x-ui-Oneclick-macOS-v{args.version}-unsigned.zip"
         built.append(zip_artifact(args.macos_app, destination))
+    if not args.skip_windows and args.windows_exe.exists():
+        destination = PROJECT_ROOT / "dist" / f"VPS-3x-ui-Oneclick-Windows-v{args.version}-unsigned.zip"
+        built.append(zip_artifact(args.windows_exe, destination))
+    installer = args.windows_installer or default_windows_installer(args.version)
+    if not args.skip_windows and installer.exists():
+        destination = PROJECT_ROOT / "dist" / f"VPS-3x-ui-Oneclick-Windows-Setup-v{args.version}-unsigned.zip"
+        built.append(zip_artifact(installer, destination))
 
     if not built:
         raise SystemExit("desktop artifact package failed: no desktop artifacts were available to package.")
