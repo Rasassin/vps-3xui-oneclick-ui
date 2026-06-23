@@ -59,6 +59,7 @@ def required_artifacts(version: str = APP_VERSION) -> list[Path]:
         dist_path("CI_READINESS_v{version}.md", version),
         dist_path("GO_LIVE_DASHBOARD_v{version}.md", version),
         dist_path("RELEASE_CANDIDATE_v{version}.md", version),
+        dist_path("DESKTOP_ARTIFACTS_v{version}.md", version),
         dist_path("EXTERNAL_RELEASE_INPUTS_v{version}.md", version),
     ]
 

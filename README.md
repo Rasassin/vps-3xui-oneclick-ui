@@ -276,6 +276,8 @@ python3 scripts/build_vps_test_report.py
 
 发布包还会生成 `EXTERNAL_RELEASE_INPUTS_vX.Y.Z.md`，专门列出代码无法自动完成的发布输入：GitHub 登录、分支推送、签名环境、桌面产物和真实 VPS 兼容性证据。页面侧边栏“外部发布输入”也可以执行同样的只读检查。
 
+发布包还会生成 `DESKTOP_ARTIFACTS_vX.Y.Z.md`，检查本地 `dist/` 里的 unsigned `.app`、`.exe` 或 desktop zip 产物。页面侧边栏“桌面产物”也可以执行同样的只读检查。
+
 `build_product_package.py` 会生成面向普通用户的 portable zip 和 `PRODUCT_READINESS` 报告。portable zip 内置 `START_HERE.md` 和 `START_HERE.zh-CN.md`，会告诉用户 Windows/macOS/Linux 应该先运行哪个启动文件。这个包仍然不会包含本地真实 `output/` 结果或 `data/profiles.json`。
 
 `check_release_ready.py` 会在不连接 VPS 的前提下运行发版前体检；开发中检查未提交改动时可加 `--allow-dirty`。
@@ -297,6 +299,7 @@ python3 scripts/build_vps_test_report.py
 侧边栏会显示产品化进度；发布包会生成 `PRODUCT_MATURITY_vX.Y.Z.md`，用于追踪离正式产品还差哪些门槛。
 侧边栏也会显示 Go-live 总览；发布包会生成 `GO_LIVE_DASHBOARD_vX.Y.Z.md`，把发布包、产品成熟度、CI、签名和 VPS 兼容矩阵合并成一个上线视图。
 侧边栏会显示 Release Candidate 验收；发布包会生成 `RELEASE_CANDIDATE_vX.Y.Z.md`，用于判断当前版本是否适合作为公开开源候选版本。
+侧边栏会显示桌面产物验收；发布包会生成 `DESKTOP_ARTIFACTS_vX.Y.Z.md`，记录本地 unsigned 桌面构建产物状态。
 侧边栏会显示外部发布输入；发布包会生成 `EXTERNAL_RELEASE_INPUTS_vX.Y.Z.md`，把剩余人工输入列成机器可读清单。
 
 `check_secret_hygiene.py` 会检查 Git 已跟踪文件，防止误提交 output 结果、profiles、env、日志、私钥和明显的节点链接。

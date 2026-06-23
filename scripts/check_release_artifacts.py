@@ -60,13 +60,13 @@ def verify_zip_contents(zip_path: Path) -> None:
 
 def verify_checksums(sums_path: Path) -> None:
     lines = [line for line in sums_path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    if len(lines) != 18:
+    if len(lines) != 19:
         raise SystemExit(
             "release artifact check failed: SHA256SUMS should list exactly source zip, release notes, "
             "portable zip, product report, product maturity report, VPS compatibility report, update manifest, signing readiness report, "
             "signed artifact validation report, go-live readiness report, release command checklist, "
             "publish readiness report, publish plan report, GitHub connectivity report, CI readiness report, go-live dashboard, "
-            "release candidate report, and external release inputs report."
+            "release candidate report, desktop artifacts report, and external release inputs report."
         )
     for line in lines:
         try:
@@ -243,6 +243,7 @@ def main() -> None:
     ci_report_path = args.dist_dir / f"CI_READINESS_v{args.version}.md"
     dashboard_report_path = args.dist_dir / f"GO_LIVE_DASHBOARD_v{args.version}.md"
     candidate_report_path = args.dist_dir / f"RELEASE_CANDIDATE_v{args.version}.md"
+    desktop_artifacts_report_path = args.dist_dir / f"DESKTOP_ARTIFACTS_v{args.version}.md"
     external_inputs_report_path = args.dist_dir / f"EXTERNAL_RELEASE_INPUTS_v{args.version}.md"
     sums_path = args.dist_dir / f"SHA256SUMS_v{args.version}.txt"
     manifest_path = args.dist_dir / f"release-manifest-v{args.version}.json"
@@ -260,6 +261,7 @@ def main() -> None:
         ci_report_path,
         dashboard_report_path,
         candidate_report_path,
+        desktop_artifacts_report_path,
         external_inputs_report_path,
     ]
     require_nonempty([*release_asset_paths, sums_path, manifest_path])

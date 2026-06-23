@@ -1032,6 +1032,7 @@ Implemented scope:
 - Add local update manifest validation and a sidebar update-channel check.
 - Add a Release Candidate report that summarizes portable readiness, update channel, publish plan, signing state, and VPS evidence.
 - Add an external release inputs report and sidebar panel for remaining signing, GitHub, desktop artifact, and VPS evidence prerequisites.
+- Build and validate a local unsigned macOS desktop artifact, and add desktop artifact reports to release evidence.
 
 Still intentionally not included:
 

@@ -10,6 +10,7 @@ import streamlit.components.v1 as components
 from deployer.ci_status import ci_overall_status, collect_ci_checks, write_ci_report
 from deployer.config import APP_VERSION, NodeConfig, OUTPUT_DIR, VPSLogin
 from deployer.diagnostics_service import build_public_diagnostics_zip, collect_local_diagnostics
+from deployer.desktop_artifacts import collect_desktop_artifacts, desktop_artifacts_overall_status, write_desktop_artifacts_report
 from deployer.deploy_service import (
     ERROR_HINTS,
     backup_remote_results,
@@ -76,6 +77,7 @@ def init_state() -> None:
     st.session_state.setdefault("dashboard_gates", [])
     st.session_state.setdefault("candidate_gates", [])
     st.session_state.setdefault("external_input_checks", [])
+    st.session_state.setdefault("desktop_artifacts", [])
     st.session_state.setdefault("profile_name_input", "")
     st.session_state.setdefault("selected_profile_name", "")
 
@@ -318,6 +320,26 @@ def render_sidebar() -> None:
                     st.caption(f"{label} · {gate.name} · {gate.detail}")
             else:
                 st.info("点击后显示当前版本是否适合作为公开开源候选版本。")
+        with st.expander("桌面产物"):
+            st.caption("检查本地 dist/ 下的 unsigned 桌面产物；不会签名、安装、上传或连接 VPS。")
+            if st.button("刷新桌面产物", use_container_width=True):
+                artifacts = collect_desktop_artifacts()
+                write_desktop_artifacts_report(artifacts)
+                st.session_state.desktop_artifacts = artifacts
+            desktop_artifacts = st.session_state.get("desktop_artifacts", [])
+            if desktop_artifacts:
+                overall = desktop_artifacts_overall_status(desktop_artifacts)
+                if overall == "pass":
+                    st.success("桌面产物检查通过。")
+                elif overall == "fail":
+                    st.error("桌面产物检查失败。")
+                else:
+                    st.warning("未发现桌面产物。")
+                for artifact in desktop_artifacts:
+                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(artifact.status, artifact.status)
+                    st.caption(f"{label} · {artifact.path.name} · {artifact.kind} · {artifact.size_bytes} bytes")
+            else:
+                st.info("点击后检查 PyInstaller 产物或 desktop-build workflow 下载到 dist/ 的产物。")
         with st.expander("外部发布输入"):
             st.caption("检查 GitHub 登录、签名环境、桌面产物和真实 VPS 证据；不会 push、签名、上传或连接 VPS。")
             if st.button("刷新外部输入", use_container_width=True):

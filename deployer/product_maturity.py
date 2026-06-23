@@ -24,7 +24,7 @@ def collect_maturity_gates() -> list[MaturityGate]:
         MaturityGate("Release packaging and integrity", 12, 12, "complete", "Release bundle, portable package, checksums, manifests, and artifact verification are automated."),
         MaturityGate("Portable local launch experience", 10, 10, "complete", "Windows, macOS, and Linux launchers create a venv, install dependencies, and run the local UI."),
         MaturityGate("Release and CI visibility", 8, 8, "complete", "Sidebar panels and reports cover release artifacts, publish readiness, update checks, and GitHub Actions status."),
-        MaturityGate("Desktop packaging scaffold", 7, 10, "partial", "PyInstaller, Windows installer scaffold, signing scripts, and desktop icons exist, but binaries are still experimental."),
+        MaturityGate("Desktop packaging scaffold", 8, 10, "partial", "PyInstaller, Windows installer scaffold, signing scripts, desktop icons, and local unsigned macOS artifact validation exist, but signed binaries are still experimental."),
         MaturityGate("Signed and notarized binaries", 0, 8, "pending", "macOS notarization and Windows code signing are scaffolded but not producing trusted public binaries yet."),
         MaturityGate("Real VPS compatibility matrix", 2, 8, "partial", "The worksheet and local evidence recorder exist, but supported-provider VPS tests are still manual and not completed as release evidence."),
         MaturityGate("Native app and update channel", 1, 3, "partial", "The update manifest has local validation and UI visibility, but automatic updates and a native Tauri-style UI are not implemented."),

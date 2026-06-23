@@ -135,6 +135,10 @@ artifact paths, and local VPS compatibility evidence. They do not print signing
 passwords, certificate private keys, GitHub tokens, VPS credentials, node links,
 subscription links, QR images, or panel credentials.
 
+Desktop artifact reports list local artifact file names, sizes, and validation
+status. They do not include VPS credentials, node links, subscription links, QR
+images, panel credentials, signing passwords, or certificate private keys.
+
 ## What Release Checks Guard
 
 Release and secret hygiene checks are local-only. They do not connect to a VPS.

@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .config import APP_VERSION, PROJECT_ROOT
+from .desktop_artifacts import collect_desktop_artifacts
 from .vps_compatibility import SUPPORTED_SYSTEMS, load_results
 
 
@@ -87,20 +88,18 @@ def check_vps_evidence() -> ExternalInputCheck:
 
 
 def check_desktop_artifacts() -> ExternalInputCheck:
-    dist_dir = PROJECT_ROOT / "dist"
-    candidates = [
-        *dist_dir.glob("VPS*Oneclick*.app"),
-        *dist_dir.glob("VPS*Oneclick*.exe"),
-        *dist_dir.glob("VPS*Oneclick*.zip"),
-    ]
-    if not candidates:
+    artifacts = collect_desktop_artifacts()
+    if not artifacts:
         return ExternalInputCheck(
             "Desktop artifacts",
             "pending",
             "No desktop build artifacts were found under dist/.",
             "Run desktop/build_macos_app.sh, desktop/build_windows_exe.ps1, or the desktop-build workflow.",
         )
-    return ExternalInputCheck("Desktop artifacts", "pass", f"{len(candidates)} desktop artifact candidate(s) found under dist/.")
+    failed = [artifact for artifact in artifacts if artifact.status != "pass"]
+    if failed:
+        return ExternalInputCheck("Desktop artifacts", "fail", f"{len(failed)} desktop artifact check(s) failed.", "Run scripts/check_desktop_artifacts.py --write-report.")
+    return ExternalInputCheck("Desktop artifacts", "pass", f"{len(artifacts)} desktop artifact candidate(s) found and checked under dist/.")
 
 
 def collect_external_input_checks() -> list[ExternalInputCheck]:

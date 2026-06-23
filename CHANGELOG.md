@@ -13,6 +13,7 @@ All notable product changes are tracked here. This project keeps product history
 - Add local update manifest validation and expose update-channel checks in the Streamlit sidebar.
 - Add a Release Candidate report that summarizes portable readiness, update channel, publishing, signing, and VPS evidence.
 - Add an external release inputs report and sidebar panel for remaining non-code productization prerequisites.
+- Build and validate a local unsigned macOS desktop artifact, and add desktop artifact reports to release evidence.
 
 ## v1.54.0
 
