@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.49 adds GitHub publish readiness checks
+v1.50 adds publish readiness to the UI
 
 ## Build Locally
 

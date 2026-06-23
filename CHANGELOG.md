@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.50.0
+
+- Moved GitHub publish readiness checks into reusable app service code.
+- Added a sidebar publish readiness panel that refreshes GitHub release blockers without pushing, tagging, uploading, or connecting to a VPS.
+- Documented v1.48 through v1.50 productization milestones separately from the Codex Skill.
+
 ## v1.49.0
 
 - Added a publish readiness checker for GitHub remote, branch sync, tag, reachability, and CLI auth status.

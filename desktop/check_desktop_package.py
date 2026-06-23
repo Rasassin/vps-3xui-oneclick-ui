@@ -34,6 +34,7 @@ REQUIRED_RELEASE_FILES = {
     "docs/release/signing-readiness.md",
     "docs/release/tagged-release.md",
     "docs/privacy.md",
+    "deployer/publish_status.py",
     "requirements-desktop.txt",
     "start_macos.command",
     "scripts/bump_version.py",

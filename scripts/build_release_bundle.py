@@ -19,7 +19,7 @@ from scripts.build_product_package import build_product_package
 from scripts.build_update_manifest import write_update_manifest
 from scripts.build_vps_test_report import write_report as write_vps_test_report
 from scripts.build_release_commands import write_report as write_release_commands
-from scripts.check_publish_readiness import write_report as write_publish_report
+from deployer.publish_status import write_publish_report
 from scripts.check_signed_artifacts import check_macos_app, check_windows_installer, write_report as write_signed_artifact_report
 from scripts.check_signing_readiness import macos_checks, windows_checks, write_report as write_signing_report
 from scripts.check_go_live_readiness import collect_gates as collect_go_live_gates, write_report as write_go_live_report

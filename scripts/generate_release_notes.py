@@ -80,6 +80,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Go-live readiness report summarizing Git sync, release tag, signing, signed artifacts, and VPS compatibility blockers.
 - Release command checklist for the final Git push, tag, and optional GitHub CLI upload steps.
 - Publish readiness report for GitHub remote, branch sync, tag, reachability, and CLI authentication status.
+- Sidebar publish readiness panel for read-only GitHub release blockers.
 
 ## Download
 

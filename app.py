@@ -20,6 +20,7 @@ from deployer.deploy_service import (
 )
 from deployer.export_service import build_export_zip
 from deployer.profile_service import delete_profile, load_profiles, upsert_profile
+from deployer.publish_status import collect_publish_checks, publish_overall_status, write_publish_report
 from deployer.qr_service import regenerate_output_qrs
 from deployer.release_status import collect_release_artifacts, load_release_source_summary, release_artifacts_ready
 from deployer.result_parser import load_results
@@ -54,6 +55,7 @@ def init_state() -> None:
     st.session_state.setdefault("local_diagnostics", {})
     st.session_state.setdefault("diagnostics_zip_path", "")
     st.session_state.setdefault("update_status", {})
+    st.session_state.setdefault("publish_checks", [])
     st.session_state.setdefault("profile_name_input", "")
     st.session_state.setdefault("selected_profile_name", "")
 
@@ -228,6 +230,26 @@ def render_sidebar() -> None:
                         key=f"release_artifact_{artifact.path.name}",
                         use_container_width=True,
                     )
+        with st.expander("GitHub 发布准备度"):
+            st.caption("只读检查：不会 push、不会创建 tag、不会上传 Release、不会连接 VPS。")
+            if st.button("刷新发布准备度", use_container_width=True):
+                checks = collect_publish_checks()
+                write_publish_report(checks)
+                st.session_state.publish_checks = checks
+            publish_checks = st.session_state.get("publish_checks", [])
+            if publish_checks:
+                overall = publish_overall_status(publish_checks)
+                if overall == "pass":
+                    st.success("GitHub 发布准备度通过。")
+                elif overall == "fail":
+                    st.error("GitHub 发布状态需要修复。")
+                else:
+                    st.warning("GitHub 发布仍有待处理项。")
+                for check in publish_checks:
+                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(check.status, check.status)
+                    st.caption(f"{label} · {check.name} · {check.detail}")
+            else:
+                st.info("点击刷新后显示 GitHub remote、分支同步、tag、网络和 CLI 登录状态。")
         st.divider()
         render_profiles_sidebar()
         st.divider()

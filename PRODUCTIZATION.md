@@ -912,6 +912,51 @@ Still intentionally not included:
 - Checking GitHub Actions status from the go-live report.
 - Publishing GitHub Releases.
 
+## v1.48 Release Command Checklist
+
+Implemented scope:
+
+- Add `scripts/build_release_commands.py`.
+- Generate `RELEASE_COMMANDS_vX.Y.Z.md` with final publish commands.
+- Include release command checklists in release bundles, checksums, manifests, and sidebar downloads.
+- Keep the checklist free of VPS credentials, node links, panel credentials, signing passwords, and private keys.
+
+Still intentionally not included:
+
+- Executing publish commands automatically.
+- Creating tags automatically.
+- Uploading assets automatically.
+
+## v1.49 GitHub Publish Readiness Reports
+
+Implemented scope:
+
+- Add `scripts/check_publish_readiness.py`.
+- Generate `PUBLISH_READINESS_vX.Y.Z.md` with GitHub remote, branch sync, worktree, tag, remote reachability, CLI auth, and release command checklist status.
+- Include publish readiness reports in release bundles, checksums, manifests, and sidebar downloads.
+- Keep checks read-only: no push, no tag creation, no release upload, no VPS connection, and no credential storage.
+
+Still intentionally not included:
+
+- Pushing commits to GitHub.
+- Creating release tags.
+- Installing or configuring GitHub CLI.
+- Uploading GitHub Release assets.
+
+## v1.50 Publish Readiness In The Local UI
+
+Implemented scope:
+
+- Move GitHub publish readiness checks into reusable app service code.
+- Show GitHub remote, branch sync, worktree, tag, remote reachability, CLI auth, and release command checklist status from the Streamlit sidebar.
+- Regenerate the publish readiness report from the UI without pushing commits, creating tags, uploading assets, connecting to a VPS, or storing credentials.
+
+Still intentionally not included:
+
+- Automatic GitHub push from the app.
+- Automatic tag creation from the app.
+- Automatic GitHub Release upload from the app.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.
