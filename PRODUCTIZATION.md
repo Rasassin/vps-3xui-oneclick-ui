@@ -988,6 +988,20 @@ Still intentionally not included:
 - Signed production desktop binaries.
 - Native installer artwork customization.
 
+## v1.53 Product Maturity Report
+
+Implemented scope:
+
+- Add a weighted product maturity model with current productization percentage.
+- Generate `PRODUCT_MATURITY_vX.Y.Z.md` with release artifacts.
+- Show productization progress in the Streamlit sidebar.
+- Track completed, partial, and pending product gates separately from the Codex Skill.
+
+Still intentionally not included:
+
+- Treating the score as a substitute for real signed release testing.
+- Hiding the remaining gaps around signing, notarization, real VPS matrix testing, native UI, and automatic updates.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

@@ -21,6 +21,7 @@ from deployer.deploy_service import (
 )
 from deployer.export_service import build_export_zip
 from deployer.profile_service import delete_profile, load_profiles, upsert_profile
+from deployer.product_maturity import collect_maturity_gates, maturity_score, product_tier, write_report as write_maturity_report
 from deployer.publish_status import collect_publish_checks, publish_overall_status, write_publish_report
 from deployer.qr_service import regenerate_output_qrs
 from deployer.release_status import collect_release_artifacts, load_release_source_summary, release_artifacts_ready
@@ -58,6 +59,7 @@ def init_state() -> None:
     st.session_state.setdefault("update_status", {})
     st.session_state.setdefault("publish_checks", [])
     st.session_state.setdefault("ci_checks", [])
+    st.session_state.setdefault("maturity_gates", collect_maturity_gates())
     st.session_state.setdefault("profile_name_input", "")
     st.session_state.setdefault("selected_profile_name", "")
 
@@ -202,6 +204,16 @@ def render_sidebar() -> None:
             )
             st.caption("完整说明见 docs/privacy.md。")
         with st.expander("发布包状态"):
+            gates = st.session_state.get("maturity_gates", collect_maturity_gates())
+            earned, total, percent = maturity_score(gates)
+            st.metric("产品化进度", f"{percent}%", f"{earned}/{total}")
+            st.progress(percent / 100)
+            st.caption(f"当前阶段：{product_tier(percent)}")
+            if st.button("刷新产品化报告", use_container_width=True):
+                gates = collect_maturity_gates()
+                write_maturity_report(gates)
+                st.session_state.maturity_gates = gates
+                st.toast("产品化报告已刷新。")
             artifacts = collect_release_artifacts()
             if release_artifacts_ready():
                 st.success("当前版本发布产物已生成。")

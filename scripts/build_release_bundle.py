@@ -15,6 +15,7 @@ if str(SCRIPT_ROOT) not in sys.path:
 
 from deployer.ci_status import write_ci_report
 from deployer.config import APP_VERSION, PROJECT_ROOT
+from deployer.product_maturity import write_report as write_maturity_report
 from scripts.build_release import build_release_zip
 from scripts.build_product_package import build_product_package
 from scripts.build_update_manifest import write_update_manifest
@@ -102,10 +103,11 @@ def build_release_bundle(version: str = APP_VERSION) -> list[Path]:
     zip_path = build_release_zip(version)
     notes_path = write_release_notes(version)
     portable_zip_path, product_report_path = build_product_package(version)
+    maturity_report_path = write_maturity_report(version=version)
     vps_test_report_path = write_vps_test_report(version)
     signing_report_path = write_signing_report([*macos_checks(), *windows_checks()])
     signed_artifact_report_path = write_signed_artifact_report([*check_macos_app(None), *check_windows_installer(None)])
-    core_artifact_paths = [zip_path, notes_path, portable_zip_path, product_report_path, vps_test_report_path]
+    core_artifact_paths = [zip_path, notes_path, portable_zip_path, product_report_path, maturity_report_path, vps_test_report_path]
     update_manifest_path = write_update_manifest(version, core_artifact_paths)
     release_commands_path = write_release_commands(version)
     publish_report_path = write_publish_report(version=version)

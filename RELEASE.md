@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.52 adds desktop icon assets
+v1.53 adds product maturity tracking
 
 ## Build Locally
 
@@ -19,6 +19,7 @@ The release artifacts are written to `dist/`:
 - `SHA256SUMS_vX.Y.Z.txt`
 - `release-manifest-vX.Y.Z.json`
 - `PRODUCT_READINESS_vX.Y.Z.md`
+- `PRODUCT_MATURITY_vX.Y.Z.md`
 - `VPS_COMPATIBILITY_TEST_vX.Y.Z.md`
 - `update-manifest-vX.Y.Z.json`
 - `SIGNING_READINESS_vX.Y.Z.md`
@@ -69,6 +70,7 @@ test -s "dist/SHA256SUMS_v${VERSION}.txt"
 test -s "dist/release-manifest-v${VERSION}.json"
 test -s "dist/vps-3xui-oneclick-ui-portable-v${VERSION}.zip"
 test -s "dist/PRODUCT_READINESS_v${VERSION}.md"
+test -s "dist/PRODUCT_MATURITY_v${VERSION}.md"
 test -s "dist/VPS_COMPATIBILITY_TEST_v${VERSION}.md"
 test -s "dist/update-manifest-v${VERSION}.json"
 test -s "dist/SIGNING_READINESS_v${VERSION}.md"
@@ -134,6 +136,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Generate `dist/release-manifest-vX.Y.Z.json`.
 - Generate `dist/vps-3xui-oneclick-ui-portable-vX.Y.Z.zip`.
 - Generate `dist/PRODUCT_READINESS_vX.Y.Z.md`.
+- Generate `dist/PRODUCT_MATURITY_vX.Y.Z.md`.
 - Generate `dist/VPS_COMPATIBILITY_TEST_vX.Y.Z.md`.
 - Generate `dist/update-manifest-vX.Y.Z.json`.
 - Generate `dist/SIGNING_READINESS_vX.Y.Z.md`.

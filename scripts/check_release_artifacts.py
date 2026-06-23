@@ -60,10 +60,10 @@ def verify_zip_contents(zip_path: Path) -> None:
 
 def verify_checksums(sums_path: Path) -> None:
     lines = [line for line in sums_path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    if len(lines) != 12:
+    if len(lines) != 13:
         raise SystemExit(
             "release artifact check failed: SHA256SUMS should list exactly source zip, release notes, "
-            "portable zip, product report, VPS compatibility report, update manifest, signing readiness report, "
+            "portable zip, product report, product maturity report, VPS compatibility report, update manifest, signing readiness report, "
             "signed artifact validation report, go-live readiness report, release command checklist, "
             "publish readiness report, and CI readiness report."
         )
@@ -229,6 +229,7 @@ def main() -> None:
     portable_zip_path = args.dist_dir / f"vps-3xui-oneclick-ui-portable-v{args.version}.zip"
     notes_path = args.dist_dir / f"GITHUB_RELEASE_v{args.version}.md"
     product_report_path = args.dist_dir / f"PRODUCT_READINESS_v{args.version}.md"
+    maturity_report_path = args.dist_dir / f"PRODUCT_MATURITY_v{args.version}.md"
     vps_test_report_path = args.dist_dir / f"VPS_COMPATIBILITY_TEST_v{args.version}.md"
     update_manifest_path = args.dist_dir / f"update-manifest-v{args.version}.json"
     signing_report_path = args.dist_dir / f"SIGNING_READINESS_v{args.version}.md"
@@ -239,7 +240,7 @@ def main() -> None:
     ci_report_path = args.dist_dir / f"CI_READINESS_v{args.version}.md"
     sums_path = args.dist_dir / f"SHA256SUMS_v{args.version}.txt"
     manifest_path = args.dist_dir / f"release-manifest-v{args.version}.json"
-    core_asset_paths = [zip_path, notes_path, portable_zip_path, product_report_path, vps_test_report_path]
+    core_asset_paths = [zip_path, notes_path, portable_zip_path, product_report_path, maturity_report_path, vps_test_report_path]
     release_asset_paths = [
         *core_asset_paths,
         update_manifest_path,

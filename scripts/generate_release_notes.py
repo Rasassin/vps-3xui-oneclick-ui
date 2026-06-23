@@ -83,6 +83,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Sidebar publish readiness panel for read-only GitHub release blockers.
 - CI readiness report and sidebar panel for public GitHub Actions status.
 - Generated desktop icon assets wired into macOS and Windows PyInstaller builds.
+- Product maturity score and report for tracking productization progress.
 
 ## Download
 
@@ -101,6 +102,7 @@ dist/GITHUB_RELEASE_v{version}.md
 dist/SHA256SUMS_v{version}.txt
 dist/release-manifest-v{version}.json
 dist/PRODUCT_READINESS_v{version}.md
+dist/PRODUCT_MATURITY_v{version}.md
 dist/VPS_COMPATIBILITY_TEST_v{version}.md
 dist/update-manifest-v{version}.json
 dist/SIGNING_READINESS_v{version}.md
@@ -157,6 +159,7 @@ python3 desktop_launcher.py
 - Release command checklists contain publish commands and artifact names only; they do not include secrets or deployment outputs.
 - Publish readiness reports contain Git/GitHub status only and never push, tag, upload, or connect to a VPS.
 - CI readiness reports read public GitHub Actions metadata only; they do not upload diagnostics or connect to a VPS.
+- Product maturity reports summarize local productization progress only and do not include deployment outputs or credentials.
 - Windows installer outputs are experimental and must be labeled unsigned until code signing is implemented.
 - Server hardening remains opt-in.
 - Remote reset remains opt-in and requires the exact confirmation phrase `RESET_3XUI_ONECLICK`.

@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.53.0
+
+- Added a weighted product maturity model with a productization percentage.
+- Generated product maturity reports with release bundles and included them in checksums, manifests, sidebar downloads, and release preparation.
+- Displayed productization progress in the Streamlit sidebar while keeping remaining production gaps explicit.
+
 ## v1.52.0
 
 - Added generated PNG, ICO, and ICNS icon assets for desktop packaging.

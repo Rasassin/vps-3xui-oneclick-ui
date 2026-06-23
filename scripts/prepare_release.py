@@ -22,6 +22,7 @@ def artifact_paths(version: str) -> list[Path]:
         dist_dir / f"release-manifest-v{version}.json",
         dist_dir / f"vps-3xui-oneclick-ui-portable-v{version}.zip",
         dist_dir / f"PRODUCT_READINESS_v{version}.md",
+        dist_dir / f"PRODUCT_MATURITY_v{version}.md",
         dist_dir / f"VPS_COMPATIBILITY_TEST_v{version}.md",
         dist_dir / f"update-manifest-v{version}.json",
         dist_dir / f"SIGNING_READINESS_v{version}.md",

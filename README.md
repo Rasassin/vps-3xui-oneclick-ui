@@ -253,6 +253,7 @@ python3 scripts/prepare_release_tag.py --skip-checks
 
 `desktop/check_desktop_package.py --built-artifact ...` 会检查 PyInstaller 产物入口、必要运行文件、敏感文件和敏感文本模式；macOS/Windows 构建脚本会在构建结束后自动运行这个验收。
 桌面实验包包含 `desktop/assets/` 下的生成图标资产，`desktop/generate_icons.py` 可重新生成 PNG、ICO 和 ICNS。
+侧边栏会显示产品化进度；发布包会生成 `PRODUCT_MATURITY_vX.Y.Z.md`，用于追踪离正式产品还差哪些门槛。
 
 `check_secret_hygiene.py` 会检查 Git 已跟踪文件，防止误提交 output 结果、profiles、env、日志、私钥和明显的节点链接。
 

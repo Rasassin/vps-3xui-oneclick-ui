@@ -98,6 +98,10 @@ CI readiness reports read public GitHub Actions metadata for this repository.
 They do not connect to a VPS, upload diagnostics, push commits, create tags,
 upload release assets, or store GitHub credentials.
 
+Product maturity reports summarize local productization progress and remaining
+work. They do not include VPS credentials, node links, QR images, subscription
+links, panel credentials, signing passwords, or certificate private keys.
+
 ## What Release Checks Guard
 
 Release and secret hygiene checks are local-only. They do not connect to a VPS.
