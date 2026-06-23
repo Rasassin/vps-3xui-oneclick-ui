@@ -113,6 +113,17 @@ The desktop output is experimental. The current production-safe start path remai
 ./start_mac_linux.sh
 ```
 
+## GitHub Actions Desktop Builds
+
+`.github/workflows/desktop-build.yml` can build experimental unsigned desktop artifacts on GitHub Actions:
+
+- unsigned macOS PyInstaller `.app` zip
+- unsigned Windows PyInstaller app zip
+
+The workflow runs `desktop/check_desktop_package.py --built-artifact ...` through the existing build scripts before uploading artifacts. It does not connect to a VPS.
+
+These artifacts are not signed, notarized, or auto-updating. Treat them as test builds until a signing and installer pipeline exists.
+
 ## Product Notes
 
 This is not yet a fully native Tauri application. It is a low-risk bridge: it lets the project behave more like a desktop app while preserving the tested Python/Streamlit deployment flow.

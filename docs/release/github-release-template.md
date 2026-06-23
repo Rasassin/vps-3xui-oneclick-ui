@@ -12,9 +12,11 @@ Use `scripts/generate_release_notes.py` for the concrete versioned draft. This t
 - Optional experimental desktop artifacts, if manually built and tested
 
 Automated releases are published by `.github/workflows/release.yml` when a matching `vX.Y.Z` tag is pushed.
+Experimental unsigned desktop artifacts are built by `.github/workflows/desktop-build.yml`.
 
 Confirm `CHANGELOG.md` has an entry for the release before tagging.
 Confirm the latest `Static checks` workflow is green before publishing or tagging.
+Confirm the `Desktop build` workflow is green before attaching unsigned desktop artifacts.
 
 ## Required Warnings
 

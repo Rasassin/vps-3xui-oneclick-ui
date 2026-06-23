@@ -43,6 +43,7 @@ OPEN_SOURCE_ITEMS = [
     RequiredItem("docs/privacy.md", ("VPS root password",)),
     RequiredItem(".github/workflows/static-check.yml", ("check_release_ready.py", "platform-smoke", "actions/upload-artifact")),
     RequiredItem(".github/workflows/release.yml", ("gh release create", "check_portable_user_package.py")),
+    RequiredItem(".github/workflows/desktop-build.yml", ("build_macos_app.sh", "build_windows_exe.ps1", "unsigned", "actions/upload-artifact")),
 ]
 
 DESKTOP_ITEMS = [

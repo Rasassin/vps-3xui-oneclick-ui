@@ -238,6 +238,8 @@ python3 scripts/prepare_release.py --allow-dirty
 
 `.github/workflows/static-check.yml` 会在 GitHub 上运行产品 CI：Linux job 执行完整 release gate 并上传已检查的发布产物，Ubuntu/macOS/Windows matrix 执行本地启动、安全、产品和 Streamlit 首屏检查。这个 CI 不会连接 VPS。
 
+`.github/workflows/desktop-build.yml` 可以在 GitHub Actions 上生成实验性的 unsigned macOS `.app` zip 和 Windows app zip。它会先运行桌面产物检查再上传 artifact；这些还不是签名安装包。
+
 `check_portable_launchers.py` 会检查 Windows、macOS、Linux 的 portable 启动入口，确认它们包含依赖安装、本地产品自检、失败提示和“不连接 VPS”的启动边界。
 
 `doctor.py` 是本地项目体检入口，会聚合密钥检查、语法检查、桌面打包输入检查和 Streamlit 首屏检查；加 `--release` 会额外执行完整发版检查。

@@ -37,6 +37,8 @@ The release workflow verifies that the tag version matches `APP_VERSION`, builds
 
 Before tagging, make sure the latest `Static checks` workflow is green. It runs the full Linux release gate, uploads checked release artifacts for review, and runs platform smoke checks on Ubuntu, macOS, and Windows.
 
+The `Desktop build` workflow also runs on matching version tags. It uploads unsigned macOS and Windows desktop artifacts as Actions artifacts. Attach them to a public release only when the desktop build workflow is green and the release notes clearly mark them as unsigned experimental builds.
+
 ## Safety
 
 The workflow does not connect to a VPS and does not run a real deployment. It only performs local static checks and release artifact validation.

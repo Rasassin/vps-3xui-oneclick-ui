@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.36.0
+
+- Added a GitHub Actions desktop build workflow for unsigned macOS and Windows PyInstaller artifacts.
+- Validated built desktop artifacts during the desktop build workflow before upload.
+- Documented experimental desktop artifacts and their unsigned product boundary.
+
 ## v1.35.1
 
 - Fixed Windows CI launcher validation by enforcing POSIX executable bits only on POSIX runners.

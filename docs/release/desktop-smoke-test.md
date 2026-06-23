@@ -36,10 +36,19 @@ Use this checklist for release validation. It must not require a real VPS unless
 - Confirm `output/desktop-launcher.log` is created.
 - Confirm the launcher does not start SSH or connect to a VPS by itself.
 
+## Experimental Desktop Build Artifacts
+
+- Trigger `.github/workflows/desktop-build.yml` manually, or by pushing a matching `vX.Y.Z` tag.
+- Confirm the macOS artifact `VPS-3x-ui-Oneclick-macOS-unsigned` exists.
+- Confirm the Windows artifact `VPS-3x-ui-Oneclick-Windows-unsigned` exists.
+- Confirm both build jobs ran `desktop/check_desktop_package.py --built-artifact ...` before artifact upload.
+- Treat these artifacts as unsigned test builds, not final signed installers.
+
 ## GitHub Release
 
 - Generate the release draft with `python3 scripts/generate_release_notes.py`.
 - Attach the source zip, release draft, SHA256SUMS file, and release manifest.
+- Attach experimental unsigned desktop artifacts only if the desktop build workflow is green and the release notes call them unsigned.
 - For automated publishing, push a matching `vX.Y.Z` tag after local checks pass.
 - Mention that the desktop packaging layer is experimental.
 - Mention that VPS root passwords are never stored by the app.

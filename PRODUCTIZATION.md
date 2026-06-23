@@ -717,6 +717,23 @@ Still intentionally not included:
 - Automatic update channels.
 - Native Tauri UI.
 
+## v1.36 Experimental Desktop Build Artifacts
+
+Implemented scope:
+
+- Add `.github/workflows/desktop-build.yml`.
+- Build unsigned macOS PyInstaller `.app` artifacts on GitHub Actions.
+- Build unsigned Windows PyInstaller app artifacts on GitHub Actions.
+- Run built-artifact validation before uploading desktop artifacts.
+- Document the unsigned artifact boundary in desktop and release docs.
+
+Still intentionally not included:
+
+- Signed and notarized macOS app bundle.
+- Signed Windows installer.
+- Automatic updates.
+- Native Tauri UI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

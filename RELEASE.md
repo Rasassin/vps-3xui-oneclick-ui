@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.35 fixes Windows CI launcher validation.
+v1.36 adds experimental desktop build artifacts.
 
 ## Build Locally
 
@@ -85,6 +85,8 @@ Do not test against a real VPS unless that is the explicit release validation go
 
 `.github/workflows/release.yml` runs on version tags, verifies the tag matches `APP_VERSION`, reruns release artifact checks, validates the portable product package, and publishes the GitHub Release assets.
 
+`.github/workflows/desktop-build.yml` runs manually or on version tags. It builds experimental unsigned macOS and Windows PyInstaller artifacts, validates them with `desktop/check_desktop_package.py --built-artifact ...`, and uploads them as GitHub Actions artifacts.
+
 ## GitHub Release Checklist
 
 - Confirm `APP_VERSION` in `deployer/config.py`.
@@ -111,6 +113,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Generate `dist/PRODUCT_READINESS_vX.Y.Z.md`.
 - Review [docs/release/desktop-smoke-test.md](docs/release/desktop-smoke-test.md).
 - Confirm the latest GitHub Actions product CI run is green.
+- Confirm the desktop build workflow is green before attaching unsigned desktop artifacts.
 - For automated publishing, follow [docs/release/tagged-release.md](docs/release/tagged-release.md).
 - Upload the generated zip, release notes, SHA256SUMS, and manifest to GitHub Releases.
 - Mention that VPS root passwords are never stored by the app.

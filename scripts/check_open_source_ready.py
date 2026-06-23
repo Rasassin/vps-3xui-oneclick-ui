@@ -25,6 +25,7 @@ REQUIRED_FILES = {
     ".github/ISSUE_TEMPLATE/config.yml": [],
     ".github/workflows/static-check.yml": [],
     ".github/workflows/release.yml": [],
+    ".github/workflows/desktop-build.yml": [],
     "docs/privacy.md": ["VPS root password"],
     "docs/release/desktop-smoke-test.md": [],
     "docs/release/github-release-template.md": [],
