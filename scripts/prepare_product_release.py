@@ -93,6 +93,7 @@ def main() -> None:
     run_step("check product package", [sys.executable, "scripts/check_product_package.py"])
     run_step("check desktop artifacts", [sys.executable, "scripts/check_desktop_artifacts.py", "--write-report"])
     run_step("check external release inputs", [sys.executable, "scripts/check_external_release_inputs.py", "--write-report"])
+    run_step("check release channels", [sys.executable, "scripts/check_release_channels.py", "--write-report", "--strict"])
     run_step("check product readiness", [sys.executable, "scripts/check_product_readiness.py"])
     run_step("doctor release", [sys.executable, "scripts/doctor.py", "--release"])
     print_summary(args.version)

@@ -100,6 +100,7 @@ def expected_release_artifacts(version: str = APP_VERSION) -> list[tuple[str, Pa
         ("Release Candidate 报告", dist_dir / f"RELEASE_CANDIDATE_v{version}.md"),
         ("桌面产物报告", dist_dir / f"DESKTOP_ARTIFACTS_v{version}.md"),
         ("外部发布输入报告", dist_dir / f"EXTERNAL_RELEASE_INPUTS_v{version}.md"),
+        ("发布渠道报告", dist_dir / f"RELEASE_CHANNELS_v{version}.md"),
         ("SHA256 校验文件", dist_dir / f"SHA256SUMS_v{version}.txt"),
         ("Release manifest", dist_dir / f"release-manifest-v{version}.json"),
     ]

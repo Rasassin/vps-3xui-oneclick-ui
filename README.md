@@ -157,6 +157,7 @@ Reality 入站端口不一定必须是 `443`。`443` 更像普通 HTTPS，通常
 - 发布包会生成签名准备度报告，列出 macOS/Windows 正式签名发行还缺哪些本地工具和证书输入
 - 发布包会生成签名产物验证报告；正式签名产物生成后可用它验证 macOS codesign/stapler 和 Windows Authenticode
 - 发布包会生成 Go-live 准备度报告，把 release 产物、update manifest、签名、签名产物和 VPS 兼容性汇总成最终上线检查表
+- 发布包会生成 Release Channels 报告，区分源码包、Portable 产品包、unsigned 桌面测试包和未来 signed 正式桌面包
 - Windows 桌面方向已有 Inno Setup 安装包脚手架，但正式公开安装包仍需 Windows 代码签名
 - 本地桌面化启动器 `desktop_launcher.py`，用于后续 App 打包探索
 - 当前状态总览、部署前快速确认和失败恢复提示，减少误操作

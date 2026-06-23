@@ -17,8 +17,11 @@ Expected local outcome before public release:
 
 - `RELEASE_CANDIDATE_vX.Y.Z.md` is generated.
 - `EXTERNAL_RELEASE_INPUTS_vX.Y.Z.md` is generated.
+- `RELEASE_CHANNELS_vX.Y.Z.md` is generated and reviewed.
 - Portable source and product packages are present under `dist/`.
 - Known external blockers are explicitly listed instead of hidden.
+- The portable zip is the recommended public MVP download; unsigned desktop
+  zips are tester artifacts until signing and notarization are complete.
 
 ## Unsigned Desktop Artifacts
 

@@ -46,6 +46,7 @@ def gate_release_artifacts(version: str) -> DashboardGate:
         report_path("RELEASE_CANDIDATE_v{version}.md", version),
         report_path("DESKTOP_ARTIFACTS_v{version}.md", version),
         report_path("EXTERNAL_RELEASE_INPUTS_v{version}.md", version),
+        report_path("RELEASE_CHANNELS_v{version}.md", version),
     ]
     missing = [path.name for path in required if not path.exists() or path.stat().st_size == 0]
     if not missing:

@@ -626,6 +626,7 @@ Implemented scope:
 - Add `scripts/prepare_product_release.py` as the one-command local product release preparation entry.
 - Build release bundles, optional unsigned desktop zips, product package checks, desktop artifact reports, external input reports, product readiness, and release doctor checks from one command.
 - Package existing macOS and Windows desktop artifacts with explicit unsigned filenames for manual release review.
+- Generate a release channels report that separates source, portable, unsigned desktop tester, unsigned installer tester, and future signed desktop downloads.
 - Refuse dirty worktrees by default, with `--allow-dirty` only for local test artifacts.
 - Keep the command local-only: no GitHub push, tag, upload, signing, notarization, or VPS connection.
 

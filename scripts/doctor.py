@@ -44,6 +44,7 @@ def quick_checks() -> list[Check]:
         Check("product readiness", [sys.executable, "scripts/check_product_readiness.py"]),
         Check("update manifest", [sys.executable, "scripts/check_update_manifest.py", "--strict"]),
         Check("external release inputs", [sys.executable, "scripts/check_external_release_inputs.py", "--write-report"]),
+        Check("release channels", [sys.executable, "scripts/check_release_channels.py", "--write-report", "--strict"]),
         Check("portable launchers", [sys.executable, "scripts/check_portable_launchers.py"]),
         Check("tracked-file secret hygiene", [sys.executable, "scripts/check_secret_hygiene.py"]),
         Check("Python syntax", [sys.executable, "-m", "py_compile", *python_files()]),
