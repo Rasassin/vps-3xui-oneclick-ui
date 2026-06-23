@@ -783,6 +783,22 @@ Still intentionally not included:
 - Changing VPS root password, root login, password login, or ping behavior.
 - Running remote reset in CI.
 
+## v1.40 VPS Compatibility Release Worksheet
+
+Implemented scope:
+
+- Add `scripts/build_vps_test_report.py`.
+- Generate `VPS_COMPATIBILITY_TEST_vX.Y.Z.md` with release artifacts.
+- Include the compatibility worksheet in SHA256SUMS, release manifest validation, and sidebar release downloads.
+- Document manual supported-system checks for Ubuntu 22.04, Ubuntu 24.04, and Debian 12 without storing VPS passwords or node credentials.
+
+Still intentionally not included:
+
+- Real VPS deployment in CI.
+- Storing provider credentials.
+- Uploading compatibility results automatically.
+- Treating untested VPS providers as certified.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

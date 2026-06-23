@@ -85,6 +85,7 @@ def expected_release_artifacts(version: str = APP_VERSION) -> list[tuple[str, Pa
         ("Portable 产品包", dist_dir / f"vps-3xui-oneclick-ui-portable-v{version}.zip"),
         ("GitHub Release 文案", dist_dir / f"GITHUB_RELEASE_v{version}.md"),
         ("产品就绪报告", dist_dir / f"PRODUCT_READINESS_v{version}.md"),
+        ("VPS 兼容性测试表", dist_dir / f"VPS_COMPATIBILITY_TEST_v{version}.md"),
         ("SHA256 校验文件", dist_dir / f"SHA256SUMS_v{version}.txt"),
         ("Release manifest", dist_dir / f"release-manifest-v{version}.json"),
     ]

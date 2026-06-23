@@ -35,6 +35,7 @@ REQUIRED_RELEASE_FILES = {
     "scripts/bump_version.py",
     "scripts/build_release_bundle.py",
     "scripts/build_product_package.py",
+    "scripts/build_vps_test_report.py",
     "scripts/check_product_package.py",
     "scripts/check_portable_launchers.py",
     "scripts/check_portable_user_package.py",

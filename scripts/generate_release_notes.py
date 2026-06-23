@@ -72,6 +72,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Sidebar GitHub Release update checker that is explicit, read-only, and does not connect to a VPS.
 - Guarded local release tag preparation helper for GitHub Release publishing.
 - Guarded remote reset with typed confirmation, remote backup, local output clearing, and optional 3x-ui stop-and-archive.
+- Manual VPS compatibility test worksheet generated with release artifacts.
 
 ## Download
 
@@ -90,6 +91,7 @@ dist/GITHUB_RELEASE_v{version}.md
 dist/SHA256SUMS_v{version}.txt
 dist/release-manifest-v{version}.json
 dist/PRODUCT_READINESS_v{version}.md
+dist/VPS_COMPATIBILITY_TEST_v{version}.md
 ```
 
 The portable zip includes both `START_HERE.md` and `START_HERE.zh-CN.md`.

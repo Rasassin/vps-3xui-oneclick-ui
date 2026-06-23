@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.40.0
+
+- Added a generated VPS compatibility test worksheet for manual release validation.
+- Included the compatibility worksheet in release checksums, manifests, and sidebar release downloads.
+- Documented supported-system manual testing without storing VPS passwords or node credentials.
+
 ## v1.39.0
 
 - Added a guarded remote reset flow with an explicit confirmation phrase.
