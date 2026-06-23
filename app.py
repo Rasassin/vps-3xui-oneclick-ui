@@ -20,6 +20,7 @@ from deployer.deploy_service import (
     reset_remote_oneclick,
 )
 from deployer.export_service import build_export_zip
+from deployer.go_live_dashboard import collect_dashboard_gates, dashboard_overall_status, write_dashboard_report
 from deployer.profile_service import delete_profile, load_profiles, upsert_profile
 from deployer.product_maturity import collect_maturity_gates, maturity_score, product_tier, write_report as write_maturity_report
 from deployer.publish_status import collect_publish_checks, publish_overall_status, write_publish_report
@@ -60,6 +61,7 @@ def init_state() -> None:
     st.session_state.setdefault("publish_checks", [])
     st.session_state.setdefault("ci_checks", [])
     st.session_state.setdefault("maturity_gates", collect_maturity_gates())
+    st.session_state.setdefault("dashboard_gates", [])
     st.session_state.setdefault("profile_name_input", "")
     st.session_state.setdefault("selected_profile_name", "")
 
@@ -244,6 +246,26 @@ def render_sidebar() -> None:
                         key=f"release_artifact_{artifact.path.name}",
                         use_container_width=True,
                     )
+        with st.expander("Go-live 总览"):
+            st.caption("汇总发布包、产品成熟度、GitHub 发布状态、CI、签名和 VPS 兼容矩阵。")
+            if st.button("刷新 Go-live 总览", use_container_width=True):
+                gates = collect_dashboard_gates()
+                write_dashboard_report(gates)
+                st.session_state.dashboard_gates = gates
+            dashboard_gates = st.session_state.get("dashboard_gates", [])
+            if dashboard_gates:
+                overall = dashboard_overall_status(dashboard_gates)
+                if overall == "pass":
+                    st.success("Go-live 状态通过。")
+                elif overall == "fail":
+                    st.error("Go-live 有必须修复项。")
+                else:
+                    st.warning("Go-live 仍有待处理项。")
+                for gate in dashboard_gates:
+                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(gate.status, gate.status)
+                    st.caption(f"{label} · {gate.name} · {gate.detail}")
+            else:
+                st.info("点击刷新后显示最终上线门槛。")
         with st.expander("GitHub 发布准备度"):
             st.caption("只读检查：不会 push、不会创建 tag、不会上传 Release、不会连接 VPS。")
             if st.button("刷新发布准备度", use_container_width=True):

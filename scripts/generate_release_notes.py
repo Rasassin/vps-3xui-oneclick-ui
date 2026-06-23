@@ -84,6 +84,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - CI readiness report and sidebar panel for public GitHub Actions status.
 - Generated desktop icon assets wired into macOS and Windows PyInstaller builds.
 - Product maturity score and report for tracking productization progress.
+- Consolidated go-live dashboard for release artifacts, maturity, publish state, CI, signing, and VPS matrix.
 
 ## Download
 
@@ -111,6 +112,7 @@ dist/GO_LIVE_READINESS_v{version}.md
 dist/RELEASE_COMMANDS_v{version}.md
 dist/PUBLISH_READINESS_v{version}.md
 dist/CI_READINESS_v{version}.md
+dist/GO_LIVE_DASHBOARD_v{version}.md
 ```
 
 The portable zip includes both `START_HERE.md` and `START_HERE.zh-CN.md`.
@@ -160,6 +162,7 @@ python3 desktop_launcher.py
 - Publish readiness reports contain Git/GitHub status only and never push, tag, upload, or connect to a VPS.
 - CI readiness reports read public GitHub Actions metadata only; they do not upload diagnostics or connect to a VPS.
 - Product maturity reports summarize local productization progress only and do not include deployment outputs or credentials.
+- Go-live dashboards summarize release gates and do not deploy to a VPS, push, tag, upload assets, or store credentials.
 - Windows installer outputs are experimental and must be labeled unsigned until code signing is implemented.
 - Server hardening remains opt-in.
 - Remote reset remains opt-in and requires the exact confirmation phrase `RESET_3XUI_ONECLICK`.

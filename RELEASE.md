@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.53 adds product maturity tracking
+v1.54 adds a go-live dashboard
 
 ## Build Locally
 
@@ -28,6 +28,7 @@ The release artifacts are written to `dist/`:
 - `RELEASE_COMMANDS_vX.Y.Z.md`
 - `PUBLISH_READINESS_vX.Y.Z.md`
 - `CI_READINESS_vX.Y.Z.md`
+- `GO_LIVE_DASHBOARD_vX.Y.Z.md`
 
 The release manifest includes the source Git commit, branch, and dirty-worktree state used when the bundle was generated. It also records artifact sizes and checksums for the source zip, portable product zip, GitHub Release notes, product readiness report, and SHA256SUMS file.
 
@@ -79,6 +80,7 @@ test -s "dist/GO_LIVE_READINESS_v${VERSION}.md"
 test -s "dist/RELEASE_COMMANDS_v${VERSION}.md"
 test -s "dist/PUBLISH_READINESS_v${VERSION}.md"
 test -s "dist/CI_READINESS_v${VERSION}.md"
+test -s "dist/GO_LIVE_DASHBOARD_v${VERSION}.md"
 ```
 
 Then unzip the generated file in a temporary directory and start the app with:
@@ -145,6 +147,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Generate `dist/RELEASE_COMMANDS_vX.Y.Z.md`.
 - Generate `dist/PUBLISH_READINESS_vX.Y.Z.md`.
 - Generate `dist/CI_READINESS_vX.Y.Z.md`.
+- Generate `dist/GO_LIVE_DASHBOARD_vX.Y.Z.md`.
 - Review [docs/release/desktop-smoke-test.md](docs/release/desktop-smoke-test.md).
 - Confirm the latest GitHub Actions product CI run is green.
 - Confirm the desktop build workflow is green before attaching unsigned desktop artifacts.

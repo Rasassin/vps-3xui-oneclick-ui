@@ -1002,6 +1002,21 @@ Still intentionally not included:
 - Treating the score as a substitute for real signed release testing.
 - Hiding the remaining gaps around signing, notarization, real VPS matrix testing, native UI, and automatic updates.
 
+## v1.54 Go-Live Dashboard
+
+Implemented scope:
+
+- Add a consolidated go-live dashboard service and CLI check.
+- Generate `GO_LIVE_DASHBOARD_vX.Y.Z.md` with release artifacts.
+- Show final release gates in the Streamlit sidebar.
+- Summarize release artifacts, product maturity, GitHub publish readiness, CI, signing readiness, signed artifacts, and VPS compatibility in one place.
+
+Still intentionally not included:
+
+- Automatically pushing commits or tags.
+- Automatically uploading GitHub Release assets.
+- Replacing actual signed binary validation or real VPS matrix testing.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

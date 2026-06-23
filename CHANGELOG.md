@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.54.0
+
+- Added a consolidated go-live dashboard for release artifacts, product maturity, publish readiness, CI, signing, signed artifacts, and VPS compatibility.
+- Displayed final go-live gates in the Streamlit sidebar and generated GO_LIVE_DASHBOARD release reports.
+- Included the go-live dashboard in release bundles, checksums, manifests, downloads, release preparation, and product checks.
+
 ## v1.53.0
 
 - Added a weighted product maturity model with a productization percentage.
