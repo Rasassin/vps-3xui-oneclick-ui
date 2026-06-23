@@ -72,7 +72,6 @@ def main() -> None:
 
     build_release_bundle(APP_VERSION)
     run([sys.executable, "scripts/check_release_artifacts.py"])
-    run([sys.executable, "scripts/build_product_package.py"])
     run([sys.executable, "scripts/check_product_package.py"])
     print(f"release readiness ok: v{APP_VERSION}")
 

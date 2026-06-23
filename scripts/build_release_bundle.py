@@ -15,6 +15,7 @@ if str(SCRIPT_ROOT) not in sys.path:
 
 from deployer.config import APP_VERSION, PROJECT_ROOT
 from scripts.build_release import build_release_zip
+from scripts.build_product_package import build_product_package
 from scripts.generate_release_notes import write_release_notes
 
 
@@ -92,9 +93,10 @@ def write_manifest(files: list[Path], checksums_path: Path, version: str) -> Pat
 def build_release_bundle(version: str = APP_VERSION) -> list[Path]:
     zip_path = build_release_zip(version)
     notes_path = write_release_notes(version)
-    checksums_path = write_sha256sums([zip_path, notes_path], version)
-    manifest_path = write_manifest([zip_path, notes_path], checksums_path, version)
-    return [zip_path, notes_path, checksums_path, manifest_path]
+    portable_zip_path, product_report_path = build_product_package(version)
+    checksums_path = write_sha256sums([zip_path, notes_path, portable_zip_path, product_report_path], version)
+    manifest_path = write_manifest([zip_path, notes_path, portable_zip_path, product_report_path], checksums_path, version)
+    return [zip_path, notes_path, portable_zip_path, product_report_path, checksums_path, manifest_path]
 
 
 def main() -> None:

@@ -69,6 +69,9 @@ def check_product_package(zip_path: Path, version: str) -> None:
     data_entries = {name for name in names if name.startswith("data/")}
     if data_entries != {"data/.gitkeep"}:
         fail("portable package must include only data/.gitkeep under data/.")
+    dist_entries = {name for name in names if name.startswith("dist/")}
+    if dist_entries:
+        fail("portable package must not include dist/ artifacts.")
 
     for marker in ("start_windows.bat", "start_mac_linux.sh", "VPS root password"):
         if marker not in start_here:

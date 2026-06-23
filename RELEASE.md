@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.26 also prepares portable product packages.
+v1.27 also exposes product package artifacts in the UI.
 
 ## Build Locally
 
@@ -20,7 +20,7 @@ The release artifacts are written to `dist/`:
 - `release-manifest-vX.Y.Z.json`
 - `PRODUCT_READINESS_vX.Y.Z.md`
 
-The release manifest includes the source Git commit, branch, and dirty-worktree state used when the bundle was generated.
+The release manifest includes the source Git commit, branch, and dirty-worktree state used when the bundle was generated. It also records artifact sizes and checksums for the source zip, portable product zip, GitHub Release notes, product readiness report, and SHA256SUMS file.
 
 The zip intentionally excludes:
 

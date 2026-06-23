@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.27.0
+
+- Displayed portable product zip and product readiness report in the Streamlit release panel.
+- Included product readiness report in release manifest checksums.
+- Documented UI access to product package artifacts.
+
 ## v1.26.0
 
 - Added a product package builder for portable user-facing zip artifacts.

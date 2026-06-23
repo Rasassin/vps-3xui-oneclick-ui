@@ -571,6 +571,22 @@ Still intentionally not included:
 - Bundled Python runtime.
 - Native Tauri UI.
 
+## v1.27 Product Artifacts In Release UI
+
+Implemented scope:
+
+- Show the Portable product zip in the Streamlit release package panel.
+- Show the product readiness report in the Streamlit release package panel.
+- Include product package artifacts in SHA256SUMS and release manifest validation.
+- Avoid rebuilding product artifacts twice during release readiness.
+
+Still intentionally not included:
+
+- Signed native installers.
+- Automatic updates.
+- Bundled Python runtime.
+- Native Tauri UI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

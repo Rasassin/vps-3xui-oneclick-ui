@@ -60,8 +60,8 @@ def verify_zip_contents(zip_path: Path) -> None:
 
 def verify_checksums(sums_path: Path) -> None:
     lines = [line for line in sums_path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    if len(lines) != 2:
-        raise SystemExit("release artifact check failed: SHA256SUMS should list exactly zip and release notes.")
+    if len(lines) != 4:
+        raise SystemExit("release artifact check failed: SHA256SUMS should list exactly source zip, release notes, portable zip, and product report.")
     for line in lines:
         try:
             expected, file_name = line.split("  ", 1)
@@ -184,14 +184,21 @@ def main() -> None:
     args = parser.parse_args()
 
     zip_path = args.dist_dir / f"vps-3xui-oneclick-ui-v{args.version}.zip"
+    portable_zip_path = args.dist_dir / f"vps-3xui-oneclick-ui-portable-v{args.version}.zip"
     notes_path = args.dist_dir / f"GITHUB_RELEASE_v{args.version}.md"
+    product_report_path = args.dist_dir / f"PRODUCT_READINESS_v{args.version}.md"
     sums_path = args.dist_dir / f"SHA256SUMS_v{args.version}.txt"
     manifest_path = args.dist_dir / f"release-manifest-v{args.version}.json"
-    require_nonempty([zip_path, notes_path, sums_path, manifest_path])
+    require_nonempty([zip_path, portable_zip_path, notes_path, product_report_path, sums_path, manifest_path])
     check_release_zip(zip_path)
     verify_zip_contents(zip_path)
     verify_checksums(sums_path)
-    verify_manifest(manifest_path, args.version, args.allow_stale_source, [zip_path, notes_path, sums_path])
+    verify_manifest(
+        manifest_path,
+        args.version,
+        args.allow_stale_source,
+        [zip_path, notes_path, portable_zip_path, product_report_path, sums_path],
+    )
     print(f"release artifact check ok: v{args.version}")
 
 

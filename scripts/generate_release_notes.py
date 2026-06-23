@@ -58,6 +58,8 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Release manifest project, timestamp, and safety metadata validation.
 - Product readiness checker for open-source MVP gates and remaining desktop product gaps.
 - Portable product package with START_HERE guidance and product readiness report.
+- Streamlit release panel downloads for portable product package and product readiness report.
+- Release manifest and SHA256 coverage for product package artifacts.
 
 ## Download
 
