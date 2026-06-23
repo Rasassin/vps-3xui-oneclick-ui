@@ -619,6 +619,22 @@ Still intentionally not included:
 - Automatic updates.
 - Native Tauri UI.
 
+## v1.30 Product Release Preparation
+
+Implemented scope:
+
+- Add `scripts/prepare_product_release.py` as the one-command local product release preparation entry.
+- Build release bundles, optional unsigned desktop zips, product package checks, desktop artifact reports, external input reports, product readiness, and release doctor checks from one command.
+- Refuse dirty worktrees by default, with `--allow-dirty` only for local test artifacts.
+- Keep the command local-only: no GitHub push, tag, upload, signing, notarization, or VPS connection.
+
+Still intentionally not included:
+
+- Automatic GitHub publishing.
+- Code signing or notarization.
+- Real VPS deployment testing.
+- Native Tauri UI.
+
 ## v1.30 macOS Double-Click Launcher
 
 Implemented scope:

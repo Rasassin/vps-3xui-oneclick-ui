@@ -15,6 +15,7 @@ All notable product changes are tracked here. This project keeps product history
 - Add an external release inputs report and sidebar panel for remaining non-code productization prerequisites.
 - Build and validate a local unsigned macOS desktop artifact, and add desktop artifact reports to release evidence.
 - Add unsigned desktop artifact packaging and zip validation for manual Release uploads.
+- Add a one-command local product release preparation script that builds, packages, checks, and reports without publishing or connecting to a VPS.
 
 ## v1.54.0
 

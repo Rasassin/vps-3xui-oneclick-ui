@@ -85,6 +85,7 @@ RELEASE_ITEMS = [
     RequiredItem("scripts/check_ci_readiness.py", ("CI Readiness", "GitHub Actions")),
     RequiredItem("scripts/check_desktop_artifacts.py", ("desktop artifacts", "--write-report")),
     RequiredItem("scripts/package_desktop_artifacts.py", ("Package local unsigned desktop artifacts", "unsigned")),
+    RequiredItem("scripts/prepare_product_release.py", ("without publishing, signing, or connecting to a VPS",)),
     RequiredItem("scripts/check_external_release_inputs.py", ("external productization inputs", "--write-report")),
     RequiredItem("scripts/check_github_connectivity.py", ("GitHub", "--apply-repair", "--skip-dry-run")),
     RequiredItem("scripts/check_go_live_dashboard.py", ("go-live dashboard", "--strict")),

@@ -63,6 +63,14 @@ python3 desktop_launcher.py
 
 实验性的 macOS 打包说明在 [desktop/README.md](desktop/README.md)。普通用户仍建议优先使用 `start_windows.bat`、`start_macos.command` 或 `start_mac_linux.sh`。
 
+维护者准备本地发布包时可以运行：
+
+```bash
+python3 scripts/prepare_product_release.py
+```
+
+这个命令会生成源码包、Portable 产品包、本地发布报告，并在本机已有 `.app` 时生成 clearly marked unsigned 的桌面 zip。它不会 push、tag、上传 GitHub Release、签名、公证或连接 VPS。测试未提交改动时可加 `--allow-dirty`。
+
 桌面打包相关文件：
 
 - `desktop/build_macos_app.sh`：实验性 macOS `.app` 构建脚本
