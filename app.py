@@ -7,6 +7,7 @@ from pathlib import Path
 import streamlit as st
 import streamlit.components.v1 as components
 
+from deployer.ci_status import ci_overall_status, collect_ci_checks, write_ci_report
 from deployer.config import APP_VERSION, NodeConfig, OUTPUT_DIR, VPSLogin
 from deployer.diagnostics_service import build_public_diagnostics_zip, collect_local_diagnostics
 from deployer.deploy_service import (
@@ -56,6 +57,7 @@ def init_state() -> None:
     st.session_state.setdefault("diagnostics_zip_path", "")
     st.session_state.setdefault("update_status", {})
     st.session_state.setdefault("publish_checks", [])
+    st.session_state.setdefault("ci_checks", [])
     st.session_state.setdefault("profile_name_input", "")
     st.session_state.setdefault("selected_profile_name", "")
 
@@ -250,6 +252,28 @@ def render_sidebar() -> None:
                     st.caption(f"{label} · {check.name} · {check.detail}")
             else:
                 st.info("点击刷新后显示 GitHub remote、分支同步、tag、网络和 CLI 登录状态。")
+        with st.expander("GitHub CI 状态"):
+            st.caption("只读检查：只读取公开 GitHub Actions 元数据，不连接 VPS、不上传诊断。")
+            if st.button("刷新 CI 状态", use_container_width=True):
+                checks = collect_ci_checks()
+                write_ci_report(checks)
+                st.session_state.ci_checks = checks
+            ci_checks = st.session_state.get("ci_checks", [])
+            if ci_checks:
+                overall = ci_overall_status(ci_checks)
+                if overall == "pass":
+                    st.success("GitHub CI 状态通过。")
+                elif overall == "fail":
+                    st.error("GitHub CI 有失败项。")
+                else:
+                    st.warning("GitHub CI 仍有待处理项。")
+                for check in ci_checks:
+                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(check.status, check.status)
+                    st.caption(f"{label} · {check.name} · {check.detail}")
+                    if check.url:
+                        st.link_button(f"打开{check.name}", check.url, use_container_width=True)
+            else:
+                st.info("点击刷新后显示 Static checks、Desktop build 和 Release workflow 最近状态。")
         st.divider()
         render_profiles_sidebar()
         st.divider()

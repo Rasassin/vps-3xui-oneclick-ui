@@ -81,6 +81,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Release command checklist for the final Git push, tag, and optional GitHub CLI upload steps.
 - Publish readiness report for GitHub remote, branch sync, tag, reachability, and CLI authentication status.
 - Sidebar publish readiness panel for read-only GitHub release blockers.
+- CI readiness report and sidebar panel for public GitHub Actions status.
 
 ## Download
 
@@ -106,6 +107,7 @@ dist/SIGNED_ARTIFACT_VALIDATION_v{version}.md
 dist/GO_LIVE_READINESS_v{version}.md
 dist/RELEASE_COMMANDS_v{version}.md
 dist/PUBLISH_READINESS_v{version}.md
+dist/CI_READINESS_v{version}.md
 ```
 
 The portable zip includes both `START_HERE.md` and `START_HERE.zh-CN.md`.
@@ -153,6 +155,7 @@ python3 desktop_launcher.py
 - Go-live readiness reports summarize status only and do not include secrets or deployment outputs.
 - Release command checklists contain publish commands and artifact names only; they do not include secrets or deployment outputs.
 - Publish readiness reports contain Git/GitHub status only and never push, tag, upload, or connect to a VPS.
+- CI readiness reports read public GitHub Actions metadata only; they do not upload diagnostics or connect to a VPS.
 - Windows installer outputs are experimental and must be labeled unsigned until code signing is implemented.
 - Server hardening remains opt-in.
 - Remote reset remains opt-in and requires the exact confirmation phrase `RESET_3XUI_ONECLICK`.

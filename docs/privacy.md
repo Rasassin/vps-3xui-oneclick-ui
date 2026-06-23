@@ -94,6 +94,10 @@ reachability results, tag state, and GitHub CLI authentication status. They do
 not push commits, create tags, upload release assets, connect to a VPS, or store
 GitHub credentials.
 
+CI readiness reports read public GitHub Actions metadata for this repository.
+They do not connect to a VPS, upload diagnostics, push commits, create tags,
+upload release assets, or store GitHub credentials.
+
 ## What Release Checks Guard
 
 Release and secret hygiene checks are local-only. They do not connect to a VPS.

@@ -13,6 +13,7 @@ SCRIPT_ROOT = Path(__file__).resolve().parents[1]
 if str(SCRIPT_ROOT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_ROOT))
 
+from deployer.ci_status import write_ci_report
 from deployer.config import APP_VERSION, PROJECT_ROOT
 from scripts.build_release import build_release_zip
 from scripts.build_product_package import build_product_package
@@ -108,6 +109,7 @@ def build_release_bundle(version: str = APP_VERSION) -> list[Path]:
     update_manifest_path = write_update_manifest(version, core_artifact_paths)
     release_commands_path = write_release_commands(version)
     publish_report_path = write_publish_report(version=version)
+    ci_report_path = write_ci_report(version=version)
     go_live_report_path = write_go_live_report(collect_go_live_gates(version), version)
     artifact_paths = [
         *core_artifact_paths,
@@ -116,6 +118,7 @@ def build_release_bundle(version: str = APP_VERSION) -> list[Path]:
         signed_artifact_report_path,
         release_commands_path,
         publish_report_path,
+        ci_report_path,
         go_live_report_path,
     ]
     checksums_path = write_sha256sums(artifact_paths, version)

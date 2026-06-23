@@ -957,6 +957,22 @@ Still intentionally not included:
 - Automatic tag creation from the app.
 - Automatic GitHub Release upload from the app.
 
+## v1.51 CI Readiness In The Local UI
+
+Implemented scope:
+
+- Add reusable GitHub Actions status checks for public CI metadata.
+- Generate `CI_READINESS_vX.Y.Z.md` with release artifacts.
+- Show Static checks, Desktop build, and Release workflow status from the Streamlit sidebar.
+- Keep checks read-only: no VPS connection, no diagnostic upload, no push, no tag creation, no release upload, and no GitHub credential storage.
+
+Still intentionally not included:
+
+- Private GitHub token support.
+- Automatically rerunning failed workflows.
+- Blocking local deployment based on CI status.
+- Automatic GitHub Release publishing.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

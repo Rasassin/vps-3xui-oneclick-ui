@@ -21,6 +21,7 @@ class RequiredItem:
 
 FOUNDATION_ITEMS = [
     RequiredItem("app.py", ("VPS 3x-ui 一键部署器",)),
+    RequiredItem("deployer/ci_status.py", ("CI Readiness", "GitHub Actions")),
     RequiredItem("deployer/deploy_service.py", ("SSHRunner", "download_remote_results")),
     RequiredItem("deployer/ssh_runner.py", ("paramiko", "redact")),
     RequiredItem("deployer/qr_service.py"),
@@ -67,6 +68,7 @@ RELEASE_ITEMS = [
     RequiredItem("scripts/build_release_commands.py", ("Release Commands", "git push origin main")),
     RequiredItem("scripts/build_update_manifest.py", ("automatic_install", "requires_user_download")),
     RequiredItem("scripts/build_vps_test_report.py", ("VPS Compatibility Test Report",)),
+    RequiredItem("scripts/check_ci_readiness.py", ("CI Readiness", "GitHub Actions")),
     RequiredItem("scripts/check_publish_readiness.py", ("Publish Readiness", "never pushes commits")),
     RequiredItem("scripts/check_release_ready.py", ("without connecting to a VPS",)),
     RequiredItem("scripts/check_go_live_readiness.py", ("GO_LIVE_READINESS", "--strict")),

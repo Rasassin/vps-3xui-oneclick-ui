@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.51.0
+
+- Added reusable GitHub Actions CI readiness checks for public workflow metadata.
+- Generated CI readiness reports with release bundles and included them in checksums, manifests, sidebar downloads, and release preparation.
+- Added a sidebar CI status panel that refreshes Static checks, Desktop build, and Release workflow state without connecting to a VPS or storing credentials.
+
 ## v1.50.0
 
 - Moved GitHub publish readiness checks into reusable app service code.
