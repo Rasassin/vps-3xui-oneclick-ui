@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.47.0
+
+- Added local Git sync status to go-live readiness reports.
+- Added local release tag status to go-live readiness reports.
+- Kept Git and tag gates local-only while surfacing ahead/behind and missing-tag states as pending blockers.
+
 ## v1.46.0
 
 - Added a go-live readiness checker that summarizes final release gates.

@@ -77,7 +77,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Signing readiness report for macOS notarization and Windows signing preparation.
 - Experimental Inno Setup Windows installer scaffold for future signed installer releases.
 - Signed artifact validation report for future macOS and Windows signed release outputs.
-- Go-live readiness report summarizing final release blockers.
+- Go-live readiness report summarizing Git sync, release tag, signing, signed artifacts, and VPS compatibility blockers.
 
 ## Download
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -26,6 +27,18 @@ def dist_path(name: str, version: str = APP_VERSION) -> Path:
     return PROJECT_ROOT / "dist" / name.format(version=version)
 
 
+def git_output(*args: str) -> str:
+    result = subprocess.run(
+        ["git", *args],
+        cwd=PROJECT_ROOT,
+        text=True,
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        return ""
+    return result.stdout.strip()
+
+
 def required_artifacts(version: str = APP_VERSION) -> list[Path]:
     return [
         dist_path("vps-3xui-oneclick-ui-v{version}.zip", version),
@@ -46,6 +59,27 @@ def gate_release_artifacts(version: str) -> Gate:
     if missing:
         return Gate("Release artifacts", "fail", "Missing: " + ", ".join(missing))
     return Gate("Release artifacts", "pass", "All expected release artifacts exist.")
+
+
+def gate_git_sync() -> Gate:
+    status = git_output("status", "--short", "--branch")
+    first_line = status.splitlines()[0] if status else ""
+    if "ahead" in first_line or "behind" in first_line:
+        return Gate("Git sync", "pending", first_line or "branch is not synchronized with origin.")
+    if not first_line:
+        return Gate("Git sync", "pending", "unable to read git branch status.")
+    return Gate("Git sync", "pass", first_line)
+
+
+def gate_release_tag(version: str) -> Gate:
+    tag_name = f"v{version}"
+    tag_ref = git_output("rev-parse", "-q", "--verify", f"refs/tags/{tag_name}")
+    if not tag_ref:
+        return Gate("Release tag", "pending", f"local tag {tag_name} has not been created.")
+    head = git_output("rev-parse", "HEAD")
+    if head and tag_ref != head:
+        return Gate("Release tag", "pending", f"tag {tag_name} points to {tag_ref[:7]}, not HEAD {head[:7]}.")
+    return Gate("Release tag", "pass", f"local tag {tag_name} points to HEAD.")
 
 
 def gate_update_manifest(version: str) -> Gate:
@@ -111,6 +145,8 @@ def gate_vps_compatibility(version: str) -> Gate:
 def collect_gates(version: str = APP_VERSION) -> list[Gate]:
     return [
         gate_release_artifacts(version),
+        gate_git_sync(),
+        gate_release_tag(version),
         gate_update_manifest(version),
         gate_signing_readiness(version),
         gate_signed_artifacts(version),

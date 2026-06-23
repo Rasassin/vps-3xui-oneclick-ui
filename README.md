@@ -237,7 +237,7 @@ python3 scripts/prepare_release_tag.py --skip-checks
 
 发布包还会生成 `SIGNED_ARTIFACT_VALIDATION_vX.Y.Z.md`。默认情况下它记录签名产物尚未提供；当维护者提供签名后的 macOS `.app` 或 Windows installer 路径时，可以用 `scripts/check_signed_artifacts.py` 验证签名状态。
 
-发布包还会生成 `GO_LIVE_READINESS_vX.Y.Z.md`，用于总结正式上线前的剩余阻塞项。日常构建允许它显示 `pending`；正式发布前可以运行 `python3 scripts/check_go_live_readiness.py --strict --write-report`。
+发布包还会生成 `GO_LIVE_READINESS_vX.Y.Z.md`，用于总结正式上线前的剩余阻塞项，包括 Git 同步、Release tag、签名、签名产物和 VPS 兼容性。日常构建允许它显示 `pending`；正式发布前可以运行 `python3 scripts/check_go_live_readiness.py --strict --write-report`。
 
 `build_product_package.py` 会生成面向普通用户的 portable zip 和 `PRODUCT_READINESS` 报告。portable zip 内置 `START_HERE.md` 和 `START_HERE.zh-CN.md`，会告诉用户 Windows/macOS/Linux 应该先运行哪个启动文件。这个包仍然不会包含本地真实 `output/` 结果或 `data/profiles.json`。
 

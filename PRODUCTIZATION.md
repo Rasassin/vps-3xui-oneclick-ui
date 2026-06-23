@@ -896,6 +896,22 @@ Still intentionally not included:
 - Uploading release assets automatically.
 - Storing any release signing secrets.
 
+## v1.47 Git And Tag Go-Live Gates
+
+Implemented scope:
+
+- Add Git branch sync status to the go-live readiness report.
+- Add local release tag status to the go-live readiness report.
+- Keep both checks local-only without contacting GitHub.
+- Surface ahead/behind and missing-tag states as pending release blockers.
+
+Still intentionally not included:
+
+- Pushing commits to GitHub.
+- Creating tags automatically.
+- Checking GitHub Actions status from the go-live report.
+- Publishing GitHub Releases.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.
