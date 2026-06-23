@@ -66,6 +66,7 @@ def main() -> None:
     run([sys.executable, "-m", "py_compile", "app.py", *[str(path) for path in sorted((PROJECT_ROOT / "deployer").glob("*.py"))], *[str(path) for path in sorted((PROJECT_ROOT / "scripts").glob("*.py"))], "desktop_launcher.py", "desktop/check_desktop_package.py"])
     run(["bash", "-n", "remote_scripts/preflight_remote.sh"])
     run(["bash", "-n", "remote_scripts/install_remote.sh"])
+    run(["bash", "-n", "remote_scripts/reset_remote.sh"])
     run(["bash", "-n", "remote_scripts/harden_after_success.sh"])
     run(["bash", "-n", "start_macos.command"])
     run(["bash", "-n", "desktop/build_macos_app.sh"])

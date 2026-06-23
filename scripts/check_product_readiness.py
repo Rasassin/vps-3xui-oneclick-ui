@@ -27,6 +27,7 @@ FOUNDATION_ITEMS = [
     RequiredItem("deployer/update_service.py", ("LATEST_RELEASE_API", "check_latest_release")),
     RequiredItem("remote_scripts/install_remote.sh", ("set -Eeuo pipefail", "ONECLICK_REALITY_PORT")),
     RequiredItem("remote_scripts/preflight_remote.sh", ("set -Eeuo pipefail",)),
+    RequiredItem("remote_scripts/reset_remote.sh", ("set -Eeuo pipefail", "RESET_3XUI_ONECLICK", "reset-before")),
     RequiredItem("remote_scripts/harden_after_success.sh", ("set -Eeuo pipefail",)),
     RequiredItem("start_windows.bat", ("streamlit run app.py", "check_product_readiness.py")),
     RequiredItem("start_mac_linux.sh", ("streamlit run app.py", "check_product_readiness.py")),
@@ -78,7 +79,7 @@ PRODUCT_GAPS = [
     "Automatic update channel is not implemented.",
     "OS keychain integration is not implemented because password persistence remains intentionally out of scope.",
     "Real VPS compatibility matrix testing is manual and not part of CI.",
-    "Guarded remote uninstall/reset flow remains intentionally unimplemented.",
+    "Full official 3x-ui uninstall is not implemented; guarded reset currently archives and disables local 3x-ui paths.",
 ]
 
 

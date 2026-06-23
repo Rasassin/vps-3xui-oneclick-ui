@@ -131,6 +131,7 @@ Reality 入站端口不一定必须是 `443`。`443` 更像普通 HTTPS，通常
 - 如果订阅失败，会显示：`订阅链接生成失败，但单节点 VLESS 二维码已经生成，可直接扫码使用。`
 - 3x-ui 面板地址、账号、密码，以及“打开 3x-ui 面板”按钮
 - 已有成功部署时的管理模式、导出配置包按钮和重复部署保护
+- 受保护的远程重置/卸载入口：必须输入确认短语，默认只备份并清理 oneclick 结果和临时脚本
 - 可选的部署前检测结果、远程状态刷新、远程结果重新下载、远程结果备份和本地二维码重建
 - 侧边栏本地自检和公开诊断包，方便开源 issue 排查
 - 侧边栏“检查更新”，只读取 GitHub Release 信息，不连接 VPS、不上传诊断、不自动执行更新
@@ -161,6 +162,8 @@ Reality 入站端口不一定必须是 `443`。`443` 更像普通 HTTPS，通常
 - 第一版不会默认关闭密码登录。
 - 第一版不会默认禁 ping。
 - `remote_scripts/harden_after_success.sh` 默认不会执行，只有你在页面里主动勾选“执行服务器加固”才会运行。
+- 远程重置/卸载默认不会执行。只有你在页面里填写确认短语 `RESET_3XUI_ONECLICK` 并点击“远程重置/卸载”时才会运行。
+- 远程重置默认不会卸载 3x-ui；只有你额外勾选“同时停用并归档 3x-ui”时，才会停止 x-ui 服务并把相关目录归档后改名停用。
 - 本地配置档保存在 `data/`，只记录 VPS IP、SSH 端口、SSH 用户和节点参数，不保存 VPS 密码；`data/` 已被 Git 忽略。
 
 部署完成后，请尽快修改 VPS root 密码，或切换为 SSH key 登录。
@@ -176,6 +179,7 @@ python -m py_compile app.py deployer/*.py scripts/*.py
 python -m py_compile desktop_launcher.py desktop/check_desktop_package.py
 bash -n remote_scripts/preflight_remote.sh
 bash -n remote_scripts/install_remote.sh
+bash -n remote_scripts/reset_remote.sh
 bash -n remote_scripts/harden_after_success.sh
 bash -n desktop/build_macos_app.sh
 python scripts/check_streamlit_app.py

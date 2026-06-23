@@ -766,6 +766,23 @@ Still intentionally not included:
 - Running real VPS deployment in CI.
 - Native Tauri UI.
 
+## v1.39 Guarded Remote Reset
+
+Implemented scope:
+
+- Add `remote_scripts/reset_remote.sh`.
+- Add a UI reset action that requires the exact confirmation phrase `RESET_3XUI_ONECLICK`.
+- Back up `/root/3xui-oneclick-result` before clearing remote oneclick results and temporary scripts.
+- Clear stale local QR/link output after a successful remote reset.
+- Add an opt-in 3x-ui stop-and-archive path that backs up and renames 3x-ui paths instead of silently deleting them.
+
+Still intentionally not included:
+
+- Default reset execution.
+- Reset without a typed confirmation phrase.
+- Changing VPS root password, root login, password login, or ping behavior.
+- Running remote reset in CI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

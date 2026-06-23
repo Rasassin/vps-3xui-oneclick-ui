@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
-APP_VERSION = "1.38.0"
+APP_VERSION = "1.39.0"
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = PROJECT_ROOT / "output"
 DATA_DIR = PROJECT_ROOT / "data"
@@ -13,6 +13,7 @@ LAST_SUCCESS_DIR = OUTPUT_DIR / "_last_success"
 REMOTE_SCRIPT = PROJECT_ROOT / "remote_scripts" / "install_remote.sh"
 REMOTE_PREFLIGHT_SCRIPT = PROJECT_ROOT / "remote_scripts" / "preflight_remote.sh"
 REMOTE_HARDEN_SCRIPT = PROJECT_ROOT / "remote_scripts" / "harden_after_success.sh"
+REMOTE_RESET_SCRIPT = PROJECT_ROOT / "remote_scripts" / "reset_remote.sh"
 REMOTE_RESULT_DIR = "/root/3xui-oneclick-result"
 REMOTE_BACKUP_DIR = "/root/3xui-oneclick-backups"
 
@@ -47,4 +48,6 @@ REMOTE_OUTPUT_FILES = [
     "subscription-qr.png",
     "panel-login.txt",
     "deploy-report.txt",
+    "reset-result.json",
+    "reset-report.txt",
 ]

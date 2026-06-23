@@ -17,6 +17,7 @@ from .config import (
     PROJECT_ROOT,
     REMOTE_HARDEN_SCRIPT,
     REMOTE_PREFLIGHT_SCRIPT,
+    REMOTE_RESET_SCRIPT,
     REMOTE_SCRIPT,
 )
 from .profile_service import load_profiles
@@ -38,6 +39,7 @@ REQUIRED_FILES = [
     "start_mac_linux.sh",
     "remote_scripts/install_remote.sh",
     "remote_scripts/preflight_remote.sh",
+    "remote_scripts/reset_remote.sh",
     "remote_scripts/harden_after_success.sh",
     "deployer/deploy_service.py",
     "deployer/ssh_runner.py",
@@ -145,6 +147,7 @@ def collect_local_diagnostics(output_dir: Path = OUTPUT_DIR) -> dict[str, Any]:
             "output_dir": _display_path(output_dir),
             "remote_script_exists": REMOTE_SCRIPT.exists(),
             "preflight_script_exists": REMOTE_PREFLIGHT_SCRIPT.exists(),
+            "reset_script_exists": REMOTE_RESET_SCRIPT.exists(),
             "harden_script_exists": REMOTE_HARDEN_SCRIPT.exists(),
         },
         "dependencies": dependency_status,

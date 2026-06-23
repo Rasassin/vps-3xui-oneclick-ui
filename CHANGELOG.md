@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.39.0
+
+- Added a guarded remote reset flow with an explicit confirmation phrase.
+- Backed up remote oneclick results before clearing generated result files and temporary scripts.
+- Added an opt-in 3x-ui stop-and-archive path without changing root login, password login, ping, or VPS root password behavior.
+
 ## v1.38.0
 
 - Added a local release tag preparation helper for GitHub Release publishing.

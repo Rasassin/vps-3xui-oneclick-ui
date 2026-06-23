@@ -16,6 +16,7 @@ from deployer.deploy_service import (
     deploy,
     download_remote_results,
     preflight,
+    reset_remote_oneclick,
 )
 from deployer.export_service import build_export_zip
 from deployer.profile_service import delete_profile, load_profiles, upsert_profile
@@ -45,6 +46,8 @@ def init_state() -> None:
     st.session_state.setdefault("generate_ssh_key_value", True)
     st.session_state.setdefault("run_hardening_value", False)
     st.session_state.setdefault("confirm_redeploy", False)
+    st.session_state.setdefault("reset_confirm_phrase", "")
+    st.session_state.setdefault("reset_uninstall_xui", False)
     st.session_state.setdefault("last_preflight", load_results(OUTPUT_DIR).get("preflight", {}))
     st.session_state.setdefault("export_zip_path", "")
     st.session_state.setdefault("last_remote_backup", "")
@@ -442,7 +445,7 @@ def render_management_mode(results: dict) -> None:
         else:
             st.warning("没有可用于重建二维码的链接。")
     actions[3].button("远程重置/卸载", disabled=True, use_container_width=True)
-    st.caption("远程重置/卸载属于危险操作，v0.3 仍不默认开放；后续会做二次确认、备份和远程回滚提示。")
+    st.caption("远程重置/卸载属于危险操作，请在下方表单的“高级选项”里输入确认短语后执行。")
 
     export_zip_path = st.session_state.get("export_zip_path", "")
     if export_zip_path and Path(export_zip_path).exists():
@@ -514,7 +517,33 @@ def render_panel_access(results: dict) -> None:
     st.caption("浏览器出于跨站安全限制，不能可靠地从本地页面自动填入远程 3x-ui 登录框；请打开面板后复制账号和密码登录。")
 
 
+def render_reset_result(results: dict) -> None:
+    reset_result = results.get("reset", {})
+    reset_report = results.get("reset_report", "")
+    if not reset_result and not reset_report:
+        return
+    st.subheader("远程重置结果")
+    status = reset_result.get("status", "unknown")
+    if status == "success":
+        st.success("远程重置已完成。")
+    else:
+        st.error(reset_result.get("error_message") or "远程重置没有完成。")
+    backup_path = reset_result.get("backup_path", "")
+    xui_action = reset_result.get("xui_action", "")
+    cols = st.columns(3)
+    cols[0].metric("状态", status)
+    cols[1].metric("远程备份", "已生成" if backup_path else "无")
+    cols[2].metric("3x-ui", xui_action or "not_requested")
+    if backup_path:
+        st.info(f"远程备份位置：{backup_path}")
+    if reset_report:
+        st.text_area("远程重置报告", value=reset_report, height=220, disabled=True, key="reset_report_area")
+
+
 def render_results(results: dict) -> None:
+    render_reset_result(results)
+    if not (results.get("vless_link") or results.get("panel_login") or (OUTPUT_DIR / "result.json").exists()):
+        return
     st.subheader("结果")
     vless_link = results.get("vless_link", "")
     subscription_link = results.get("subscription_link", "")
@@ -626,14 +655,30 @@ def main() -> None:
             generate_ssh_key = st.checkbox("安装完成后生成 SSH key", key="generate_ssh_key_value")
             run_hardening = st.checkbox("执行服务器加固", key="run_hardening_value")
             st.caption("服务器加固脚本默认不会执行；只有主动勾选时才会运行。第一版不会默认关闭 root 登录、密码登录或 ping。")
+            st.divider()
+            st.markdown("**危险操作：远程重置 / 卸载**")
+            reset_confirm_phrase = st.text_input(
+                "远程重置确认短语",
+                key="reset_confirm_phrase",
+                placeholder="输入 RESET_3XUI_ONECLICK 才能执行",
+            )
+            reset_uninstall_xui = st.checkbox(
+                "同时停用并归档 3x-ui",
+                key="reset_uninstall_xui",
+            )
+            st.caption(
+                "远程重置会先备份 /root/3xui-oneclick-result，再清理 oneclick 结果和临时脚本。"
+                "只有勾选“同时停用并归档 3x-ui”时，才会停止 x-ui 服务并把 3x-ui 目录归档后改名停用。"
+            )
 
-        col_a, col_b, col_c, col_d, col_e = st.columns([1, 1, 1, 1, 1])
+        col_a, col_b, col_c, col_d, col_e, col_f = st.columns([1, 1, 1, 1, 1, 1])
         start_disabled = st.session_state.is_running or (existing_success and not confirm_redeploy)
         check = col_a.form_submit_button("刷新远程状态", disabled=st.session_state.is_running)
         redownload = col_b.form_submit_button("重新下载结果", disabled=st.session_state.is_running)
         backup_remote = col_c.form_submit_button("远程备份结果", disabled=st.session_state.is_running)
         start = col_d.form_submit_button("开始一键部署", type="primary", disabled=start_disabled)
         clear = col_e.form_submit_button("清空本地输出", disabled=st.session_state.is_running)
+        remote_reset = col_f.form_submit_button("远程重置/卸载", disabled=st.session_state.is_running)
 
     if clear:
         clear_output()
@@ -758,6 +803,46 @@ def main() -> None:
             st.session_state.is_running = False
             render_logs(log_placeholder)
 
+    if remote_reset:
+        if not validate_form_ready(host, ssh_user, ssh_password, "远程重置"):
+            render_preflight(st.session_state.last_preflight or (st.session_state.last_results or {}).get("preflight", {}))
+            results = st.session_state.last_results or load_results(OUTPUT_DIR)
+            if results.get("vless_link") or results.get("panel_login") or (OUTPUT_DIR / "result.json").exists():
+                render_results(results)
+            return
+        st.session_state.is_running = True
+        st.session_state.logs = []
+        login = VPSLogin(host=host.strip(), port=int(ssh_port), username=ssh_user.strip(), password=ssh_password)
+
+        def ui_log(line: str) -> None:
+            append_log(line, ssh_password)
+            render_logs(log_placeholder)
+
+        try:
+            ui_log("开始远程重置。将先备份远程结果目录，再执行清理；不会修改 VPS root 密码。")
+            results = reset_remote_oneclick(
+                login,
+                confirm_phrase=reset_confirm_phrase,
+                uninstall_xui=bool(reset_uninstall_xui),
+                log=ui_log,
+            )
+            st.session_state.last_results = results
+            st.session_state.last_preflight = {}
+            ui_log("远程重置完成。本地旧二维码和链接已清空。")
+            st.success("远程重置完成。")
+        except DeploymentError as exc:
+            append_log(f"错误：{exc.message}", ssh_password)
+            st.session_state.last_results = load_results(OUTPUT_DIR)
+            hint = ERROR_HINTS.get(exc.code, exc.message)
+            st.error(hint)
+        except Exception as exc:  # noqa: BLE001
+            append_log(f"未知错误：{exc}", ssh_password)
+            st.session_state.last_results = load_results(OUTPUT_DIR)
+            st.error(f"远程重置失败：{exc}")
+        finally:
+            st.session_state.is_running = False
+            render_logs(log_placeholder)
+
     if start:
         if not validate_form_ready(host, ssh_user, ssh_password, "开始部署"):
             render_preflight(st.session_state.last_preflight or (st.session_state.last_results or {}).get("preflight", {}))
@@ -809,7 +894,12 @@ def main() -> None:
 
     results = st.session_state.last_results or load_results(OUTPUT_DIR)
     render_preflight(st.session_state.last_preflight or results.get("preflight", {}))
-    if results.get("vless_link") or results.get("panel_login") or (OUTPUT_DIR / "result.json").exists():
+    if (
+        results.get("vless_link")
+        or results.get("panel_login")
+        or results.get("reset")
+        or (OUTPUT_DIR / "result.json").exists()
+    ):
         render_results(results)
     else:
         st.info("填写 VPS IP 和 root 密码后，点击“开始一键部署”。完成后这里会直接显示二维码、链接和面板信息。")

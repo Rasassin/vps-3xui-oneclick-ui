@@ -71,6 +71,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Experimental unsigned macOS and Windows desktop artifacts through GitHub Actions.
 - Sidebar GitHub Release update checker that is explicit, read-only, and does not connect to a VPS.
 - Guarded local release tag preparation helper for GitHub Release publishing.
+- Guarded remote reset with typed confirmation, remote backup, local output clearing, and optional 3x-ui stop-and-archive.
 
 ## Download
 
@@ -131,6 +132,7 @@ python3 desktop_launcher.py
 - See `docs/privacy.md` for local data, VPS data, diagnostics, and release-check boundaries.
 - The update checker only reads GitHub Release metadata and does not upload diagnostics or install updates.
 - Server hardening remains opt-in.
+- Remote reset remains opt-in and requires the exact confirmation phrase `RESET_3XUI_ONECLICK`.
 - The first version does not default-disable root login, password login, or ping.
 
 ## Changelog

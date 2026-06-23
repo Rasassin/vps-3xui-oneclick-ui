@@ -37,8 +37,15 @@ When you click deployment or management actions that use SSH, the app may send:
 - selected node configuration
 - remote installer scripts
 - optional hardening script if you explicitly enable hardening
+- remote reset script if you explicitly type the reset confirmation phrase
 
 The app does not use browser automation to operate the remote 3x-ui panel.
+
+Remote reset actions first create a VPS-side backup under
+`/root/3xui-oneclick-backups`. By default, reset only clears oneclick result
+files and temporary scripts. If you explicitly enable the 3x-ui archive option,
+the app stops x-ui and renames the 3x-ui paths after archiving them. It does not
+change the VPS root password, root login, password login, or ping behavior.
 
 ## What Public Diagnostics Exclude
 

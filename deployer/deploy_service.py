@@ -15,6 +15,7 @@ from .config import (
     REMOTE_PREFLIGHT_SCRIPT,
     REMOTE_OUTPUT_FILES,
     REMOTE_HARDEN_SCRIPT,
+    REMOTE_RESET_SCRIPT,
     REMOTE_RESULT_DIR,
     REMOTE_SCRIPT,
     VPSLogin,
@@ -44,6 +45,8 @@ ERROR_HINTS = {
     "DOWNLOAD_FAILED": "远程结果文件下载失败。",
     "PREFLIGHT_FAILED": "部署前检测失败，请查看检测日志。",
     "REMOTE_BACKUP_FAILED": "远程备份失败，请查看日志。",
+    "REMOTE_RESET_FAILED": "远程重置失败，请查看日志。",
+    "BAD_RESET_CONFIRM": "远程重置确认短语不正确。",
 }
 
 
@@ -248,3 +251,38 @@ def backup_remote_results(login: VPSLogin, log: LogCallback) -> str:
         if exit_code != 0:
             raise DeploymentError("REMOTE_BACKUP_FAILED", "远程结果备份失败。")
     return f"{REMOTE_BACKUP_DIR}/result-*.tgz"
+
+
+def reset_remote_oneclick(
+    login: VPSLogin,
+    *,
+    confirm_phrase: str,
+    uninstall_xui: bool,
+    log: LogCallback,
+) -> dict:
+    validate_login(login)
+    if confirm_phrase != "RESET_3XUI_ONECLICK":
+        raise DeploymentError("BAD_RESET_CONFIRM", "远程重置确认短语不正确。")
+    if not REMOTE_RESET_SCRIPT.exists():
+        raise DeploymentError("LOCAL_SCRIPT_MISSING", f"本地重置脚本不存在：{REMOTE_RESET_SCRIPT}")
+
+    with SSHRunner(login, log) as runner:
+        runner.upload(REMOTE_RESET_SCRIPT, "/root/reset_3xui_oneclick.sh")
+        exports = [
+            shell_export("ONECLICK_RESET_CONFIRM", confirm_phrase),
+            shell_export("ONECLICK_RESET_UNINSTALL_XUI", int(uninstall_xui)),
+        ]
+        exit_code = runner.run(" && ".join(exports + ["bash /root/reset_3xui_oneclick.sh"]))
+        clear_output()
+        try:
+            runner.download_dir_files(REMOTE_RESULT_DIR, OUTPUT_DIR, ["reset-result.json", "reset-report.txt"])
+        except DeploymentError:
+            if exit_code == 0:
+                raise
+        if exit_code != 0:
+            partial = load_results(OUTPUT_DIR)
+            reset_result = partial.get("reset", {})
+            code = str(reset_result.get("error_code") or "REMOTE_RESET_FAILED")
+            message = str(reset_result.get("error_message") or ERROR_HINTS["REMOTE_RESET_FAILED"])
+            raise DeploymentError(code, message)
+    return load_results(OUTPUT_DIR)

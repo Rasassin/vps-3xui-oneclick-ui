@@ -48,6 +48,8 @@ REQUIRED_RELEASE_FILES = {
     "scripts/install_git_hooks.py",
     "scripts/generate_release_notes.py",
     "scripts/prepare_release.py",
+    "scripts/prepare_release_tag.py",
+    "remote_scripts/reset_remote.sh",
     "output/.gitkeep",
     "data/.gitkeep",
 }

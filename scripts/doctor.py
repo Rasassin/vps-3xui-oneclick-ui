@@ -47,6 +47,7 @@ def quick_checks() -> list[Check]:
         Check("Python syntax", [sys.executable, "-m", "py_compile", *python_files()]),
         Check("remote preflight Bash syntax", ["bash", "-n", "remote_scripts/preflight_remote.sh"]),
         Check("remote installer Bash syntax", ["bash", "-n", "remote_scripts/install_remote.sh"]),
+        Check("remote reset Bash syntax", ["bash", "-n", "remote_scripts/reset_remote.sh"]),
         Check("hardening Bash syntax", ["bash", "-n", "remote_scripts/harden_after_success.sh"]),
         Check("macOS double-click launcher Bash syntax", ["bash", "-n", "start_macos.command"]),
         Check("desktop macOS build Bash syntax", ["bash", "-n", "desktop/build_macos_app.sh"]),

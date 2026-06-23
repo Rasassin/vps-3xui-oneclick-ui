@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.38 adds guarded release tag preparation
+v1.39 adds guarded remote reset
 
 ## Build Locally
 
@@ -48,6 +48,7 @@ VERSION="$(python3 -c 'from deployer.config import APP_VERSION; print(APP_VERSIO
 python3 scripts/check_release_artifacts.py
 python3 scripts/check_product_package.py
 python3 scripts/check_portable_user_package.py
+bash -n remote_scripts/reset_remote.sh
 python3 scripts/check_portable_launchers.py \
   --zip-path "dist/vps-3xui-oneclick-ui-v${VERSION}.zip" \
   --zip-path "dist/vps-3xui-oneclick-ui-portable-v${VERSION}.zip"
@@ -97,6 +98,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Run `python3 scripts/check_version_consistency.py`.
 - Run `python3 scripts/check_portable_launchers.py`.
 - Run `python3 scripts/check_portable_user_package.py`.
+- Run `bash -n remote_scripts/reset_remote.sh`.
 - Run `python3 desktop/check_desktop_package.py --built-artifact ...` after creating a PyInstaller artifact.
 - Use `python3 scripts/bump_version.py ...` when preparing a new version.
 - Run `python3 scripts/check_release_artifacts.py` after building the release bundle.
