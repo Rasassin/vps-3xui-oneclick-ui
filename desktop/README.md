@@ -81,6 +81,7 @@ python3 desktop/check_desktop_package.py --built-artifact "dist/VPS-3x-ui-Onecli
 ```
 
 The zip remains unsigned until the signing and notarization flow is completed.
+The zip includes `DESKTOP_README.txt` with startup, unsigned-build, and privacy notes for testers.
 
 The same packaging helper also wraps Windows artifacts when they exist under
 `dist/`:
@@ -92,6 +93,7 @@ python3 desktop/check_desktop_package.py --built-artifact "dist/VPS-3x-ui-Onecli
 ```
 
 Windows zips remain unsigned until Windows code signing is implemented.
+They also include `DESKTOP_README.txt` with the same safety boundary.
 
 ## macOS Signing And Notarization Experiment
 

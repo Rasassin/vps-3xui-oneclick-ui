@@ -17,6 +17,7 @@ All notable product changes are tracked here. This project keeps product history
 - Add unsigned desktop artifact packaging and zip validation for manual Release uploads.
 - Add a one-command local product release preparation script that builds, packages, checks, and reports without publishing or connecting to a VPS.
 - Extend desktop artifact packaging to cover existing Windows executable and installer outputs with explicit unsigned zip names.
+- Include a desktop README inside packaged desktop zips with unsigned-build, startup, and privacy guidance.
 
 ## v1.54.0
 

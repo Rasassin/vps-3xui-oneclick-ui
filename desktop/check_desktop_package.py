@@ -211,9 +211,15 @@ def check_desktop_zip(path: Path) -> None:
         fail(f"desktop zip is empty: {path}")
     with ZipFile(path) as archive:
         names = set(archive.namelist())
+        readme = archive.read("DESKTOP_README.txt").decode("utf-8") if "DESKTOP_README.txt" in names else ""
     leaked = sorted(name for name in names if Path(name).name in FORBIDDEN_ARTIFACT_NAMES)
     if leaked:
         fail(f"desktop zip contains local sensitive files: {', '.join(leaked[:8])}")
+    if not readme:
+        fail("desktop zip is missing DESKTOP_README.txt.")
+    for marker in ("unsigned", "does not connect to a VPS", "VPS root passwords", "output/"):
+        if marker not in readme:
+            fail(f"DESKTOP_README.txt is missing marker: {marker}")
     app_roots = sorted({name.split(".app/", 1)[0] + ".app" for name in names if ".app/" in name})
     if app_roots:
         root = app_roots[0]
