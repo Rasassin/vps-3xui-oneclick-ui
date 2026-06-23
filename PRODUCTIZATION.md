@@ -799,6 +799,22 @@ Still intentionally not included:
 - Uploading compatibility results automatically.
 - Treating untested VPS providers as certified.
 
+## v1.41 Update Channel Manifest
+
+Implemented scope:
+
+- Add `scripts/build_update_manifest.py`.
+- Generate `update-manifest-vX.Y.Z.json` with release assets, sizes, SHA256 checksums, version, tag, and Release URL.
+- Validate update manifest safety flags during release artifact checks.
+- Expose the update manifest through release bundles and the sidebar release-download panel.
+
+Still intentionally not included:
+
+- Automatic update installation.
+- Background downloads.
+- Code signing or notarization.
+- OS-level updater integration.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

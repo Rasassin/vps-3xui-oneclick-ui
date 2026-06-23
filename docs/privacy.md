@@ -67,6 +67,11 @@ The sidebar update checker only requests the latest GitHub Release metadata for
 this project. It does not connect to a VPS, does not send VPS credentials, does
 not upload diagnostics, and does not auto-install updates.
 
+Release builds also generate `update-manifest-vX.Y.Z.json`. The manifest
+contains version, release URL, artifact names, sizes, and checksums. It does not
+contain VPS passwords, node links, QR images, subscription links, panel
+credentials, or local diagnostics.
+
 ## What Release Checks Guard
 
 Release and secret hygiene checks are local-only. They do not connect to a VPS.

@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.41.0
+
+- Added a machine-readable update manifest for release assets.
+- Validated update manifest versions, safety flags, artifact sizes, and SHA256 checksums during release checks.
+- Exposed update manifests through release bundles and sidebar release downloads without enabling automatic installation.
+
 ## v1.40.0
 
 - Added a generated VPS compatibility test worksheet for manual release validation.

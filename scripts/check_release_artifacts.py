@@ -60,10 +60,10 @@ def verify_zip_contents(zip_path: Path) -> None:
 
 def verify_checksums(sums_path: Path) -> None:
     lines = [line for line in sums_path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    if len(lines) != 5:
+    if len(lines) != 6:
         raise SystemExit(
             "release artifact check failed: SHA256SUMS should list exactly source zip, release notes, "
-            "portable zip, product report, and VPS compatibility report."
+            "portable zip, product report, VPS compatibility report, and update manifest."
         )
     for line in lines:
         try:
@@ -145,6 +145,43 @@ def verify_manifest_metadata(manifest: dict, version: str) -> None:
         raise SystemExit("release artifact check failed: manifest generated_at must include timezone information.")
 
 
+def verify_update_manifest(update_manifest_path: Path, version: str, expected_asset_paths: list[Path]) -> None:
+    manifest = json.loads(update_manifest_path.read_text(encoding="utf-8"))
+    if manifest.get("project") != EXPECTED_PROJECT:
+        raise SystemExit("release artifact check failed: update manifest project does not match this project.")
+    if manifest.get("version") != version:
+        raise SystemExit("release artifact check failed: update manifest version does not match APP_VERSION.")
+    if manifest.get("tag") != f"v{version}":
+        raise SystemExit("release artifact check failed: update manifest tag does not match APP_VERSION.")
+    if manifest.get("channel") != "stable":
+        raise SystemExit("release artifact check failed: update manifest channel must be stable.")
+    safety = manifest.get("safety", {})
+    required_safety = {
+        "automatic_install": False,
+        "requires_user_download": True,
+        "connects_to_vps": False,
+        "contains_vps_root_password": False,
+        "contains_node_credentials": False,
+    }
+    for key, expected in required_safety.items():
+        if safety.get(key) is not expected:
+            raise SystemExit(f"release artifact check failed: update manifest safety flag mismatch: {key}")
+
+    artifacts = manifest.get("artifacts")
+    if not isinstance(artifacts, list):
+        raise SystemExit("release artifact check failed: update manifest artifacts must be a list.")
+    by_name = {str(item.get("name")): item for item in artifacts if isinstance(item, dict)}
+    expected_names = {path.name for path in expected_asset_paths}
+    if set(by_name) != expected_names:
+        raise SystemExit("release artifact check failed: update manifest artifacts do not match release assets.")
+    for path in expected_asset_paths:
+        item = by_name[path.name]
+        if item.get("size_bytes") != path.stat().st_size:
+            raise SystemExit(f"release artifact check failed: update manifest size mismatch for {path.name}")
+        if item.get("sha256") != sha256_file(path):
+            raise SystemExit(f"release artifact check failed: update manifest checksum mismatch for {path.name}")
+
+
 def verify_manifest(
     manifest_path: Path,
     version: str,
@@ -191,17 +228,21 @@ def main() -> None:
     notes_path = args.dist_dir / f"GITHUB_RELEASE_v{args.version}.md"
     product_report_path = args.dist_dir / f"PRODUCT_READINESS_v{args.version}.md"
     vps_test_report_path = args.dist_dir / f"VPS_COMPATIBILITY_TEST_v{args.version}.md"
+    update_manifest_path = args.dist_dir / f"update-manifest-v{args.version}.json"
     sums_path = args.dist_dir / f"SHA256SUMS_v{args.version}.txt"
     manifest_path = args.dist_dir / f"release-manifest-v{args.version}.json"
-    require_nonempty([zip_path, portable_zip_path, notes_path, product_report_path, vps_test_report_path, sums_path, manifest_path])
+    core_asset_paths = [zip_path, notes_path, portable_zip_path, product_report_path, vps_test_report_path]
+    release_asset_paths = [*core_asset_paths, update_manifest_path]
+    require_nonempty([*release_asset_paths, sums_path, manifest_path])
     check_release_zip(zip_path)
     verify_zip_contents(zip_path)
     verify_checksums(sums_path)
+    verify_update_manifest(update_manifest_path, args.version, core_asset_paths)
     verify_manifest(
         manifest_path,
         args.version,
         args.allow_stale_source,
-        [zip_path, notes_path, portable_zip_path, product_report_path, vps_test_report_path, sums_path],
+        [*release_asset_paths, sums_path],
     )
     print(f"release artifact check ok: v{args.version}")
 

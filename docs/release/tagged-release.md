@@ -48,6 +48,7 @@ The release workflow verifies that the tag version matches `APP_VERSION`, builds
 - release manifest JSON
 - product readiness report
 - VPS compatibility test worksheet
+- update manifest JSON
 
 Before tagging, make sure the latest `Static checks` workflow is green. It runs the full Linux release gate, uploads checked release artifacts for review, and runs platform smoke checks on Ubuntu, macOS, and Windows.
 

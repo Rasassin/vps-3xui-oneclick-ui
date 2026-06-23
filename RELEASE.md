@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.40 adds VPS compatibility release worksheets
+v1.41 adds update-channel manifests
 
 ## Build Locally
 
@@ -20,6 +20,7 @@ The release artifacts are written to `dist/`:
 - `release-manifest-vX.Y.Z.json`
 - `PRODUCT_READINESS_vX.Y.Z.md`
 - `VPS_COMPATIBILITY_TEST_vX.Y.Z.md`
+- `update-manifest-vX.Y.Z.json`
 
 The release manifest includes the source Git commit, branch, and dirty-worktree state used when the bundle was generated. It also records artifact sizes and checksums for the source zip, portable product zip, GitHub Release notes, product readiness report, and SHA256SUMS file.
 
@@ -61,6 +62,7 @@ test -s "dist/release-manifest-v${VERSION}.json"
 test -s "dist/vps-3xui-oneclick-ui-portable-v${VERSION}.zip"
 test -s "dist/PRODUCT_READINESS_v${VERSION}.md"
 test -s "dist/VPS_COMPATIBILITY_TEST_v${VERSION}.md"
+test -s "dist/update-manifest-v${VERSION}.json"
 ```
 
 Then unzip the generated file in a temporary directory and start the app with:
@@ -118,6 +120,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Generate `dist/vps-3xui-oneclick-ui-portable-vX.Y.Z.zip`.
 - Generate `dist/PRODUCT_READINESS_vX.Y.Z.md`.
 - Generate `dist/VPS_COMPATIBILITY_TEST_vX.Y.Z.md`.
+- Generate `dist/update-manifest-vX.Y.Z.json`.
 - Review [docs/release/desktop-smoke-test.md](docs/release/desktop-smoke-test.md).
 - Confirm the latest GitHub Actions product CI run is green.
 - Confirm the desktop build workflow is green before attaching unsigned desktop artifacts.
