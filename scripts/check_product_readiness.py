@@ -66,6 +66,7 @@ RELEASE_ITEMS = [
     RequiredItem("scripts/build_release_commands.py", ("Release Commands", "git push origin main")),
     RequiredItem("scripts/build_update_manifest.py", ("automatic_install", "requires_user_download")),
     RequiredItem("scripts/build_vps_test_report.py", ("VPS Compatibility Test Report",)),
+    RequiredItem("scripts/check_publish_readiness.py", ("Publish Readiness", "never pushes commits")),
     RequiredItem("scripts/check_release_ready.py", ("without connecting to a VPS",)),
     RequiredItem("scripts/check_go_live_readiness.py", ("GO_LIVE_READINESS", "--strict")),
     RequiredItem("scripts/check_release_artifacts.py", ("Verify release artifacts",)),

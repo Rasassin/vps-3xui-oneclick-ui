@@ -51,6 +51,8 @@ def required_artifacts(version: str = APP_VERSION) -> list[Path]:
         dist_path("update-manifest-v{version}.json", version),
         dist_path("SIGNING_READINESS_v{version}.md", version),
         dist_path("SIGNED_ARTIFACT_VALIDATION_v{version}.md", version),
+        dist_path("RELEASE_COMMANDS_v{version}.md", version),
+        dist_path("PUBLISH_READINESS_v{version}.md", version),
     ]
 
 

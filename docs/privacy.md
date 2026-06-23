@@ -89,6 +89,11 @@ names, and artifact file names. They do not include VPS credentials, node links,
 QR images, subscription links, panel credentials, signing passwords, or
 certificate private keys.
 
+Publish readiness reports only contain local Git/GitHub status, remote
+reachability results, tag state, and GitHub CLI authentication status. They do
+not push commits, create tags, upload release assets, connect to a VPS, or store
+GitHub credentials.
+
 ## What Release Checks Guard
 
 Release and secret hygiene checks are local-only. They do not connect to a VPS.

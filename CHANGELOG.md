@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.49.0
+
+- Added a publish readiness checker for GitHub remote, branch sync, tag, reachability, and CLI auth status.
+- Generated publish readiness reports with release bundles and included them in checksums, manifests, and sidebar downloads.
+- Kept publish checks read-only: no push, tag creation, asset upload, VPS connection, or credential storage.
+
 ## v1.48.0
 
 - Added generated release command checklists for final publish steps.

@@ -45,6 +45,7 @@ REQUIRED_RELEASE_FILES = {
     "scripts/check_product_package.py",
     "scripts/check_portable_launchers.py",
     "scripts/check_portable_user_package.py",
+    "scripts/check_publish_readiness.py",
     "scripts/check_go_live_readiness.py",
     "scripts/check_open_source_ready.py",
     "scripts/check_product_readiness.py",
