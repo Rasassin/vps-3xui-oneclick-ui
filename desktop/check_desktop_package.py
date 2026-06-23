@@ -26,9 +26,13 @@ REQUIRED_RELEASE_FILES = {
     "desktop/build_windows_exe.ps1",
     "desktop/build_windows_installer.ps1",
     "desktop/check_desktop_package.py",
+    "desktop/generate_icons.py",
     "desktop/sign_macos_app.sh",
     "desktop/vps_3xui_oneclick.spec",
     "desktop/windows_installer.iss",
+    "desktop/assets/icon.icns",
+    "desktop/assets/icon.ico",
+    "desktop/assets/icon.png",
     "docs/release/desktop-smoke-test.md",
     "docs/release/github-release-template.md",
     "docs/release/signing-readiness.md",
@@ -94,6 +98,11 @@ FORBIDDEN_ARTIFACT_NAMES = {
     "subscription-qr.png",
     "desktop-launcher.log",
 }
+REQUIRED_ICON_FILES = {
+    "desktop/assets/icon.icns",
+    "desktop/assets/icon.ico",
+    "desktop/assets/icon.png",
+}
 FORBIDDEN_TEXT_PATTERNS = (
     re.compile(r"vless://[0-9a-fA-F-]{36}@"),
     re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
@@ -108,6 +117,10 @@ def check_source_tree() -> None:
     for relative in REQUIRED_RELEASE_FILES:
         if not (PROJECT_ROOT / relative).exists():
             fail(f"missing required file: {relative}")
+    for relative in REQUIRED_ICON_FILES:
+        path = PROJECT_ROOT / relative
+        if path.stat().st_size == 0:
+            fail(f"desktop icon file is empty: {relative}")
     for relative in FORBIDDEN_RELEASE_FILES:
         if (PROJECT_ROOT / relative).exists() and relative != "data/profiles.json":
             print(f"warning: local sensitive output exists but should not be committed: {relative}")
@@ -115,6 +128,10 @@ def check_source_tree() -> None:
     for marker in DESKTOP_LAUNCHER_MARKERS:
         if marker not in launcher_text:
             fail(f"desktop_launcher.py is missing product marker: {marker}")
+    spec_text = (PROJECT_ROOT / "desktop" / "vps_3xui_oneclick.spec").read_text(encoding="utf-8")
+    for marker in ("icon.ico", "icon.icns", "desktop/assets"):
+        if marker not in spec_text:
+            fail(f"PyInstaller spec is missing icon marker: {marker}")
 
 
 def check_release_zip(zip_path: Path) -> None:

@@ -6,6 +6,7 @@ from PyInstaller.utils.hooks import collect_all
 
 
 ROOT = Path(SPECPATH).resolve().parent
+ASSETS = ROOT / "desktop" / "assets"
 streamlit_datas, streamlit_binaries, streamlit_hiddenimports = collect_all("streamlit")
 
 datas = [
@@ -14,6 +15,7 @@ datas = [
     (str(ROOT / "requirements.txt"), "."),
     (str(ROOT / "deployer"), "deployer"),
     (str(ROOT / "remote_scripts"), "remote_scripts"),
+    (str(ASSETS), "desktop/assets"),
     (str(ROOT / "output" / ".gitkeep"), "output"),
     (str(ROOT / "data" / ".gitkeep"), "data"),
 ]
@@ -54,6 +56,7 @@ exe = EXE(
     strip=False,
     upx=True,
     console=False,
+    icon=str(ASSETS / "icon.ico") if (ASSETS / "icon.ico").exists() else None,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
@@ -74,6 +77,6 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name="VPS 3x-ui Oneclick.app",
-    icon=None,
+    icon=str(ASSETS / "icon.icns") if (ASSETS / "icon.icns").exists() else None,
     bundle_identifier="com.vps3xui.oneclick",
 )

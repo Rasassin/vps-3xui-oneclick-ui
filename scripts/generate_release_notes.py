@@ -82,6 +82,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Publish readiness report for GitHub remote, branch sync, tag, reachability, and CLI authentication status.
 - Sidebar publish readiness panel for read-only GitHub release blockers.
 - CI readiness report and sidebar panel for public GitHub Actions status.
+- Generated desktop icon assets wired into macOS and Windows PyInstaller builds.
 
 ## Download
 

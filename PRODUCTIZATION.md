@@ -973,6 +973,21 @@ Still intentionally not included:
 - Blocking local deployment based on CI status.
 - Automatic GitHub Release publishing.
 
+## v1.52 Desktop Icon Assets
+
+Implemented scope:
+
+- Add generated desktop icon assets for source, Windows, and macOS packaging.
+- Wire the icon assets into the PyInstaller spec for Windows `.ico` and macOS `.icns`.
+- Add a reproducible icon generation script under `desktop/`.
+- Validate desktop icon files during product and desktop package checks.
+
+Still intentionally not included:
+
+- Final brand design.
+- Signed production desktop binaries.
+- Native installer artwork customization.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

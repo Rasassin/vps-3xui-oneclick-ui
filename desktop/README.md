@@ -8,6 +8,7 @@ Current approach:
 - start Streamlit through `desktop_launcher.py`
 - open a local browser page automatically
 - package the launcher and project files with PyInstaller
+- bundle generated desktop icons for macOS and Windows test builds
 
 Security boundaries stay the same:
 
@@ -50,6 +51,13 @@ For portable zip users on macOS, `start_macos.command` is the simplest entry poi
 This launcher only starts the local app. It does not connect to a VPS.
 
 ## macOS Build Experiment
+
+The repository includes generated icon assets under `desktop/assets/`. To regenerate
+them after changing the icon drawing script:
+
+```bash
+python3 desktop/generate_icons.py
+```
 
 Install packaging tools in your virtual environment:
 

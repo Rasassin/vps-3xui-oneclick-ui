@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.51 adds CI readiness to the UI
+v1.52 adds desktop icon assets
 
 ## Build Locally
 

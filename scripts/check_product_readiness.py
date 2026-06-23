@@ -57,9 +57,13 @@ DESKTOP_ITEMS = [
     RequiredItem("desktop/build_macos_app.sh", ("pyinstaller", "check_desktop_package.py", "--built-artifact")),
     RequiredItem("desktop/build_windows_exe.ps1", ("pyinstaller", "check_desktop_package.py", "--built-artifact")),
     RequiredItem("desktop/build_windows_installer.ps1", ("Inno Setup", "ISCC.exe", "--windows-installer")),
+    RequiredItem("desktop/generate_icons.py", ("icon.ico", "icon.icns")),
     RequiredItem("desktop/sign_macos_app.sh", ("notarytool", "APPLE_SIGNING_IDENTITY", "APPLE_APP_SPECIFIC_PASSWORD")),
-    RequiredItem("desktop/vps_3xui_oneclick.spec"),
+    RequiredItem("desktop/vps_3xui_oneclick.spec", ("icon.ico", "icon.icns")),
     RequiredItem("desktop/windows_installer.iss", ("PrivilegesRequired=lowest", "unsigned")),
+    RequiredItem("desktop/assets/icon.icns"),
+    RequiredItem("desktop/assets/icon.ico"),
+    RequiredItem("desktop/assets/icon.png"),
     RequiredItem("docs/release/desktop-smoke-test.md"),
 ]
 

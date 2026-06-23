@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.52.0
+
+- Added generated PNG, ICO, and ICNS icon assets for desktop packaging.
+- Wired icon assets into the PyInstaller spec for Windows and macOS builds.
+- Added icon generation and validation to desktop product checks and documentation.
+
 ## v1.51.0
 
 - Added reusable GitHub Actions CI readiness checks for public workflow metadata.
