@@ -510,6 +510,20 @@ Still intentionally not included:
 - Uploading release artifacts.
 - Signing release artifacts.
 
+## v1.23 Manifest Artifact Validation
+
+Implemented scope:
+
+- Validate release manifest artifact names, sizes, and SHA256 checksums.
+- Require manifest entries for the release zip, GitHub Release notes, and SHA256SUMS file.
+- Refuse unexpected artifact entries in the manifest.
+
+Still intentionally not included:
+
+- Signing release artifacts.
+- Uploading release artifacts.
+- Replacing manual review of GitHub Release assets.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

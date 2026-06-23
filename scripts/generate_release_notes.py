@@ -54,6 +54,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Command-line warning when preparing release artifacts from a dirty worktree.
 - Sidebar warning for release artifacts built from an older Git commit.
 - Command-line stale release artifact validation against local Git HEAD.
+- Release manifest artifact size and checksum validation.
 
 ## Download
 

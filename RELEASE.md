@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.22 also checks stale release artifact provenance from the command line.
+v1.23 also validates release manifest artifact checksums.
 
 ## Build Locally
 

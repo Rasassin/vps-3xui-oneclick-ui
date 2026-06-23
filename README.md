@@ -197,7 +197,7 @@ python3 scripts/prepare_release.py --allow-dirty
 
 `check_release_ready.py` 会在不连接 VPS 的前提下运行发版前体检；开发中检查未提交改动时可加 `--allow-dirty`。
 
-`check_release_artifacts.py` 会检查 `dist/` 里的发布 zip、Release 文案、SHA256SUMS 和 manifest，确认没有混入本地 `output/` 结果或 `data/profiles.json`，并验证 manifest 里的源码来源信息。默认会拒绝旧 commit 构建的发布产物；如果只是检查历史产物，可显式添加 `--allow-stale-source`。
+`check_release_artifacts.py` 会检查 `dist/` 里的发布 zip、Release 文案、SHA256SUMS 和 manifest，确认没有混入本地 `output/` 结果或 `data/profiles.json`，并验证 manifest 里的源码来源信息、artifact 文件名、大小和 SHA256。默认会拒绝旧 commit 构建的发布产物；如果只是检查历史产物，可显式添加 `--allow-stale-source`。
 
 `check_secret_hygiene.py` 会检查 Git 已跟踪文件，防止误提交 output 结果、profiles、env、日志、私钥和明显的节点链接。
 

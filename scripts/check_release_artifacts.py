@@ -100,7 +100,34 @@ def verify_manifest_source_current(source: dict, allow_stale_source: bool) -> No
         )
 
 
-def verify_manifest(manifest_path: Path, version: str, allow_stale_source: bool) -> None:
+def verify_manifest_artifacts(manifest: dict, expected_paths: list[Path]) -> None:
+    artifacts = manifest.get("artifacts")
+    if not isinstance(artifacts, list):
+        raise SystemExit("release artifact check failed: manifest artifacts must be a list.")
+
+    by_name = {str(item.get("name")): item for item in artifacts if isinstance(item, dict)}
+    expected_names = {path.name for path in expected_paths}
+    missing = [path.name for path in expected_paths if path.name not in by_name]
+    if missing:
+        raise SystemExit(f"release artifact check failed: manifest artifacts missing: {', '.join(missing)}")
+    unexpected = sorted(set(by_name) - expected_names)
+    if unexpected:
+        raise SystemExit(f"release artifact check failed: manifest artifacts include unexpected files: {', '.join(unexpected)}")
+
+    for path in expected_paths:
+        item = by_name[path.name]
+        if item.get("size_bytes") != path.stat().st_size:
+            raise SystemExit(f"release artifact check failed: manifest size mismatch for {path.name}")
+        if item.get("sha256") != sha256_file(path):
+            raise SystemExit(f"release artifact check failed: manifest checksum mismatch for {path.name}")
+
+
+def verify_manifest(
+    manifest_path: Path,
+    version: str,
+    allow_stale_source: bool,
+    expected_artifact_paths: list[Path],
+) -> None:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     if manifest.get("version") != version:
         raise SystemExit("release artifact check failed: manifest version does not match APP_VERSION.")
@@ -121,6 +148,7 @@ def verify_manifest(manifest_path: Path, version: str, allow_stale_source: bool)
     missing_flags = [flag for flag in required_flags if safety.get(flag) is not True]
     if missing_flags:
         raise SystemExit(f"release artifact check failed: manifest safety flags missing: {', '.join(missing_flags)}")
+    verify_manifest_artifacts(manifest, expected_artifact_paths)
 
 
 def main() -> None:
@@ -142,7 +170,7 @@ def main() -> None:
     check_release_zip(zip_path)
     verify_zip_contents(zip_path)
     verify_checksums(sums_path)
-    verify_manifest(manifest_path, args.version, args.allow_stale_source)
+    verify_manifest(manifest_path, args.version, args.allow_stale_source, [zip_path, notes_path, sums_path])
     print(f"release artifact check ok: v{args.version}")
 
 

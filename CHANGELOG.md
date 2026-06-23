@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.23.0
+
+- Added release manifest artifact size and SHA256 validation.
+- Required manifest artifact entries for the release zip, GitHub Release notes, and SHA256SUMS file.
+- Documented manifest artifact validation.
+
 ## v1.22.0
 
 - Added stale release source validation to scripts/check_release_artifacts.py.
