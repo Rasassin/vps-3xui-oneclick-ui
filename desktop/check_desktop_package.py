@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 from zipfile import ZipFile
@@ -58,6 +59,29 @@ DESKTOP_LAUNCHER_MARKERS = (
     "VPS_3XUI_OPEN_BROWSER",
     "does not connect",
 )
+REQUIRED_ARTIFACT_NAMES = {
+    "app.py",
+    "README.md",
+    "requirements.txt",
+    "install_remote.sh",
+    "harden_after_success.sh",
+    ".gitkeep",
+}
+FORBIDDEN_ARTIFACT_NAMES = {
+    "profiles.json",
+    "result.json",
+    "vless-link.txt",
+    "subscription-link.txt",
+    "panel-login.txt",
+    "deploy-report.txt",
+    "vless-qr.png",
+    "subscription-qr.png",
+    "desktop-launcher.log",
+}
+FORBIDDEN_TEXT_PATTERNS = (
+    re.compile(r"vless://[0-9a-fA-F-]{36}@"),
+    re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
+)
 
 
 def fail(message: str) -> None:
@@ -98,17 +122,61 @@ def check_built_artifact(path: Path) -> None:
     if not path.exists():
         fail(f"built artifact does not exist: {path}")
     if path.is_file():
-        print(f"built artifact found: {path}")
+        check_executable_file(path)
+        print(f"built artifact checked: {path}")
         return
 
-    forbidden_names = {"profiles.json", "result.json", "vless-link.txt", "panel-login.txt"}
+    check_artifact_tree(path)
+    print(f"built artifact checked: {path}")
+
+
+def check_executable_file(path: Path) -> None:
+    if path.stat().st_size == 0:
+        fail(f"built executable is empty: {path}")
+    if path.suffix.lower() not in {"", ".exe"}:
+        fail(f"built executable has unexpected suffix: {path.name}")
+
+
+def all_files(path: Path) -> list[Path]:
+    return [child for child in path.rglob("*") if child.is_file()]
+
+
+def check_artifact_tree(path: Path) -> None:
+    files = all_files(path)
+    if not files:
+        fail(f"built artifact contains no files: {path}")
+
+    if path.suffix == ".app":
+        executable = path / "Contents" / "MacOS" / "VPS 3x-ui Oneclick"
+        info_plist = path / "Contents" / "Info.plist"
+        if not executable.exists():
+            fail("macOS app bundle is missing Contents/MacOS/VPS 3x-ui Oneclick")
+        if not info_plist.exists():
+            fail("macOS app bundle is missing Contents/Info.plist")
+    else:
+        executables = [child for child in files if child.name in {"VPS 3x-ui Oneclick", "VPS 3x-ui Oneclick.exe"}]
+        if not executables:
+            fail("desktop artifact is missing the launcher executable.")
+
+    names = {child.name for child in files}
+    missing = sorted(REQUIRED_ARTIFACT_NAMES - names)
+    if missing:
+        fail(f"built artifact is missing bundled runtime files: {', '.join(missing)}")
+
     leaked = []
-    for child in path.rglob("*"):
-        if child.name in forbidden_names:
+    for child in files:
+        if child.name in FORBIDDEN_ARTIFACT_NAMES:
             leaked.append(str(child.relative_to(path)))
     if leaked:
         fail(f"built artifact contains local sensitive files: {', '.join(sorted(leaked))}")
-    print(f"built artifact checked: {path}")
+
+    for child in files:
+        if child.suffix.lower() not in {".py", ".txt", ".md", ".json", ".sh", ".bat", ".ps1", ".yml", ".yaml"}:
+            continue
+        text = child.read_text(encoding="utf-8", errors="ignore")
+        for pattern in FORBIDDEN_TEXT_PATTERNS:
+            if pattern.search(text):
+                fail(f"built artifact contains sensitive text pattern in {child.relative_to(path)}")
 
 
 def main() -> None:

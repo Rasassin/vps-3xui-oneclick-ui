@@ -49,8 +49,8 @@ DESKTOP_ITEMS = [
     RequiredItem("desktop_launcher.py", ("streamlit", "127.0.0.1", "validate_runtime_files", "VPS_3XUI_PORT")),
     RequiredItem("requirements-desktop.txt", ("pyinstaller",)),
     RequiredItem("desktop/README.md", ("PyInstaller",)),
-    RequiredItem("desktop/build_macos_app.sh", ("pyinstaller",)),
-    RequiredItem("desktop/build_windows_exe.ps1", ("pyinstaller",)),
+    RequiredItem("desktop/build_macos_app.sh", ("pyinstaller", "check_desktop_package.py", "--built-artifact")),
+    RequiredItem("desktop/build_windows_exe.ps1", ("pyinstaller", "check_desktop_package.py", "--built-artifact")),
     RequiredItem("desktop/vps_3xui_oneclick.spec"),
     RequiredItem("docs/release/desktop-smoke-test.md"),
 ]

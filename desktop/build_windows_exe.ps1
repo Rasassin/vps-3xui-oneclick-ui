@@ -8,5 +8,6 @@ if (-not (Get-Command pyinstaller -ErrorAction SilentlyContinue)) {
 }
 
 pyinstaller --clean --noconfirm desktop/vps_3xui_oneclick.spec
+python desktop\check_desktop_package.py --built-artifact "dist\VPS 3x-ui Oneclick"
 
 Write-Host "构建完成：dist/VPS 3x-ui Oneclick/"

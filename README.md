@@ -224,6 +224,8 @@ python3 scripts/prepare_release.py --allow-dirty
 
 `check_portable_user_package.py` 会把 portable zip 解压到临时目录，模拟用户下载后的包结构，检查中英文快速开始、启动入口、敏感文件排除和 macOS/Linux 启动脚本语法。
 
+`desktop/check_desktop_package.py --built-artifact ...` 会检查 PyInstaller 产物入口、必要运行文件、敏感文件和敏感文本模式；macOS/Windows 构建脚本会在构建结束后自动运行这个验收。
+
 `check_secret_hygiene.py` 会检查 Git 已跟踪文件，防止误提交 output 结果、profiles、env、日志、私钥和明显的节点链接。
 
 `check_streamlit_app.py` 会在不连接 VPS 的前提下渲染一次本地页面，用来提前发现 Streamlit 组件 ID、导入错误和首屏异常。

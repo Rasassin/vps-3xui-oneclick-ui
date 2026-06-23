@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.34.0
+
+- Strengthened desktop artifact validation for PyInstaller app and exe outputs.
+- Ran desktop artifact checks automatically after macOS and Windows build scripts.
+- Validated desktop artifact safety markers in product readiness and release docs.
+
 ## v1.33.0
 
 - Added an extracted portable package acceptance checker that simulates a downloaded user package.

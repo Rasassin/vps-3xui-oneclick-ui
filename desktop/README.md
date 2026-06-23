@@ -63,6 +63,8 @@ Then run:
 ./desktop/build_macos_app.sh
 ```
 
+The script runs `desktop/check_desktop_package.py --built-artifact "dist/VPS 3x-ui Oneclick.app"` after PyInstaller finishes.
+
 ## Windows Build Experiment
 
 On Windows PowerShell, install packaging tools:
@@ -78,6 +80,7 @@ Then run:
 ```
 
 The PyInstaller output is written to `dist/`.
+The script runs `desktop\check_desktop_package.py --built-artifact "dist\VPS 3x-ui Oneclick"` after PyInstaller finishes.
 
 ## Packaging Check
 
@@ -85,6 +88,12 @@ Run the non-VPS packaging check from the project root:
 
 ```bash
 python desktop/check_desktop_package.py
+```
+
+After building a PyInstaller artifact:
+
+```bash
+python desktop/check_desktop_package.py --built-artifact "dist/VPS 3x-ui Oneclick.app"
 ```
 
 After building a source release zip:

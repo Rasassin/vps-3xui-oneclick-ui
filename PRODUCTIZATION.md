@@ -684,6 +684,22 @@ Still intentionally not included:
 - Automatic updates.
 - Native Tauri UI.
 
+## v1.34 Desktop Artifact Validation
+
+Implemented scope:
+
+- Strengthen `desktop/check_desktop_package.py --built-artifact`.
+- Validate PyInstaller artifact entrypoints, bundled runtime files, forbidden sensitive files, and sensitive text patterns.
+- Run desktop artifact validation automatically after macOS and Windows PyInstaller build scripts.
+- Document the built-artifact verification path for release smoke tests.
+
+Still intentionally not included:
+
+- Signed and notarized macOS app bundle.
+- Signed Windows installer.
+- Automatic updates.
+- Native Tauri UI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

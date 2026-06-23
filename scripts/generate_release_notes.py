@@ -66,6 +66,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Dedicated portable launcher validation for Windows, macOS, and Linux startup files.
 - Chinese portable quick-start guide through `START_HERE.zh-CN.md`.
 - Extracted portable package acceptance check that simulates a downloaded user package.
+- Stronger PyInstaller desktop artifact validation after macOS and Windows builds.
 
 ## Download
 
@@ -156,6 +157,7 @@ python3 scripts/check_portable_user_package.py
 python3 scripts/doctor.py --release
 python3 scripts/prepare_release.py --allow-dirty
 python3 desktop/check_desktop_package.py --release-zip dist/vps-3xui-oneclick-ui-v{version}.zip
+python3 desktop/check_desktop_package.py --built-artifact "dist/VPS 3x-ui Oneclick.app"
 ```
 
 Do not run a real VPS deployment during release validation unless that is the explicit test goal.

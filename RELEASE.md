@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.33 adds extracted portable package acceptance checks.
+v1.34 strengthens desktop build artifact validation.
 
 ## Build Locally
 
@@ -51,6 +51,8 @@ python3 scripts/check_portable_launchers.py \
   --zip-path "dist/vps-3xui-oneclick-ui-v${VERSION}.zip" \
   --zip-path "dist/vps-3xui-oneclick-ui-portable-v${VERSION}.zip"
 python3 desktop/check_desktop_package.py --release-zip "dist/vps-3xui-oneclick-ui-v${VERSION}.zip"
+# After building a PyInstaller artifact, also run:
+# python3 desktop/check_desktop_package.py --built-artifact "dist/VPS 3x-ui Oneclick.app"
 test -s "dist/SHA256SUMS_v${VERSION}.txt"
 test -s "dist/release-manifest-v${VERSION}.json"
 test -s "dist/vps-3xui-oneclick-ui-portable-v${VERSION}.zip"
@@ -83,6 +85,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Run `python3 scripts/check_version_consistency.py`.
 - Run `python3 scripts/check_portable_launchers.py`.
 - Run `python3 scripts/check_portable_user_package.py`.
+- Run `python3 desktop/check_desktop_package.py --built-artifact ...` after creating a PyInstaller artifact.
 - Use `python3 scripts/bump_version.py ...` when preparing a new version.
 - Run `python3 scripts/check_release_artifacts.py` after building the release bundle.
 - Run `python3 scripts/prepare_release.py --allow-dirty` during local release preparation.

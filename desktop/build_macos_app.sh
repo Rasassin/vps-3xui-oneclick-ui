@@ -9,5 +9,6 @@ if ! command -v pyinstaller >/dev/null 2>&1; then
 fi
 
 pyinstaller --clean --noconfirm desktop/vps_3xui_oneclick.spec
+python3 desktop/check_desktop_package.py --built-artifact "dist/VPS 3x-ui Oneclick.app"
 
 echo "构建完成：dist/VPS 3x-ui Oneclick.app"
