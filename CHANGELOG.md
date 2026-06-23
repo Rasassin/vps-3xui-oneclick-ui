@@ -2,6 +2,11 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.35.1
+
+- Fixed Windows CI launcher validation by enforcing POSIX executable bits only on POSIX runners.
+- Kept macOS/Linux executable-bit validation active on POSIX systems.
+
 ## v1.35.0
 
 - Expanded GitHub Actions into a cross-platform product CI matrix for Ubuntu, macOS, and Windows.

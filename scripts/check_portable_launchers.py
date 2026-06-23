@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import stat
 from dataclasses import dataclass
 from pathlib import Path
@@ -73,6 +74,8 @@ def check_text(spec: LauncherSpec, text: str) -> None:
 
 def check_file_mode(path: Path, spec: LauncherSpec) -> None:
     if not spec.executable:
+        return
+    if os.name == "nt":
         return
     mode = path.stat().st_mode
     if not (mode & stat.S_IXUSR):

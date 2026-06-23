@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.35 adds cross-platform product CI.
+v1.35 fixes Windows CI launcher validation.
 
 ## Build Locally
 
