@@ -69,6 +69,7 @@ RELEASE_ITEMS = [
     RequiredItem("scripts/check_release_artifacts.py", ("Verify release artifacts",)),
     RequiredItem("scripts/check_product_package.py", ("Check product package artifacts",)),
     RequiredItem("scripts/check_portable_user_package.py", ("extracted portable user package",)),
+    RequiredItem("scripts/check_signed_artifacts.py", ("--macos-app", "--windows-installer", "SIGNED_ARTIFACT_VALIDATION")),
     RequiredItem("scripts/check_signing_readiness.py", ("--strict", "APPLE_SIGNING_IDENTITY", "WINDOWS_SIGNING_CERT_PATH")),
     RequiredItem("scripts/check_secret_hygiene.py"),
     RequiredItem("scripts/check_streamlit_app.py"),

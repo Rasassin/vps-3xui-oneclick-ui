@@ -76,6 +76,10 @@ Signing readiness reports list whether expected signing tools and environment
 variables are present. They do not print signing passwords, certificate contents,
 Apple app-specific passwords, VPS credentials, node links, or panel credentials.
 
+Signed artifact validation reports contain validation status and command output
+summaries only. They do not contain signing passwords, certificate private keys,
+VPS credentials, node links, QR images, subscription links, or panel credentials.
+
 ## What Release Checks Guard
 
 Release and secret hygiene checks are local-only. They do not connect to a VPS.

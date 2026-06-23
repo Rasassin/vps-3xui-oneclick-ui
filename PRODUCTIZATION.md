@@ -863,6 +863,23 @@ Still intentionally not included:
 - CI notarization.
 - Automatic update installation.
 
+## v1.45 Signed Artifact Validation Reports
+
+Implemented scope:
+
+- Add `scripts/check_signed_artifacts.py`.
+- Generate `SIGNED_ARTIFACT_VALIDATION_vX.Y.Z.md` with release artifacts.
+- Validate provided macOS `.app` bundles with `codesign` and `stapler` on macOS.
+- Validate provided Windows installers with Authenticode status on Windows.
+- Keep validation pending when signed artifacts are not provided.
+
+Still intentionally not included:
+
+- Creating signed artifacts automatically.
+- Uploading validation results automatically.
+- Storing certificate private keys or signing passwords.
+- Treating unsigned artifacts as production-ready.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

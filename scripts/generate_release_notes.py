@@ -76,6 +76,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Machine-readable update manifest for future update-channel tooling.
 - Signing readiness report for macOS notarization and Windows signing preparation.
 - Experimental Inno Setup Windows installer scaffold for future signed installer releases.
+- Signed artifact validation report for future macOS and Windows signed release outputs.
 
 ## Download
 
@@ -97,6 +98,7 @@ dist/PRODUCT_READINESS_v{version}.md
 dist/VPS_COMPATIBILITY_TEST_v{version}.md
 dist/update-manifest-v{version}.json
 dist/SIGNING_READINESS_v{version}.md
+dist/SIGNED_ARTIFACT_VALIDATION_v{version}.md
 ```
 
 The portable zip includes both `START_HERE.md` and `START_HERE.zh-CN.md`.
@@ -140,6 +142,7 @@ python3 desktop_launcher.py
 - The update checker only reads GitHub Release metadata and does not upload diagnostics or install updates.
 - The update manifest describes release assets and checksums, but does not auto-install anything.
 - Signing readiness reports do not include signing passwords, certificates, or app-specific passwords.
+- Signed artifact validation reports do not contain signing secrets or certificate private keys.
 - Windows installer outputs are experimental and must be labeled unsigned until code signing is implemented.
 - Server hardening remains opt-in.
 - Remote reset remains opt-in and requires the exact confirmation phrase `RESET_3XUI_ONECLICK`.

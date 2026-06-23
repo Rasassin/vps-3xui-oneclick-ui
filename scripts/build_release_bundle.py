@@ -18,6 +18,7 @@ from scripts.build_release import build_release_zip
 from scripts.build_product_package import build_product_package
 from scripts.build_update_manifest import write_update_manifest
 from scripts.build_vps_test_report import write_report as write_vps_test_report
+from scripts.check_signed_artifacts import check_macos_app, check_windows_installer, write_report as write_signed_artifact_report
 from scripts.check_signing_readiness import macos_checks, windows_checks, write_report as write_signing_report
 from scripts.generate_release_notes import write_release_notes
 
@@ -99,9 +100,10 @@ def build_release_bundle(version: str = APP_VERSION) -> list[Path]:
     portable_zip_path, product_report_path = build_product_package(version)
     vps_test_report_path = write_vps_test_report(version)
     signing_report_path = write_signing_report([*macos_checks(), *windows_checks()])
+    signed_artifact_report_path = write_signed_artifact_report([*check_macos_app(None), *check_windows_installer(None)])
     core_artifact_paths = [zip_path, notes_path, portable_zip_path, product_report_path, vps_test_report_path]
     update_manifest_path = write_update_manifest(version, core_artifact_paths)
-    artifact_paths = [*core_artifact_paths, update_manifest_path, signing_report_path]
+    artifact_paths = [*core_artifact_paths, update_manifest_path, signing_report_path, signed_artifact_report_path]
     checksums_path = write_sha256sums(artifact_paths, version)
     manifest_path = write_manifest(artifact_paths, checksums_path, version)
     return [*artifact_paths, checksums_path, manifest_path]

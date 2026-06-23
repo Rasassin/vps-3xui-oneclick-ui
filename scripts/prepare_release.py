@@ -25,6 +25,7 @@ def artifact_paths(version: str) -> list[Path]:
         dist_dir / f"VPS_COMPATIBILITY_TEST_v{version}.md",
         dist_dir / f"update-manifest-v{version}.json",
         dist_dir / f"SIGNING_READINESS_v{version}.md",
+        dist_dir / f"SIGNED_ARTIFACT_VALIDATION_v{version}.md",
     ]
 
 

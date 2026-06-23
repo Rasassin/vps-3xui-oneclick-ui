@@ -60,10 +60,11 @@ def verify_zip_contents(zip_path: Path) -> None:
 
 def verify_checksums(sums_path: Path) -> None:
     lines = [line for line in sums_path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    if len(lines) != 7:
+    if len(lines) != 8:
         raise SystemExit(
             "release artifact check failed: SHA256SUMS should list exactly source zip, release notes, "
-            "portable zip, product report, VPS compatibility report, update manifest, and signing readiness report."
+            "portable zip, product report, VPS compatibility report, update manifest, signing readiness report, "
+            "and signed artifact validation report."
         )
     for line in lines:
         try:
@@ -230,10 +231,11 @@ def main() -> None:
     vps_test_report_path = args.dist_dir / f"VPS_COMPATIBILITY_TEST_v{args.version}.md"
     update_manifest_path = args.dist_dir / f"update-manifest-v{args.version}.json"
     signing_report_path = args.dist_dir / f"SIGNING_READINESS_v{args.version}.md"
+    signed_artifact_report_path = args.dist_dir / f"SIGNED_ARTIFACT_VALIDATION_v{args.version}.md"
     sums_path = args.dist_dir / f"SHA256SUMS_v{args.version}.txt"
     manifest_path = args.dist_dir / f"release-manifest-v{args.version}.json"
     core_asset_paths = [zip_path, notes_path, portable_zip_path, product_report_path, vps_test_report_path]
-    release_asset_paths = [*core_asset_paths, update_manifest_path, signing_report_path]
+    release_asset_paths = [*core_asset_paths, update_manifest_path, signing_report_path, signed_artifact_report_path]
     require_nonempty([*release_asset_paths, sums_path, manifest_path])
     check_release_zip(zip_path)
     verify_zip_contents(zip_path)

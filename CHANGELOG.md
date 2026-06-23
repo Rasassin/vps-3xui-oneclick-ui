@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.45.0
+
+- Added a signed artifact validation tool for macOS app bundles and Windows installers.
+- Generated signed artifact validation reports with release bundles.
+- Kept validation pending when signed artifacts are not provided and free of signing secrets.
+
 ## v1.44.0
 
 - Added an experimental macOS signing and notarization script for release machines.

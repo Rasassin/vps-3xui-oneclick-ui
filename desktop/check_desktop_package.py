@@ -48,6 +48,7 @@ REQUIRED_RELEASE_FILES = {
     "scripts/check_product_readiness.py",
     "scripts/check_release_artifacts.py",
     "scripts/check_release_ready.py",
+    "scripts/check_signed_artifacts.py",
     "scripts/check_signing_readiness.py",
     "scripts/check_streamlit_app.py",
     "scripts/check_version_consistency.py",
