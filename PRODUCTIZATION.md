@@ -1033,6 +1033,7 @@ Implemented scope:
 - Add a Release Candidate report that summarizes portable readiness, update channel, publish plan, signing state, and VPS evidence.
 - Add an external release inputs report and sidebar panel for remaining signing, GitHub, desktop artifact, and VPS evidence prerequisites.
 - Build and validate a local unsigned macOS desktop artifact, and add desktop artifact reports to release evidence.
+- Add unsigned desktop artifact packaging and zip validation for manual Release uploads.
 
 Still intentionally not included:
 

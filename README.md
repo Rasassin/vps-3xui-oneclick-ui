@@ -278,6 +278,13 @@ python3 scripts/build_vps_test_report.py
 
 发布包还会生成 `DESKTOP_ARTIFACTS_vX.Y.Z.md`，检查本地 `dist/` 里的 unsigned `.app`、`.exe` 或 desktop zip 产物。页面侧边栏“桌面产物”也可以执行同样的只读检查。
 
+本地已经支持把 unsigned macOS `.app` 打成适合手动上传 GitHub Release 的 zip：
+
+```bash
+python3 scripts/package_desktop_artifacts.py
+python3 scripts/check_desktop_artifacts.py --write-report
+```
+
 `build_product_package.py` 会生成面向普通用户的 portable zip 和 `PRODUCT_READINESS` 报告。portable zip 内置 `START_HERE.md` 和 `START_HERE.zh-CN.md`，会告诉用户 Windows/macOS/Linux 应该先运行哪个启动文件。这个包仍然不会包含本地真实 `output/` 结果或 `data/profiles.json`。
 
 `check_release_ready.py` 会在不连接 VPS 的前提下运行发版前体检；开发中检查未提交改动时可加 `--allow-dirty`。

@@ -20,6 +20,18 @@ Expected local outcome before public release:
 - Portable source and product packages are present under `dist/`.
 - Known external blockers are explicitly listed instead of hidden.
 
+## Unsigned Desktop Artifacts
+
+After building the macOS `.app`, package it for manual release review:
+
+```bash
+python3 scripts/package_desktop_artifacts.py
+python3 scripts/check_desktop_artifacts.py --write-report
+```
+
+The generated zip must be clearly marked `unsigned` until code signing and
+notarization are complete.
+
 ## GitHub Publishing
 
 ```bash

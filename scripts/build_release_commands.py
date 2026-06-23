@@ -12,6 +12,7 @@ if str(SCRIPT_ROOT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_ROOT))
 
 from deployer.config import APP_VERSION, PROJECT_ROOT
+from deployer.desktop_artifacts import candidate_paths
 from deployer.release_status import expected_release_artifacts
 
 
@@ -28,7 +29,13 @@ def git_output(*args: str) -> str:
 
 
 def release_artifacts(version: str) -> list[str]:
-    return [str(path.relative_to(PROJECT_ROOT)) for _, path in expected_release_artifacts(version)]
+    required = [str(path.relative_to(PROJECT_ROOT)) for _, path in expected_release_artifacts(version)]
+    optional_desktop = [
+        str(path.relative_to(PROJECT_ROOT))
+        for path in candidate_paths()
+        if path.is_file() and path.suffix.lower() in {".zip", ".exe"}
+    ]
+    return [*required, *optional_desktop]
 
 
 def report_text(version: str = APP_VERSION) -> str:
@@ -77,6 +84,10 @@ git push origin {tag_name}
 ## Release Artifacts
 
 {artifact_lines}
+
+Desktop artifacts are included only when they already exist under `dist/`.
+Unsigned artifacts must stay clearly marked `unsigned` until signing and
+notarization are complete.
 
 ## Optional GitHub CLI Upload
 

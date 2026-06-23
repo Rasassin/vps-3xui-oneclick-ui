@@ -61,6 +61,7 @@ REQUIRED_RELEASE_FILES = {
     "scripts/check_product_package.py",
     "scripts/check_ci_readiness.py",
     "scripts/check_desktop_artifacts.py",
+    "scripts/package_desktop_artifacts.py",
     "scripts/check_external_release_inputs.py",
     "scripts/check_go_live_dashboard.py",
     "scripts/check_github_connectivity.py",
@@ -174,6 +175,10 @@ def check_built_artifact(path: Path) -> None:
     if not path.exists():
         fail(f"built artifact does not exist: {path}")
     if path.is_file():
+        if path.suffix.lower() == ".zip":
+            check_desktop_zip(path)
+            print(f"built artifact checked: {path}")
+            return
         check_executable_file(path)
         print(f"built artifact checked: {path}")
         return
@@ -199,6 +204,30 @@ def check_executable_file(path: Path) -> None:
         fail(f"built executable is empty: {path}")
     if path.suffix.lower() not in {"", ".exe"}:
         fail(f"built executable has unexpected suffix: {path.name}")
+
+
+def check_desktop_zip(path: Path) -> None:
+    if path.stat().st_size == 0:
+        fail(f"desktop zip is empty: {path}")
+    with ZipFile(path) as archive:
+        names = set(archive.namelist())
+    leaked = sorted(name for name in names if Path(name).name in FORBIDDEN_ARTIFACT_NAMES)
+    if leaked:
+        fail(f"desktop zip contains local sensitive files: {', '.join(leaked[:8])}")
+    app_roots = sorted({name.split(".app/", 1)[0] + ".app" for name in names if ".app/" in name})
+    if app_roots:
+        root = app_roots[0]
+        required = {
+            f"{root}/Contents/Info.plist",
+            f"{root}/Contents/MacOS/VPS 3x-ui Oneclick",
+        }
+        missing = sorted(required - names)
+        if missing:
+            fail(f"desktop zip macOS app is missing: {', '.join(missing)}")
+        return
+    executable_names = {Path(name).name for name in names}
+    if not ({"VPS 3x-ui Oneclick", "VPS 3x-ui Oneclick.exe"} & executable_names):
+        fail("desktop zip is missing a recognized launcher executable or .app bundle.")
 
 
 def all_files(path: Path) -> list[Path]:

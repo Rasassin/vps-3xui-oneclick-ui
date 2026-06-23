@@ -73,6 +73,15 @@ Then run:
 
 The script runs `desktop/check_desktop_package.py --built-artifact "dist/VPS 3x-ui Oneclick.app"` after PyInstaller finishes.
 
+To package the unsigned `.app` for a manual GitHub Release upload:
+
+```bash
+python3 scripts/package_desktop_artifacts.py
+python3 desktop/check_desktop_package.py --built-artifact "dist/VPS-3x-ui-Oneclick-macOS-vX.Y.Z-unsigned.zip"
+```
+
+The zip remains unsigned until the signing and notarization flow is completed.
+
 ## macOS Signing And Notarization Experiment
 
 On a prepared macOS release machine, after building the `.app`, set the required Apple signing variables and run the script:

@@ -14,6 +14,7 @@ All notable product changes are tracked here. This project keeps product history
 - Add a Release Candidate report that summarizes portable readiness, update channel, publishing, signing, and VPS evidence.
 - Add an external release inputs report and sidebar panel for remaining non-code productization prerequisites.
 - Build and validate a local unsigned macOS desktop artifact, and add desktop artifact reports to release evidence.
+- Add unsigned desktop artifact packaging and zip validation for manual Release uploads.
 
 ## v1.54.0
 
