@@ -15,6 +15,7 @@ if str(SCRIPT_ROOT) not in sys.path:
 
 from deployer.ci_status import write_ci_report
 from deployer.config import APP_VERSION, PROJECT_ROOT
+from deployer.external_release_inputs import write_external_inputs_report
 from deployer.go_live_dashboard import write_dashboard_report
 from deployer.github_connectivity import write_github_connectivity_report
 from deployer.product_maturity import write_report as write_maturity_report
@@ -121,6 +122,7 @@ def build_release_bundle(version: str = APP_VERSION) -> list[Path]:
     go_live_report_path = write_go_live_report(collect_go_live_gates(version), version)
     dashboard_report_path = write_dashboard_report(version=version)
     candidate_report_path = write_candidate_report(version=version)
+    external_inputs_report_path = write_external_inputs_report(version=version)
     artifact_paths = [
         *core_artifact_paths,
         update_manifest_path,
@@ -134,6 +136,7 @@ def build_release_bundle(version: str = APP_VERSION) -> list[Path]:
         go_live_report_path,
         dashboard_report_path,
         candidate_report_path,
+        external_inputs_report_path,
     ]
     checksums_path = write_sha256sums(artifact_paths, version)
     manifest_path = write_manifest(artifact_paths, checksums_path, version)

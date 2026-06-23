@@ -129,6 +129,12 @@ Release Candidate reports summarize local release evidence and known blockers.
 They do not publish, download, install, connect to a VPS, upload diagnostics, or
 store credentials.
 
+External release input reports summarize whether release-only prerequisites are
+present, such as GitHub authentication, signing environment variables, desktop
+artifact paths, and local VPS compatibility evidence. They do not print signing
+passwords, certificate private keys, GitHub tokens, VPS credentials, node links,
+subscription links, QR images, or panel credentials.
+
 ## What Release Checks Guard
 
 Release and secret hygiene checks are local-only. They do not connect to a VPS.

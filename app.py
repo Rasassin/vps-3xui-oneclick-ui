@@ -20,6 +20,7 @@ from deployer.deploy_service import (
     reset_remote_oneclick,
 )
 from deployer.export_service import build_export_zip
+from deployer.external_release_inputs import collect_external_input_checks, external_inputs_overall_status, write_external_inputs_report
 from deployer.go_live_dashboard import collect_dashboard_gates, dashboard_overall_status, write_dashboard_report
 from deployer.github_connectivity import (
     collect_github_connectivity_checks,
@@ -74,6 +75,7 @@ def init_state() -> None:
     st.session_state.setdefault("maturity_gates", collect_maturity_gates())
     st.session_state.setdefault("dashboard_gates", [])
     st.session_state.setdefault("candidate_gates", [])
+    st.session_state.setdefault("external_input_checks", [])
     st.session_state.setdefault("profile_name_input", "")
     st.session_state.setdefault("selected_profile_name", "")
 
@@ -316,6 +318,28 @@ def render_sidebar() -> None:
                     st.caption(f"{label} · {gate.name} · {gate.detail}")
             else:
                 st.info("点击后显示当前版本是否适合作为公开开源候选版本。")
+        with st.expander("外部发布输入"):
+            st.caption("检查 GitHub 登录、签名环境、桌面产物和真实 VPS 证据；不会 push、签名、上传或连接 VPS。")
+            if st.button("刷新外部输入", use_container_width=True):
+                checks = collect_external_input_checks()
+                write_external_inputs_report(checks)
+                st.session_state.external_input_checks = checks
+            external_checks = st.session_state.get("external_input_checks", [])
+            if external_checks:
+                overall = external_inputs_overall_status(external_checks)
+                if overall == "pass":
+                    st.success("外部发布输入齐全。")
+                elif overall == "fail":
+                    st.error("外部发布输入有失败项。")
+                else:
+                    st.warning("还有外部发布输入待补齐。")
+                for check in external_checks:
+                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(check.status, check.status)
+                    st.caption(f"{label} · {check.name} · {check.detail}")
+                    if check.action:
+                        st.caption(f"动作：{check.action}")
+            else:
+                st.info("点击后显示产品化剩余外部输入。")
         with st.expander("GitHub 发布准备度"):
             st.caption("只读检查：不会 push、不会创建 tag、不会上传 Release、不会连接 VPS。")
             if st.button("刷新发布准备度", use_container_width=True):

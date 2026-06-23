@@ -23,6 +23,7 @@ FOUNDATION_ITEMS = [
     RequiredItem("app.py", ("VPS 3x-ui 一键部署器",)),
     RequiredItem("deployer/ci_status.py", ("CI Readiness", "GitHub Actions")),
     RequiredItem("deployer/deploy_service.py", ("SSHRunner", "download_remote_results")),
+    RequiredItem("deployer/external_release_inputs.py", ("External Release Inputs", "collect_external_input_checks")),
     RequiredItem("deployer/go_live_dashboard.py", ("Go-Live Dashboard", "dashboard_overall_status")),
     RequiredItem("deployer/github_connectivity.py", ("GitHub Connectivity", "curloptResolve", "push --dry-run")),
     RequiredItem("deployer/product_maturity.py", ("Product Maturity", "Current score")),
@@ -81,6 +82,7 @@ RELEASE_ITEMS = [
     RequiredItem("scripts/build_vps_test_report.py", ("VPS Compatibility Test Report",)),
     RequiredItem("scripts/record_vps_compatibility.py", ("compatibility result", "ignored by Git")),
     RequiredItem("scripts/check_ci_readiness.py", ("CI Readiness", "GitHub Actions")),
+    RequiredItem("scripts/check_external_release_inputs.py", ("external productization inputs", "--write-report")),
     RequiredItem("scripts/check_github_connectivity.py", ("GitHub", "--apply-repair", "--skip-dry-run")),
     RequiredItem("scripts/check_go_live_dashboard.py", ("go-live dashboard", "--strict")),
     RequiredItem("scripts/check_publish_readiness.py", ("Publish Readiness", "never pushes commits")),
@@ -101,6 +103,7 @@ RELEASE_ITEMS = [
     RequiredItem("scripts/doctor.py"),
     RequiredItem("scripts/prepare_release.py", ("without tagging, uploading, or connecting to a VPS",)),
     RequiredItem("scripts/prepare_release_tag.py", ("--create-local-tag", "does not connect to a VPS")),
+    RequiredItem("docs/release/productization-runbook.md", ("Productization Runbook", "check_external_release_inputs.py")),
 ]
 
 PRODUCT_GAPS = [

@@ -73,6 +73,7 @@ def main() -> None:
     run(["bash", "-n", "desktop/sign_macos_app.sh"])
     run(["bash", "-n", ".githooks/pre-commit"])
     run([sys.executable, "scripts/check_streamlit_app.py"])
+    run([sys.executable, "scripts/check_external_release_inputs.py", "--write-report"])
 
     build_release_bundle(APP_VERSION)
     run([sys.executable, "scripts/check_release_artifacts.py"])

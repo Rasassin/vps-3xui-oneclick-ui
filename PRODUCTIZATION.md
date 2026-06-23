@@ -1031,6 +1031,7 @@ Implemented scope:
 - Add a local VPS compatibility evidence recorder under `data/` and feed recorded results into the compatibility report.
 - Add local update manifest validation and a sidebar update-channel check.
 - Add a Release Candidate report that summarizes portable readiness, update channel, publish plan, signing state, and VPS evidence.
+- Add an external release inputs report and sidebar panel for remaining signing, GitHub, desktop artifact, and VPS evidence prerequisites.
 
 Still intentionally not included:
 

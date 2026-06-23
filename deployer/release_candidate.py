@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .config import APP_VERSION, PROJECT_ROOT
+from .external_release_inputs import collect_external_input_checks, external_inputs_overall_status
 from .product_maturity import collect_maturity_gates, maturity_score, product_tier
 from .publish_assistant import collect_publish_steps, publish_plan_overall_status
 from .release_status import expected_release_artifacts
@@ -101,6 +102,16 @@ def gate_product_maturity() -> CandidateGate:
     return CandidateGate("Product maturity", status, f"{percent}% ({earned}/{total}), tier: {product_tier(percent)}.")
 
 
+def gate_external_inputs() -> CandidateGate:
+    checks = collect_external_input_checks()
+    status = external_inputs_overall_status(checks)
+    blocking = [check for check in checks if check.status != "pass"]
+    if not blocking:
+        return CandidateGate("External release inputs", "pass", "GitHub auth, signing inputs, desktop artifacts, and VPS evidence are ready.")
+    detail = "; ".join(f"{check.name}: {check.detail}" for check in blocking[:4])
+    return CandidateGate("External release inputs", "pending" if status == "pending" else status, detail)
+
+
 def collect_candidate_gates(version: str = APP_VERSION) -> list[CandidateGate]:
     return [
         gate_release_artifacts(version),
@@ -108,6 +119,7 @@ def collect_candidate_gates(version: str = APP_VERSION) -> list[CandidateGate]:
         gate_update_channel(version),
         gate_product_maturity(),
         gate_publish_plan(version),
+        gate_external_inputs(),
         gate_signing(version),
         gate_vps_evidence(version),
     ]
