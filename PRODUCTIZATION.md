@@ -1030,6 +1030,7 @@ Implemented scope:
 - Fix generated release command checklists to derive from the canonical release artifact list.
 - Add a local VPS compatibility evidence recorder under `data/` and feed recorded results into the compatibility report.
 - Add local update manifest validation and a sidebar update-channel check.
+- Add a Release Candidate report that summarizes portable readiness, update channel, publish plan, signing state, and VPS evidence.
 
 Still intentionally not included:
 

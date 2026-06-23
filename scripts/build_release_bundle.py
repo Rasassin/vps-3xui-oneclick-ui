@@ -19,6 +19,7 @@ from deployer.go_live_dashboard import write_dashboard_report
 from deployer.github_connectivity import write_github_connectivity_report
 from deployer.product_maturity import write_report as write_maturity_report
 from deployer.publish_assistant import write_publish_plan
+from deployer.release_candidate import write_candidate_report
 from scripts.build_release import build_release_zip
 from scripts.build_product_package import build_product_package
 from scripts.build_update_manifest import write_update_manifest
@@ -119,6 +120,7 @@ def build_release_bundle(version: str = APP_VERSION) -> list[Path]:
     ci_report_path = write_ci_report(version=version)
     go_live_report_path = write_go_live_report(collect_go_live_gates(version), version)
     dashboard_report_path = write_dashboard_report(version=version)
+    candidate_report_path = write_candidate_report(version=version)
     artifact_paths = [
         *core_artifact_paths,
         update_manifest_path,
@@ -131,6 +133,7 @@ def build_release_bundle(version: str = APP_VERSION) -> list[Path]:
         ci_report_path,
         go_live_report_path,
         dashboard_report_path,
+        candidate_report_path,
     ]
     checksums_path = write_sha256sums(artifact_paths, version)
     manifest_path = write_manifest(artifact_paths, checksums_path, version)

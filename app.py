@@ -31,6 +31,7 @@ from deployer.product_maturity import collect_maturity_gates, maturity_score, pr
 from deployer.publish_assistant import collect_publish_steps, publish_plan_overall_status, write_publish_plan
 from deployer.publish_status import collect_publish_checks, publish_overall_status, write_publish_report
 from deployer.qr_service import regenerate_output_qrs
+from deployer.release_candidate import candidate_overall_status, collect_candidate_gates, write_candidate_report
 from deployer.release_status import collect_release_artifacts, load_release_source_summary, release_artifacts_ready
 from deployer.result_parser import load_results
 from deployer.ssh_runner import DeploymentError, redact
@@ -72,6 +73,7 @@ def init_state() -> None:
     st.session_state.setdefault("github_connectivity_checks", [])
     st.session_state.setdefault("maturity_gates", collect_maturity_gates())
     st.session_state.setdefault("dashboard_gates", [])
+    st.session_state.setdefault("candidate_gates", [])
     st.session_state.setdefault("profile_name_input", "")
     st.session_state.setdefault("selected_profile_name", "")
 
@@ -292,6 +294,28 @@ def render_sidebar() -> None:
                     st.caption(f"{label} · {gate.name} · {gate.detail}")
             else:
                 st.info("点击刷新后显示最终上线门槛。")
+        with st.expander("Release Candidate"):
+            st.caption("汇总 portable 产品包、更新通道、发布计划、签名状态和 VPS 证据；不会发布、下载、安装或连接 VPS。")
+            if st.button("刷新候选版本验收", use_container_width=True):
+                gates = collect_candidate_gates()
+                write_candidate_report(gates)
+                st.session_state.candidate_gates = gates
+            candidate_gates = st.session_state.get("candidate_gates", [])
+            if candidate_gates:
+                overall = candidate_overall_status(candidate_gates)
+                if overall == "pass":
+                    st.success("候选版本所有门槛通过。")
+                elif overall == "candidate":
+                    st.warning("可作为开源 portable 候选版本，但仍有外部发布门槛。")
+                elif overall == "fail":
+                    st.error("候选版本有必须修复项。")
+                else:
+                    st.warning("候选版本仍有待处理项。")
+                for gate in candidate_gates:
+                    label = {"pass": "通过", "candidate": "候选", "pending": "待处理", "fail": "失败"}.get(gate.status, gate.status)
+                    st.caption(f"{label} · {gate.name} · {gate.detail}")
+            else:
+                st.info("点击后显示当前版本是否适合作为公开开源候选版本。")
         with st.expander("GitHub 发布准备度"):
             st.caption("只读检查：不会 push、不会创建 tag、不会上传 Release、不会连接 VPS。")
             if st.button("刷新发布准备度", use_container_width=True):

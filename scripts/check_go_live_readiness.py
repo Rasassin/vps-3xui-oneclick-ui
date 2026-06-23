@@ -58,6 +58,7 @@ def required_artifacts(version: str = APP_VERSION) -> list[Path]:
         dist_path("GITHUB_CONNECTIVITY_v{version}.md", version),
         dist_path("CI_READINESS_v{version}.md", version),
         dist_path("GO_LIVE_DASHBOARD_v{version}.md", version),
+        dist_path("RELEASE_CANDIDATE_v{version}.md", version),
     ]
 
 

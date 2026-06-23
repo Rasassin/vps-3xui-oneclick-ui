@@ -125,6 +125,10 @@ state, and public GitHub metadata. They do not deploy to a VPS, upload
 diagnostics, push commits, create tags, upload release assets, or store GitHub
 credentials.
 
+Release Candidate reports summarize local release evidence and known blockers.
+They do not publish, download, install, connect to a VPS, upload diagnostics, or
+store credentials.
+
 ## What Release Checks Guard
 
 Release and secret hygiene checks are local-only. They do not connect to a VPS.

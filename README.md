@@ -272,6 +272,8 @@ python3 scripts/build_vps_test_report.py
 
 发布包还会生成 `PUBLISH_PLAN_vX.Y.Z.md`，把正式发布拆成本地工作区、发布产物、GitHub 连接、GitHub 登录、push main、创建 tag、push tag 和 Release 资产上传步骤。它会给出命令，但不会自动执行这些发布动作。
 
+发布包还会生成 `RELEASE_CANDIDATE_vX.Y.Z.md`，把 portable 产品包、更新通道、发布计划、签名状态和 VPS 证据合并成一个候选版本验收结论。页面侧边栏“Release Candidate”也可以执行同样的只读汇总。
+
 `build_product_package.py` 会生成面向普通用户的 portable zip 和 `PRODUCT_READINESS` 报告。portable zip 内置 `START_HERE.md` 和 `START_HERE.zh-CN.md`，会告诉用户 Windows/macOS/Linux 应该先运行哪个启动文件。这个包仍然不会包含本地真实 `output/` 结果或 `data/profiles.json`。
 
 `check_release_ready.py` 会在不连接 VPS 的前提下运行发版前体检；开发中检查未提交改动时可加 `--allow-dirty`。
@@ -292,6 +294,7 @@ python3 scripts/build_vps_test_report.py
 桌面实验包包含 `desktop/assets/` 下的生成图标资产，`desktop/generate_icons.py` 可重新生成 PNG、ICO 和 ICNS。
 侧边栏会显示产品化进度；发布包会生成 `PRODUCT_MATURITY_vX.Y.Z.md`，用于追踪离正式产品还差哪些门槛。
 侧边栏也会显示 Go-live 总览；发布包会生成 `GO_LIVE_DASHBOARD_vX.Y.Z.md`，把发布包、产品成熟度、CI、签名和 VPS 兼容矩阵合并成一个上线视图。
+侧边栏会显示 Release Candidate 验收；发布包会生成 `RELEASE_CANDIDATE_vX.Y.Z.md`，用于判断当前版本是否适合作为公开开源候选版本。
 
 `check_secret_hygiene.py` 会检查 Git 已跟踪文件，防止误提交 output 结果、profiles、env、日志、私钥和明显的节点链接。
 

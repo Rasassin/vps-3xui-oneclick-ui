@@ -85,7 +85,8 @@ def artifact_step(version: str) -> PublishStep:
     missing = [
         path.name
         for _, path in expected_release_artifacts(version)
-        if not path.name.startswith("PUBLISH_PLAN_v") and (not path.exists() or path.stat().st_size == 0)
+        if not path.name.startswith(("PUBLISH_PLAN_v", "RELEASE_CANDIDATE_v"))
+        and (not path.exists() or path.stat().st_size == 0)
     ]
     if missing:
         return PublishStep("Release artifacts", "fail", "Missing: " + ", ".join(missing), "python3 scripts/prepare_release.py --allow-dirty")

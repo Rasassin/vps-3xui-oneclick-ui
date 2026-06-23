@@ -11,6 +11,7 @@ All notable product changes are tracked here. This project keeps product history
 - Fix generated release command checklists so they include every expected release artifact.
 - Add a local VPS compatibility evidence recorder that writes ignored `data/` results and feeds the compatibility report.
 - Add local update manifest validation and expose update-channel checks in the Streamlit sidebar.
+- Add a Release Candidate report that summarizes portable readiness, update channel, publishing, signing, and VPS evidence.
 
 ## v1.54.0
 
