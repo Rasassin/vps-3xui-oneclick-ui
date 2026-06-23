@@ -12,6 +12,7 @@ if str(SCRIPT_ROOT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_ROOT))
 
 from deployer.config import APP_VERSION, PROJECT_ROOT
+from deployer.release_status import expected_release_artifacts
 
 
 def git_output(*args: str) -> str:
@@ -27,19 +28,7 @@ def git_output(*args: str) -> str:
 
 
 def release_artifacts(version: str) -> list[str]:
-    return [
-        f"dist/vps-3xui-oneclick-ui-v{version}.zip",
-        f"dist/vps-3xui-oneclick-ui-portable-v{version}.zip",
-        f"dist/GITHUB_RELEASE_v{version}.md",
-        f"dist/SHA256SUMS_v{version}.txt",
-        f"dist/release-manifest-v{version}.json",
-        f"dist/PRODUCT_READINESS_v{version}.md",
-        f"dist/VPS_COMPATIBILITY_TEST_v{version}.md",
-        f"dist/update-manifest-v{version}.json",
-        f"dist/SIGNING_READINESS_v{version}.md",
-        f"dist/SIGNED_ARTIFACT_VALIDATION_v{version}.md",
-        f"dist/GO_LIVE_READINESS_v{version}.md",
-    ]
+    return [str(path.relative_to(PROJECT_ROOT)) for _, path in expected_release_artifacts(version)]
 
 
 def report_text(version: str = APP_VERSION) -> str:

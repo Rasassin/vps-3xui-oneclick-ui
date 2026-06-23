@@ -12,24 +12,19 @@ if str(SCRIPT_ROOT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_ROOT))
 
 from deployer.config import APP_VERSION, PROJECT_ROOT
-
-
-SYSTEM_ROWS = [
-    ("Ubuntu 22.04", "pending"),
-    ("Ubuntu 24.04", "pending"),
-    ("Debian 12", "pending"),
-]
+from deployer.vps_compatibility import load_results, markdown_rows
 
 
 def report_text(version: str) -> str:
     generated_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    rows = "\n".join(
-        f"| {system} |  | {status} |  |  |  |  |  |  |  | |"
-        for system, status in SYSTEM_ROWS
-    )
+    results = load_results()
+    rows = markdown_rows(results)
+    source = "local recorded compatibility results" if results else "blank manual worksheet"
     return f"""# VPS Compatibility Test Report v{version}
 
 Generated at: {generated_at}
+
+Source: {source}
 
 This report is a manual release-validation worksheet. It does not contain VPS
 root passwords, node links, QR images, subscription links, or 3x-ui panel
@@ -66,6 +61,13 @@ Status values:
 Do not paste real VPS root passwords, node links, subscription links, QR images,
 or panel credentials into this report. Use the public diagnostics zip when
 opening an issue.
+
+## Recording Local Evidence
+
+Use `scripts/record_vps_compatibility.py` to append a local test result under
+`data/vps-compatibility-results.json`. The `data/` directory is ignored by Git.
+The recorder rejects obvious passwords, private keys, and node/subscription
+links.
 """
 
 

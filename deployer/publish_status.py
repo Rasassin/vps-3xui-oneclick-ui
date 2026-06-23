@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .config import APP_VERSION, PROJECT_ROOT
+from .github_connectivity import collect_github_connectivity_checks, github_connectivity_overall_status
 
 
 @dataclass(frozen=True)
@@ -97,6 +98,16 @@ def check_gh_auth() -> PublishCheck:
     return PublishCheck("GitHub CLI auth", "pending", output or "no output")
 
 
+def check_github_connectivity() -> PublishCheck:
+    checks = collect_github_connectivity_checks(include_dry_run=False)
+    status = github_connectivity_overall_status(checks)
+    blocking = [check for check in checks if check.status != "pass"]
+    if not blocking:
+        return PublishCheck("GitHub connectivity diagnosis", "pass", "GitHub DNS, reachability, and credential checks passed.")
+    detail = "; ".join(f"{check.name}: {check.detail}" for check in blocking[:3])
+    return PublishCheck("GitHub connectivity diagnosis", status, detail)
+
+
 def check_release_commands(version: str) -> PublishCheck:
     path = PROJECT_ROOT / "dist" / f"RELEASE_COMMANDS_v{version}.md"
     if not path.exists() or path.stat().st_size == 0:
@@ -111,6 +122,7 @@ def collect_publish_checks(version: str = APP_VERSION) -> list[PublishCheck]:
         check_worktree(),
         check_release_tag(version),
         check_git_remote_reachable(),
+        check_github_connectivity(),
         check_gh_auth(),
         check_release_commands(version),
     ]

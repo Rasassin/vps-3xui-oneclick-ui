@@ -1017,6 +1017,27 @@ Still intentionally not included:
 - Automatically uploading GitHub Release assets.
 - Replacing actual signed binary validation or real VPS matrix testing.
 
+## v1.55 GitHub Connectivity Repair
+
+Implemented scope:
+
+- Add reusable GitHub connectivity diagnostics for DNS, SSL/proxy failures, direct-IP reachability, HTTPS credentials, and push dry-runs.
+- Add a guarded direct-IP repair that writes only repo-local Git config with `curloptResolve`.
+- Expose GitHub connection diagnosis and repair in the Streamlit sidebar.
+- Generate `GITHUB_CONNECTIVITY_vX.Y.Z.md` with release artifacts and include it in release/go-live checks.
+- Add a local publish plan assistant for worktree, artifacts, connectivity, auth, branch push, tag creation, tag push, and Release asset upload.
+- Generate `PUBLISH_PLAN_vX.Y.Z.md` and show the publish plan in the Streamlit sidebar.
+- Fix generated release command checklists to derive from the canonical release artifact list.
+- Add a local VPS compatibility evidence recorder under `data/` and feed recorded results into the compatibility report.
+
+Still intentionally not included:
+
+- Reading, printing, or storing GitHub tokens.
+- Performing a real push from the diagnostic command.
+- Creating tags or uploading GitHub Release assets from the app.
+- Fixing the user's global VPN/proxy configuration.
+- Claiming real VPS compatibility until the supported-system/provider rows have been manually tested.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

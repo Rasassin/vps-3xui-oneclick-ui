@@ -139,8 +139,11 @@ Reality 入站端口不一定必须是 `443`。`443` 更像普通 HTTPS，通常
 - 侧边栏本地自检和公开诊断包，方便开源 issue 排查
 - 侧边栏“检查更新”，只读取 GitHub Release 信息，不连接 VPS、不上传诊断、不自动执行更新
 - 侧边栏本地配置档，保存常用 VPS 和节点参数，但不保存 VPS 密码
+- 侧边栏“GitHub 连接修复”，用于诊断 `SSL_ERROR_SYSCALL`、`CONNECT 503`、DNS/代理和 GitHub CLI 凭据问题；它不会真实 push，也不会显示 token
+- 侧边栏“发布向导”，把 worktree、release artifacts、GitHub 连接、登录、push、tag 和 Release 上传拆成可执行步骤；它只生成计划，不会替你发布
 - 侧边栏发布包状态，显示并下载当前版本的 GitHub Release 产物、Portable 产品包和产品就绪报告，也显示发布包来源 commit、分支和 dirty 状态；如果产物来自未提交工作区，会提示不要正式发布
 - 发布包会生成 VPS 兼容性测试表，用于人工记录 Ubuntu 22.04、Ubuntu 24.04、Debian 12 的真实部署验收
+- 可用 `scripts/record_vps_compatibility.py` 在本机记录真实 VPS 兼容性证据；记录保存在被 Git 忽略的 `data/`，不会包含密码、节点链接、二维码或面板凭据
 - 发布包会生成机器可读的 update manifest，作为后续桌面更新通道的基础；当前不会自动下载或安装更新
 - 发布包会生成签名准备度报告，列出 macOS/Windows 正式签名发行还缺哪些本地工具和证书输入
 - 发布包会生成签名产物验证报告；正式签名产物生成后可用它验证 macOS codesign/stapler 和 Windows Authenticode
@@ -195,6 +198,8 @@ python scripts/check_streamlit_app.py
 python scripts/check_version_consistency.py
 python scripts/check_open_source_ready.py
 python scripts/check_product_readiness.py
+python scripts/check_github_connectivity.py --skip-dry-run
+python scripts/check_publish_plan.py --write-report
 python scripts/check_portable_launchers.py
 python scripts/build_product_package.py
 python scripts/check_product_package.py
@@ -231,6 +236,26 @@ python3 scripts/prepare_release_tag.py --skip-checks
 
 发布包还会生成 `VPS_COMPATIBILITY_TEST_vX.Y.Z.md`，它是一份人工测试表，用来记录支持系统和 VPS 服务商组合的真实部署结果；这份模板不会包含 VPS 密码、节点链接、二维码、订阅链接或面板密码。
 
+真实 VPS 测试完成后，可以用本地记录器写入被 Git 忽略的 `data/vps-compatibility-results.json`，再重新生成兼容性报告：
+
+```bash
+python3 scripts/record_vps_compatibility.py \
+  --system "Ubuntu 24.04" \
+  --provider-region "ExampleProvider / Singapore" \
+  --status pass \
+  --ssh pass \
+  --preflight pass \
+  --deploy pass \
+  --vless-qr pass \
+  --subscription partial \
+  --panel-login pass \
+  --reset pass \
+  --notes "Subscription QR not generated, single VLESS QR works."
+python3 scripts/build_vps_test_report.py
+```
+
+记录器会拒绝明显的密码、私钥、节点链接或订阅链接。
+
 发布包也会生成 `update-manifest-vX.Y.Z.json`，记录版本号、Release URL、核心下载资产、大小和 SHA256。它是未来自动更新通道的基础，但当前版本仍然只提示用户手动下载，不会自动安装。
 
 发布包还会生成 `SIGNING_READINESS_vX.Y.Z.md`，用于维护者检查 macOS 签名/公证和 Windows 签名所需的本地工具、证书路径与环境变量；报告不会包含证书密码、Apple app-specific password 或 VPS 凭据。
@@ -239,6 +264,10 @@ python3 scripts/prepare_release_tag.py --skip-checks
 
 发布包还会生成 `GO_LIVE_READINESS_vX.Y.Z.md`，用于总结正式上线前的剩余阻塞项，包括 Git 同步、Release tag、签名、签名产物和 VPS 兼容性。日常构建允许它显示 `pending`；正式发布前可以运行 `python3 scripts/check_go_live_readiness.py --strict --write-report`。
 
+发布包还会生成 `GITHUB_CONNECTIVITY_vX.Y.Z.md`，用于诊断本机到 GitHub 的 DNS、SSL、代理、直连 IP 和凭据状态。遇到 `LibreSSL SSL_connect: SSL_ERROR_SYSCALL` 或 `CONNECT tunnel failed` 时，可以在侧边栏点“GitHub 连接修复”，或运行 `python3 scripts/check_github_connectivity.py --apply-repair`。它最多写入仓库本地 Git 配置来绕过异常 DNS/代理，不会真实 push，也不会保存或打印 GitHub token。
+
+发布包还会生成 `PUBLISH_PLAN_vX.Y.Z.md`，把正式发布拆成本地工作区、发布产物、GitHub 连接、GitHub 登录、push main、创建 tag、push tag 和 Release 资产上传步骤。它会给出命令，但不会自动执行这些发布动作。
+
 `build_product_package.py` 会生成面向普通用户的 portable zip 和 `PRODUCT_READINESS` 报告。portable zip 内置 `START_HERE.md` 和 `START_HERE.zh-CN.md`，会告诉用户 Windows/macOS/Linux 应该先运行哪个启动文件。这个包仍然不会包含本地真实 `output/` 结果或 `data/profiles.json`。
 
 `check_release_ready.py` 会在不连接 VPS 的前提下运行发版前体检；开发中检查未提交改动时可加 `--allow-dirty`。
@@ -246,6 +275,10 @@ python3 scripts/prepare_release_tag.py --skip-checks
 `prepare_release_tag.py` 会在不连接 VPS 的前提下准备 GitHub Release tag。默认只 dry-run，打印应该创建和推送的 tag 命令；只有显式加 `--create-local-tag` 才会创建本地 tag，且不会自动推送到 GitHub。
 
 `check_release_artifacts.py` 会检查 `dist/` 里的发布 zip、Release 文案、SHA256SUMS 和 manifest，确认没有混入本地 `output/` 结果或 `data/profiles.json`，并验证 manifest 里的项目元数据、源码来源信息、artifact 文件名、大小和 SHA256。默认会拒绝旧 commit 构建的发布产物；如果只是检查历史产物，可显式添加 `--allow-stale-source`。
+
+`check_github_connectivity.py` 会检查 GitHub remote、DNS、`git ls-remote`、直连 IP、HTTPS 凭据和可选的 `git push --dry-run`。使用 `--apply-repair` 时，它只会修改当前仓库的 Git 配置，不会推送提交、创建 tag 或上传 Release。
+
+`check_publish_plan.py` 会生成本地发布计划，明确当前卡在 worktree、GitHub 网络、GitHub 登录、分支 push、tag 还是 Release 上传。它不会执行发布动作。
 
 `check_product_package.py` 会检查 portable product zip，确认包含中英文快速开始、启动脚本、产品就绪报告，并排除节点链接、二维码、订阅链接、面板信息和本地配置档。
 

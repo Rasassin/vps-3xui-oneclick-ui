@@ -21,8 +21,14 @@ from deployer.deploy_service import (
 )
 from deployer.export_service import build_export_zip
 from deployer.go_live_dashboard import collect_dashboard_gates, dashboard_overall_status, write_dashboard_report
+from deployer.github_connectivity import (
+    collect_github_connectivity_checks,
+    github_connectivity_overall_status,
+    write_github_connectivity_report,
+)
 from deployer.profile_service import delete_profile, load_profiles, upsert_profile
 from deployer.product_maturity import collect_maturity_gates, maturity_score, product_tier, write_report as write_maturity_report
+from deployer.publish_assistant import collect_publish_steps, publish_plan_overall_status, write_publish_plan
 from deployer.publish_status import collect_publish_checks, publish_overall_status, write_publish_report
 from deployer.qr_service import regenerate_output_qrs
 from deployer.release_status import collect_release_artifacts, load_release_source_summary, release_artifacts_ready
@@ -59,7 +65,9 @@ def init_state() -> None:
     st.session_state.setdefault("diagnostics_zip_path", "")
     st.session_state.setdefault("update_status", {})
     st.session_state.setdefault("publish_checks", [])
+    st.session_state.setdefault("publish_steps", [])
     st.session_state.setdefault("ci_checks", [])
+    st.session_state.setdefault("github_connectivity_checks", [])
     st.session_state.setdefault("maturity_gates", collect_maturity_gates())
     st.session_state.setdefault("dashboard_gates", [])
     st.session_state.setdefault("profile_name_input", "")
@@ -286,6 +294,55 @@ def render_sidebar() -> None:
                     st.caption(f"{label} · {check.name} · {check.detail}")
             else:
                 st.info("点击刷新后显示 GitHub remote、分支同步、tag、网络和 CLI 登录状态。")
+        with st.expander("GitHub 连接修复"):
+            st.caption("只处理本机到 GitHub 的 DNS/SSL/代理诊断；不会真实 push、不会上传 Release、不会读取或显示 token。")
+            github_cols = st.columns(2)
+            if github_cols[0].button("诊断 GitHub 连接", use_container_width=True):
+                checks = collect_github_connectivity_checks()
+                write_github_connectivity_report(checks)
+                st.session_state.github_connectivity_checks = checks
+            if github_cols[1].button("应用直连修复", use_container_width=True):
+                checks = collect_github_connectivity_checks(apply_repair=True)
+                write_github_connectivity_report(checks)
+                st.session_state.github_connectivity_checks = checks
+            github_checks = st.session_state.get("github_connectivity_checks", [])
+            if github_checks:
+                overall = github_connectivity_overall_status(github_checks)
+                if overall == "pass":
+                    st.success("GitHub 连接与认证检查通过。")
+                elif overall == "fail":
+                    st.error("GitHub 连接仍有阻塞项。")
+                else:
+                    st.warning("GitHub 发布仍有待处理项，多数情况是认证或本机网络。")
+                for check in github_checks:
+                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(check.status, check.status)
+                    st.caption(f"{label} · {check.name} · {check.detail}")
+                    if check.recovery:
+                        st.caption(f"建议：{check.recovery}")
+            else:
+                st.info("如果看到 LibreSSL SSL_ERROR_SYSCALL 或 CONNECT 503，先点“诊断 GitHub 连接”。")
+        with st.expander("发布向导"):
+            st.caption("生成本地发布步骤和命令；不会 push、不会创建 tag、不会上传 Release、不会连接 VPS。")
+            if st.button("生成发布计划", use_container_width=True):
+                steps = collect_publish_steps()
+                write_publish_plan(steps)
+                st.session_state.publish_steps = steps
+            publish_steps = st.session_state.get("publish_steps", [])
+            if publish_steps:
+                overall = publish_plan_overall_status(publish_steps)
+                if overall == "pass":
+                    st.success("发布计划通过，剩余只需按发布策略执行。")
+                elif overall == "fail":
+                    st.error("发布计划有必须修复项。")
+                else:
+                    st.warning("发布计划仍有待处理项。")
+                for step in publish_steps:
+                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(step.status, step.status)
+                    st.caption(f"{label} · {step.name} · {step.detail}")
+                    if step.command and step.status != "pass":
+                        st.code(step.command, language="bash")
+            else:
+                st.info("点击后会显示 worktree、artifact、GitHub 连接、登录、push、tag 和 Release 上传步骤。")
         with st.expander("GitHub CI 状态"):
             st.caption("只读检查：只读取公开 GitHub Actions 元数据，不连接 VPS、不上传诊断。")
             if st.button("刷新 CI 状态", use_container_width=True):

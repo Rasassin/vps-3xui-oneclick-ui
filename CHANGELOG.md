@@ -2,6 +2,15 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.55.0
+
+- Add GitHub SSL/proxy connectivity diagnostics with repo-local direct-IP repair.
+- Expose GitHub connection repair in the Streamlit sidebar without real pushes or token logging.
+- Include a GitHub connectivity report in release artifacts and go-live checks.
+- Add a local publish plan assistant with worktree, artifact, connectivity, authentication, push, tag, and Release upload steps.
+- Fix generated release command checklists so they include every expected release artifact.
+- Add a local VPS compatibility evidence recorder that writes ignored `data/` results and feeds the compatibility report.
+
 ## v1.54.0
 
 - Added a consolidated go-live dashboard for release artifacts, product maturity, publish readiness, CI, signing, signed artifacts, and VPS compatibility.

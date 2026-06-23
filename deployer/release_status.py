@@ -93,6 +93,8 @@ def expected_release_artifacts(version: str = APP_VERSION) -> list[tuple[str, Pa
         ("Go-live 准备度报告", dist_dir / f"GO_LIVE_READINESS_v{version}.md"),
         ("发布命令清单", dist_dir / f"RELEASE_COMMANDS_v{version}.md"),
         ("GitHub 发布准备度报告", dist_dir / f"PUBLISH_READINESS_v{version}.md"),
+        ("GitHub 发布计划报告", dist_dir / f"PUBLISH_PLAN_v{version}.md"),
+        ("GitHub 连接诊断报告", dist_dir / f"GITHUB_CONNECTIVITY_v{version}.md"),
         ("GitHub CI 准备度报告", dist_dir / f"CI_READINESS_v{version}.md"),
         ("Go-live 总览报告", dist_dir / f"GO_LIVE_DASHBOARD_v{version}.md"),
         ("SHA256 校验文件", dist_dir / f"SHA256SUMS_v{version}.txt"),

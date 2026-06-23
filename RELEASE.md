@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.54 adds a go-live dashboard
+v1.55 GitHub connectivity repair, publish diagnostics, and local publish plan assistant.
 
 ## Build Locally
 

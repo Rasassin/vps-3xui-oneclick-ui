@@ -16,7 +16,9 @@ if str(SCRIPT_ROOT) not in sys.path:
 from deployer.ci_status import write_ci_report
 from deployer.config import APP_VERSION, PROJECT_ROOT
 from deployer.go_live_dashboard import write_dashboard_report
+from deployer.github_connectivity import write_github_connectivity_report
 from deployer.product_maturity import write_report as write_maturity_report
+from deployer.publish_assistant import write_publish_plan
 from scripts.build_release import build_release_zip
 from scripts.build_product_package import build_product_package
 from scripts.build_update_manifest import write_update_manifest
@@ -112,6 +114,8 @@ def build_release_bundle(version: str = APP_VERSION) -> list[Path]:
     update_manifest_path = write_update_manifest(version, core_artifact_paths)
     release_commands_path = write_release_commands(version)
     publish_report_path = write_publish_report(version=version)
+    publish_plan_path = write_publish_plan(version=version)
+    github_connectivity_report_path = write_github_connectivity_report(version=version)
     ci_report_path = write_ci_report(version=version)
     go_live_report_path = write_go_live_report(collect_go_live_gates(version), version)
     dashboard_report_path = write_dashboard_report(version=version)
@@ -122,6 +126,8 @@ def build_release_bundle(version: str = APP_VERSION) -> list[Path]:
         signed_artifact_report_path,
         release_commands_path,
         publish_report_path,
+        publish_plan_path,
+        github_connectivity_report_path,
         ci_report_path,
         go_live_report_path,
         dashboard_report_path,

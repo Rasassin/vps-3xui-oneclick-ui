@@ -30,6 +30,8 @@ def artifact_paths(version: str) -> list[Path]:
         dist_dir / f"GO_LIVE_READINESS_v{version}.md",
         dist_dir / f"RELEASE_COMMANDS_v{version}.md",
         dist_dir / f"PUBLISH_READINESS_v{version}.md",
+        dist_dir / f"PUBLISH_PLAN_v{version}.md",
+        dist_dir / f"GITHUB_CONNECTIVITY_v{version}.md",
         dist_dir / f"CI_READINESS_v{version}.md",
         dist_dir / f"GO_LIVE_DASHBOARD_v{version}.md",
     ]

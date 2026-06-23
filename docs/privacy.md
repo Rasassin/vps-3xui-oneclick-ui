@@ -94,6 +94,15 @@ reachability results, tag state, and GitHub CLI authentication status. They do
 not push commits, create tags, upload release assets, connect to a VPS, or store
 GitHub credentials.
 
+GitHub connectivity reports may include DNS results, GitHub direct-IP override
+status, `git ls-remote` reachability, and `git push --dry-run` outcomes. They do
+not perform a real push, create tags, upload release assets, connect to a VPS,
+store GitHub credentials, or print GitHub tokens.
+
+Publish plan reports contain local publish status, release artifact names, and
+suggested Git/GitHub commands. They do not execute those commands, connect to a
+VPS, upload release assets, store GitHub credentials, or print GitHub tokens.
+
 CI readiness reports read public GitHub Actions metadata for this repository.
 They do not connect to a VPS, upload diagnostics, push commits, create tags,
 upload release assets, or store GitHub credentials.
@@ -101,6 +110,11 @@ upload release assets, or store GitHub credentials.
 Product maturity reports summarize local productization progress and remaining
 work. They do not include VPS credentials, node links, QR images, subscription
 links, panel credentials, signing passwords, or certificate private keys.
+
+VPS compatibility evidence can be recorded locally under
+`data/vps-compatibility-results.json`. The `data/` directory is ignored by Git.
+The recorder is intended for non-secret provider/system/status notes only and
+rejects obvious passwords, private keys, node links, and subscription links.
 
 Go-live dashboard reports summarize release gates using local files, local Git
 state, and public GitHub metadata. They do not deploy to a VPS, upload
