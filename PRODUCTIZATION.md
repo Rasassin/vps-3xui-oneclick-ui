@@ -815,6 +815,22 @@ Still intentionally not included:
 - Code signing or notarization.
 - OS-level updater integration.
 
+## v1.42 Signing Readiness Reports
+
+Implemented scope:
+
+- Add `scripts/check_signing_readiness.py`.
+- Generate `SIGNING_READINESS_vX.Y.Z.md` with release artifacts.
+- Check macOS signing/notarization inputs and Windows signing inputs without printing secrets.
+- Document strict signing checks for future release-signing machines.
+
+Still intentionally not included:
+
+- Actual code signing.
+- macOS notarization submission.
+- Windows installer signing.
+- Storing signing secrets in the repository.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

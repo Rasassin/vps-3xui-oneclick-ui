@@ -74,6 +74,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Guarded remote reset with typed confirmation, remote backup, local output clearing, and optional 3x-ui stop-and-archive.
 - Manual VPS compatibility test worksheet generated with release artifacts.
 - Machine-readable update manifest for future update-channel tooling.
+- Signing readiness report for macOS notarization and Windows signing preparation.
 
 ## Download
 
@@ -94,6 +95,7 @@ dist/release-manifest-v{version}.json
 dist/PRODUCT_READINESS_v{version}.md
 dist/VPS_COMPATIBILITY_TEST_v{version}.md
 dist/update-manifest-v{version}.json
+dist/SIGNING_READINESS_v{version}.md
 ```
 
 The portable zip includes both `START_HERE.md` and `START_HERE.zh-CN.md`.
@@ -136,6 +138,7 @@ python3 desktop_launcher.py
 - See `docs/privacy.md` for local data, VPS data, diagnostics, and release-check boundaries.
 - The update checker only reads GitHub Release metadata and does not upload diagnostics or install updates.
 - The update manifest describes release assets and checksums, but does not auto-install anything.
+- Signing readiness reports do not include signing passwords, certificates, or app-specific passwords.
 - Server hardening remains opt-in.
 - Remote reset remains opt-in and requires the exact confirmation phrase `RESET_3XUI_ONECLICK`.
 - The first version does not default-disable root login, password login, or ping.

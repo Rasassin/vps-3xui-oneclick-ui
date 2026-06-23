@@ -139,6 +139,7 @@ Reality 入站端口不一定必须是 `443`。`443` 更像普通 HTTPS，通常
 - 侧边栏发布包状态，显示并下载当前版本的 GitHub Release 产物、Portable 产品包和产品就绪报告，也显示发布包来源 commit、分支和 dirty 状态；如果产物来自未提交工作区，会提示不要正式发布
 - 发布包会生成 VPS 兼容性测试表，用于人工记录 Ubuntu 22.04、Ubuntu 24.04、Debian 12 的真实部署验收
 - 发布包会生成机器可读的 update manifest，作为后续桌面更新通道的基础；当前不会自动下载或安装更新
+- 发布包会生成签名准备度报告，列出 macOS/Windows 正式签名发行还缺哪些本地工具和证书输入
 - 本地桌面化启动器 `desktop_launcher.py`，用于后续 App 打包探索
 - 当前状态总览、部署前快速确认和失败恢复提示，减少误操作
 - 部署报告
@@ -225,6 +226,8 @@ python3 scripts/prepare_release_tag.py --skip-checks
 发布包还会生成 `VPS_COMPATIBILITY_TEST_vX.Y.Z.md`，它是一份人工测试表，用来记录支持系统和 VPS 服务商组合的真实部署结果；这份模板不会包含 VPS 密码、节点链接、二维码、订阅链接或面板密码。
 
 发布包也会生成 `update-manifest-vX.Y.Z.json`，记录版本号、Release URL、核心下载资产、大小和 SHA256。它是未来自动更新通道的基础，但当前版本仍然只提示用户手动下载，不会自动安装。
+
+发布包还会生成 `SIGNING_READINESS_vX.Y.Z.md`，用于维护者检查 macOS 签名/公证和 Windows 签名所需的本地工具、证书路径与环境变量；报告不会包含证书密码、Apple app-specific password 或 VPS 凭据。
 
 `build_product_package.py` 会生成面向普通用户的 portable zip 和 `PRODUCT_READINESS` 报告。portable zip 内置 `START_HERE.md` 和 `START_HERE.zh-CN.md`，会告诉用户 Windows/macOS/Linux 应该先运行哪个启动文件。这个包仍然不会包含本地真实 `output/` 结果或 `data/profiles.json`。
 

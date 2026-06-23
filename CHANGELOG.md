@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.42.0
+
+- Added a desktop signing readiness checker for macOS notarization and Windows signing inputs.
+- Generated signing readiness reports with release bundles without exposing signing secrets.
+- Documented signing readiness as a release preparation step while unsigned builds remain supported.
+
 ## v1.41.0
 
 - Added a machine-readable update manifest for release assets.

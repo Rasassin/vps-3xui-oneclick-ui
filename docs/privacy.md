@@ -72,6 +72,10 @@ contains version, release URL, artifact names, sizes, and checksums. It does not
 contain VPS passwords, node links, QR images, subscription links, panel
 credentials, or local diagnostics.
 
+Signing readiness reports list whether expected signing tools and environment
+variables are present. They do not print signing passwords, certificate contents,
+Apple app-specific passwords, VPS credentials, node links, or panel credentials.
+
 ## What Release Checks Guard
 
 Release and secret hygiene checks are local-only. They do not connect to a VPS.
