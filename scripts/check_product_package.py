@@ -53,6 +53,8 @@ def check_product_package(zip_path: Path, version: str) -> None:
         names = set(archive.namelist())
         start_here = archive.read("START_HERE.md").decode("utf-8") if "START_HERE.md" in names else ""
         report = archive.read(report_name).decode("utf-8") if report_name in names else ""
+        mac_launcher = archive.read("start_mac_linux.sh").decode("utf-8") if "start_mac_linux.sh" in names else ""
+        win_launcher = archive.read("start_windows.bat").decode("utf-8") if "start_windows.bat" in names else ""
 
     missing = sorted((REQUIRED_FILES | {report_name}) - names)
     if missing:
@@ -76,6 +78,15 @@ def check_product_package(zip_path: Path, version: str) -> None:
     for marker in ("start_windows.bat", "start_mac_linux.sh", "VPS root password"):
         if marker not in start_here:
             fail(f"START_HERE.md is missing marker: {marker}")
+    for marker in (".venv", "requirements.txt", "check_product_readiness.py", "does not connect to a VPS"):
+        if marker not in start_here:
+            fail(f"START_HERE.md is missing startup marker: {marker}")
+    for marker in ("check_product_readiness.py", "requirements.txt", "启动失败"):
+        if marker not in mac_launcher:
+            fail(f"start_mac_linux.sh is missing startup marker: {marker}")
+    for marker in ("check_product_readiness.py", "requirements.txt", "启动失败"):
+        if marker not in win_launcher:
+            fail(f"start_windows.bat is missing startup marker: {marker}")
     for marker in ("Current Tier", "Remaining Product Gaps", "does not connect to a VPS"):
         if marker not in report:
             fail(f"{report_name} is missing marker: {marker}")

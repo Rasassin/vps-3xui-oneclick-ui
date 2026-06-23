@@ -587,6 +587,22 @@ Still intentionally not included:
 - Bundled Python runtime.
 - Native Tauri UI.
 
+## v1.28 Portable Launch Preflight
+
+Implemented scope:
+
+- Add startup preflight checks to `start_windows.bat`.
+- Add startup preflight checks to `start_mac_linux.sh`.
+- Improve launch failure messages for missing Python, virtual environment creation, pip upgrades, and dependency installation.
+- Validate portable launch scripts include product readiness preflight markers.
+
+Still intentionally not included:
+
+- Bundled Python runtime.
+- Signed native installers.
+- Automatic updates.
+- Native Tauri UI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

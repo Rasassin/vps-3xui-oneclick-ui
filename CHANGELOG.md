@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.28.0
+
+- Added startup preflight checks to Windows and macOS/Linux launch scripts.
+- Improved launch failure messages for missing Python, virtual environment creation, and dependency installation.
+- Validated portable launch scripts include product readiness preflight markers.
+
 ## v1.27.0
 
 - Displayed portable product zip and product readiness report in the Streamlit release panel.

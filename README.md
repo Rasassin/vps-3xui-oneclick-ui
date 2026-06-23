@@ -24,7 +24,7 @@
 start_windows.bat
 ```
 
-脚本会自动创建 `.venv`、安装依赖，并执行：
+脚本会自动创建 `.venv`、安装依赖、运行本地产品启动前自检，并执行：
 
 ```bash
 streamlit run app.py
@@ -40,6 +40,8 @@ streamlit run app.py
 chmod +x start_mac_linux.sh
 ./start_mac_linux.sh
 ```
+
+启动脚本的本地产品自检不会连接 VPS；它只确认项目文件、隐私说明、发版脚手架和启动入口完整。
 
 ## 桌面 App 雏形
 

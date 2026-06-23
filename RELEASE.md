@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.27 also exposes product package artifacts in the UI.
+v1.28 also improves portable launch preflight checks.
 
 ## Build Locally
 

@@ -57,6 +57,8 @@ Experimental desktop-style launcher:
 python3 desktop_launcher.py
 ```
 
+The launch scripts create `.venv`, install `requirements.txt`, and run `scripts/check_product_readiness.py` before opening the page. This startup preflight does not connect to a VPS.
+
 ## What You Need
 
 - VPS IP

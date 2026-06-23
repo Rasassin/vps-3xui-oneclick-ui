@@ -27,8 +27,8 @@ FOUNDATION_ITEMS = [
     RequiredItem("remote_scripts/install_remote.sh", ("set -Eeuo pipefail", "ONECLICK_REALITY_PORT")),
     RequiredItem("remote_scripts/preflight_remote.sh", ("set -Eeuo pipefail",)),
     RequiredItem("remote_scripts/harden_after_success.sh", ("set -Eeuo pipefail",)),
-    RequiredItem("start_windows.bat", ("streamlit run app.py",)),
-    RequiredItem("start_mac_linux.sh", ("streamlit run app.py",)),
+    RequiredItem("start_windows.bat", ("streamlit run app.py", "check_product_readiness.py")),
+    RequiredItem("start_mac_linux.sh", ("streamlit run app.py", "check_product_readiness.py")),
     RequiredItem("requirements.txt", ("streamlit", "paramiko", "qrcode", "pillow")),
 ]
 
