@@ -750,6 +750,22 @@ Still intentionally not included:
 - Signed Windows installer.
 - Native Tauri UI.
 
+## v1.38 Guarded Release Tag Preparation
+
+Implemented scope:
+
+- Add `scripts/prepare_release_tag.py`.
+- Validate version consistency, tracked-file secret hygiene, release artifacts, product packages, and extracted portable packages before tag preparation.
+- Keep tag creation dry-run by default and separate from pushing to GitHub.
+- Document annotated tag publishing for the existing GitHub Release workflow.
+
+Still intentionally not included:
+
+- Automatically pushing tags to GitHub.
+- Signing release artifacts.
+- Running real VPS deployment in CI.
+- Native Tauri UI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

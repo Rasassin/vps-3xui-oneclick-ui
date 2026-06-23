@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.37 adds in-app update checking
+v1.38 adds guarded release tag preparation
 
 ## Build Locally
 
@@ -43,6 +43,7 @@ Before publishing a release:
 python3 scripts/check_release_ready.py
 python3 scripts/prepare_release.py --allow-dirty
 python3 scripts/doctor.py --release
+python3 scripts/prepare_release_tag.py --skip-checks
 VERSION="$(python3 -c 'from deployer.config import APP_VERSION; print(APP_VERSION)')"
 python3 scripts/check_release_artifacts.py
 python3 scripts/check_product_package.py
@@ -100,6 +101,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Use `python3 scripts/bump_version.py ...` when preparing a new version.
 - Run `python3 scripts/check_release_artifacts.py` after building the release bundle.
 - Run `python3 scripts/prepare_release.py --allow-dirty` during local release preparation.
+- Run `python3 scripts/prepare_release_tag.py --skip-checks` after committing the release version to preview the tag commands.
 - Run `python3 scripts/doctor.py --release`.
 - Optionally run `python3 scripts/install_git_hooks.py` to enable pre-commit checks locally.
 - Confirm `PRODUCTIZATION.md` reflects the shipped scope.

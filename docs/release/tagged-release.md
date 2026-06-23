@@ -16,14 +16,27 @@ python3 scripts/check_release_ready.py
 
 During local development, before committing the release changes, use `python3 scripts/check_release_ready.py --allow-dirty`.
 
+After committing the release version, preview the exact tag commands:
+
+```bash
+python3 scripts/prepare_release_tag.py --skip-checks
+```
+
 ## Publish
 
-Create and push a tag that exactly matches the app version:
+Create and push an annotated tag that exactly matches the app version:
 
 ```bash
 VERSION="$(python3 -c 'from deployer.config import APP_VERSION; print(APP_VERSION)')"
-git tag "v${VERSION}"
+git tag -a "v${VERSION}" -m "v${VERSION}"
+git push origin main
 git push origin "v${VERSION}"
+```
+
+If you want the helper to create the local annotated tag after checks pass, run:
+
+```bash
+python3 scripts/prepare_release_tag.py --create-local-tag
 ```
 
 The release workflow verifies that the tag version matches `APP_VERSION`, builds the release bundle, and uploads:

@@ -68,6 +68,7 @@ RELEASE_ITEMS = [
     RequiredItem("scripts/check_portable_launchers.py", ("Validate portable launchers",)),
     RequiredItem("scripts/doctor.py"),
     RequiredItem("scripts/prepare_release.py", ("without tagging, uploading, or connecting to a VPS",)),
+    RequiredItem("scripts/prepare_release_tag.py", ("--create-local-tag", "does not connect to a VPS")),
 ]
 
 PRODUCT_GAPS = [

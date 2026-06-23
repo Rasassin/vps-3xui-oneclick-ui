@@ -70,6 +70,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Cross-platform GitHub Actions product CI for Ubuntu, macOS, and Windows.
 - Experimental unsigned macOS and Windows desktop artifacts through GitHub Actions.
 - Sidebar GitHub Release update checker that is explicit, read-only, and does not connect to a VPS.
+- Guarded local release tag preparation helper for GitHub Release publishing.
 
 ## Download
 
@@ -160,6 +161,7 @@ python3 scripts/check_product_package.py
 python3 scripts/check_portable_user_package.py
 python3 scripts/doctor.py --release
 python3 scripts/prepare_release.py --allow-dirty
+python3 scripts/prepare_release_tag.py --skip-checks
 python3 desktop/check_desktop_package.py --release-zip dist/vps-3xui-oneclick-ui-v{version}.zip
 python3 desktop/check_desktop_package.py --built-artifact "dist/VPS 3x-ui Oneclick.app"
 ```

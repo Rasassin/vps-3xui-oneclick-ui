@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.38.0
+
+- Added a local release tag preparation helper for GitHub Release publishing.
+- Kept tag creation dry-run by default and separate from pushing to GitHub.
+- Validated release artifacts, product packages, and secret hygiene before tag preparation.
+
 ## v1.37.0
 
 - Added a sidebar GitHub Release update checker for source and desktop-style distributions.
