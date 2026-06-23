@@ -63,6 +63,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Portable launch preflight checks for Python, virtual environment setup, dependency installation, and product readiness.
 - Desktop launcher runtime validation and local-only environment overrides.
 - Double-click macOS portable launcher through `start_macos.command`.
+- Dedicated portable launcher validation for Windows, macOS, and Linux startup files.
 
 ## Download
 
@@ -144,6 +145,7 @@ python3 scripts/check_release_artifacts.py
 python3 scripts/check_version_consistency.py
 python3 scripts/check_open_source_ready.py
 python3 scripts/check_product_readiness.py
+python3 scripts/check_portable_launchers.py
 python3 scripts/build_product_package.py
 python3 scripts/check_product_package.py
 python3 scripts/doctor.py --release

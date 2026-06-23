@@ -181,6 +181,7 @@ python scripts/check_streamlit_app.py
 python scripts/check_version_consistency.py
 python scripts/check_open_source_ready.py
 python scripts/check_product_readiness.py
+python scripts/check_portable_launchers.py
 python scripts/build_product_package.py
 python scripts/check_product_package.py
 python desktop/check_desktop_package.py
@@ -201,6 +202,7 @@ python3 scripts/check_streamlit_app.py
 python3 scripts/check_version_consistency.py
 python3 scripts/check_open_source_ready.py
 python3 scripts/check_product_readiness.py
+python3 scripts/check_portable_launchers.py
 python3 scripts/build_product_package.py
 python3 scripts/check_product_package.py
 python3 scripts/doctor.py --release
@@ -228,6 +230,8 @@ python3 scripts/prepare_release.py --allow-dirty
 `check_open_source_ready.py` 会检查开源项目必备文件、issue 模板、GitHub Actions 和 release 文档是否存在。
 
 `check_product_readiness.py` 会检查本地产品化基础门槛，不连接 VPS。它会通过“开源 MVP”所需的 UI、部署、隐私、发版和桌面打包脚手架，同时列出签名安装包、原生 UI、自动更新等仍未完成的产品级缺口。
+
+`check_portable_launchers.py` 会检查 Windows、macOS、Linux 的 portable 启动入口，确认它们包含依赖安装、本地产品自检、失败提示和“不连接 VPS”的启动边界。
 
 `doctor.py` 是本地项目体检入口，会聚合密钥检查、语法检查、桌面打包输入检查和 Streamlit 首屏检查；加 `--release` 会额外执行完整发版检查。
 
@@ -300,6 +304,7 @@ vps-3xui-oneclick-ui/
 │   ├── check_release_artifacts.py
 │   ├── bump_version.py
 │   ├── check_open_source_ready.py
+│   ├── check_portable_launchers.py
 │   ├── check_secret_hygiene.py
 │   ├── check_release_ready.py
 │   ├── check_streamlit_app.py

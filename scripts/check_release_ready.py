@@ -61,6 +61,7 @@ def main() -> None:
     run([sys.executable, "scripts/check_version_consistency.py"])
     run([sys.executable, "scripts/check_open_source_ready.py"])
     run([sys.executable, "scripts/check_product_readiness.py"])
+    run([sys.executable, "scripts/check_portable_launchers.py"])
     run([sys.executable, "scripts/check_secret_hygiene.py"])
     run([sys.executable, "-m", "py_compile", "app.py", *[str(path) for path in sorted((PROJECT_ROOT / "deployer").glob("*.py"))], *[str(path) for path in sorted((PROJECT_ROOT / "scripts").glob("*.py"))], "desktop_launcher.py", "desktop/check_desktop_package.py"])
     run(["bash", "-n", "remote_scripts/preflight_remote.sh"])
@@ -74,6 +75,16 @@ def main() -> None:
     build_release_bundle(APP_VERSION)
     run([sys.executable, "scripts/check_release_artifacts.py"])
     run([sys.executable, "scripts/check_product_package.py"])
+    run(
+        [
+            sys.executable,
+            "scripts/check_portable_launchers.py",
+            "--zip-path",
+            str(PROJECT_ROOT / "dist" / f"vps-3xui-oneclick-ui-v{APP_VERSION}.zip"),
+            "--zip-path",
+            str(PROJECT_ROOT / "dist" / f"vps-3xui-oneclick-ui-portable-v{APP_VERSION}.zip"),
+        ]
+    )
     print(f"release readiness ok: v{APP_VERSION}")
 
 

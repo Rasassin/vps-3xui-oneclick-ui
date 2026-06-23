@@ -635,6 +635,22 @@ Still intentionally not included:
 - Automatic updates.
 - Native Tauri UI.
 
+## v1.31 Portable Launcher Validation
+
+Implemented scope:
+
+- Add `scripts/check_portable_launchers.py`.
+- Validate Windows, macOS, and Linux startup files for expected local-only startup markers.
+- Validate launchers from generated source and portable release zips during release readiness.
+- Include launcher validation in local doctor and GitHub Actions static checks.
+
+Still intentionally not included:
+
+- Signed native installers.
+- Bundled Python runtime.
+- Automatic updates.
+- Native Tauri UI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.30 adds a double-click macOS launcher for portable users.
+v1.31 adds dedicated portable launcher validation.
 
 ## Build Locally
 
@@ -44,6 +44,9 @@ python3 scripts/doctor.py --release
 VERSION="$(python3 -c 'from deployer.config import APP_VERSION; print(APP_VERSION)')"
 python3 scripts/check_release_artifacts.py
 python3 scripts/check_product_package.py
+python3 scripts/check_portable_launchers.py \
+  --zip-path "dist/vps-3xui-oneclick-ui-v${VERSION}.zip" \
+  --zip-path "dist/vps-3xui-oneclick-ui-portable-v${VERSION}.zip"
 python3 desktop/check_desktop_package.py --release-zip "dist/vps-3xui-oneclick-ui-v${VERSION}.zip"
 test -s "dist/SHA256SUMS_v${VERSION}.txt"
 test -s "dist/release-manifest-v${VERSION}.json"
@@ -75,6 +78,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Run `python3 scripts/check_secret_hygiene.py`.
 - Run `python3 scripts/check_streamlit_app.py`.
 - Run `python3 scripts/check_version_consistency.py`.
+- Run `python3 scripts/check_portable_launchers.py`.
 - Use `python3 scripts/bump_version.py ...` when preparing a new version.
 - Run `python3 scripts/check_release_artifacts.py` after building the release bundle.
 - Run `python3 scripts/prepare_release.py --allow-dirty` during local release preparation.

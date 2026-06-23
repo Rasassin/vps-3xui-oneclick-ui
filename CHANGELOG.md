@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.31.0
+
+- Added a dedicated portable launcher validation script for Windows, macOS, and Linux startup files.
+- Integrated portable launcher validation into doctor, release readiness, product readiness, and CI checks.
+- Validated portable launchers inside generated source and portable release zips.
+
 ## v1.30.0
 
 - Added start_macos.command as a double-click macOS launcher.
