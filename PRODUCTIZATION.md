@@ -880,6 +880,22 @@ Still intentionally not included:
 - Storing certificate private keys or signing passwords.
 - Treating unsigned artifacts as production-ready.
 
+## v1.46 Go-Live Readiness Report
+
+Implemented scope:
+
+- Add `scripts/check_go_live_readiness.py`.
+- Generate `GO_LIVE_READINESS_vX.Y.Z.md` with release artifacts.
+- Summarize release artifacts, update manifest safety, signing readiness, signed artifact validation, and VPS compatibility status.
+- Allow day-to-day builds to remain pending while `--strict` becomes the final release gate.
+
+Still intentionally not included:
+
+- Replacing real signed-artifact validation.
+- Replacing real VPS testing.
+- Uploading release assets automatically.
+- Storing any release signing secrets.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

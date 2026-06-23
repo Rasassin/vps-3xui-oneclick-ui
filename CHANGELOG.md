@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.46.0
+
+- Added a go-live readiness checker that summarizes final release gates.
+- Generated go-live readiness reports with release bundles.
+- Kept strict go-live checks optional so local builds can remain pending until external signing and VPS testing are complete.
+
 ## v1.45.0
 
 - Added a signed artifact validation tool for macOS app bundles and Windows installers.

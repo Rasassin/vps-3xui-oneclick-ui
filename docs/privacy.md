@@ -80,6 +80,10 @@ Signed artifact validation reports contain validation status and command output
 summaries only. They do not contain signing passwords, certificate private keys,
 VPS credentials, node links, QR images, subscription links, or panel credentials.
 
+Go-live readiness reports only summarize the status of generated release reports.
+They do not include VPS credentials, node links, QR images, subscription links,
+panel credentials, signing passwords, or certificate private keys.
+
 ## What Release Checks Guard
 
 Release and secret hygiene checks are local-only. They do not connect to a VPS.

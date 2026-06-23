@@ -89,6 +89,7 @@ def expected_release_artifacts(version: str = APP_VERSION) -> list[tuple[str, Pa
         ("更新通道 manifest", dist_dir / f"update-manifest-v{version}.json"),
         ("签名准备度报告", dist_dir / f"SIGNING_READINESS_v{version}.md"),
         ("签名产物验证报告", dist_dir / f"SIGNED_ARTIFACT_VALIDATION_v{version}.md"),
+        ("Go-live 准备度报告", dist_dir / f"GO_LIVE_READINESS_v{version}.md"),
         ("SHA256 校验文件", dist_dir / f"SHA256SUMS_v{version}.txt"),
         ("Release manifest", dist_dir / f"release-manifest-v{version}.json"),
     ]
