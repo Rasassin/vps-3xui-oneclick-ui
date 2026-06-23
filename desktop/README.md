@@ -24,7 +24,24 @@ From the project root:
 python3 desktop_launcher.py
 ```
 
-The launcher finds a free local port, starts Streamlit on `127.0.0.1`, waits for the health check, and opens the page.
+The launcher validates required runtime files, finds a free local port, starts Streamlit on `127.0.0.1`, waits for the health check, and opens the page.
+
+Optional local-only environment overrides:
+
+```bash
+VPS_3XUI_PORT=8601 python3 desktop_launcher.py
+VPS_3XUI_OPEN_BROWSER=0 python3 desktop_launcher.py
+VPS_3XUI_START_TIMEOUT=90 python3 desktop_launcher.py
+```
+
+Supported variables:
+
+- `VPS_3XUI_HOST`: `127.0.0.1` or `localhost`
+- `VPS_3XUI_PORT`: preferred local Streamlit port
+- `VPS_3XUI_START_TIMEOUT`: startup health-check timeout in seconds
+- `VPS_3XUI_OPEN_BROWSER`: set to `0` to skip opening the browser automatically
+
+These options only affect the local launcher. They do not connect to a VPS.
 
 ## macOS Build Experiment
 

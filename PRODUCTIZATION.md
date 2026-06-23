@@ -603,6 +603,22 @@ Still intentionally not included:
 - Automatic updates.
 - Native Tauri UI.
 
+## v1.29 Desktop Launcher Runtime Controls
+
+Implemented scope:
+
+- Add desktop launcher runtime file validation before starting Streamlit.
+- Add local-only environment overrides for host, preferred port, startup timeout, and browser opening.
+- Write the launcher safety boundary to the local desktop launcher log.
+- Validate desktop launcher product markers during desktop packaging checks.
+
+Still intentionally not included:
+
+- Bundled Python runtime.
+- Signed native installers.
+- Automatic updates.
+- Native Tauri UI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

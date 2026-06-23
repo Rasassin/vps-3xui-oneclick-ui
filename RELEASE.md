@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.28 also improves portable launch preflight checks.
+v1.29 improves the experimental desktop launcher runtime checks.
 
 ## Build Locally
 

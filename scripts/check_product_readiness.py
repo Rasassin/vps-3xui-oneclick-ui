@@ -45,7 +45,7 @@ OPEN_SOURCE_ITEMS = [
 ]
 
 DESKTOP_ITEMS = [
-    RequiredItem("desktop_launcher.py", ("streamlit", "127.0.0.1")),
+    RequiredItem("desktop_launcher.py", ("streamlit", "127.0.0.1", "validate_runtime_files", "VPS_3XUI_PORT")),
     RequiredItem("requirements-desktop.txt", ("pyinstaller",)),
     RequiredItem("desktop/README.md", ("PyInstaller",)),
     RequiredItem("desktop/build_macos_app.sh", ("pyinstaller",)),

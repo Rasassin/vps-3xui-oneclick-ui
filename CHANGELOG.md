@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.29.0
+
+- Added desktop launcher runtime file validation before starting Streamlit.
+- Added desktop launcher environment overrides for local host, port, timeout, and browser opening.
+- Validated desktop launcher product markers during desktop packaging checks.
+
 ## v1.28.0
 
 - Added startup preflight checks to Windows and macOS/Linux launch scripts.

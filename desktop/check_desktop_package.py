@@ -47,6 +47,14 @@ REQUIRED_RELEASE_FILES = {
     "output/.gitkeep",
     "data/.gitkeep",
 }
+DESKTOP_LAUNCHER_MARKERS = (
+    "validate_runtime_files",
+    "VPS_3XUI_HOST",
+    "VPS_3XUI_PORT",
+    "VPS_3XUI_START_TIMEOUT",
+    "VPS_3XUI_OPEN_BROWSER",
+    "does not connect",
+)
 
 
 def fail(message: str) -> None:
@@ -60,6 +68,10 @@ def check_source_tree() -> None:
     for relative in FORBIDDEN_RELEASE_FILES:
         if (PROJECT_ROOT / relative).exists() and relative != "data/profiles.json":
             print(f"warning: local sensitive output exists but should not be committed: {relative}")
+    launcher_text = (PROJECT_ROOT / "desktop_launcher.py").read_text(encoding="utf-8")
+    for marker in DESKTOP_LAUNCHER_MARKERS:
+        if marker not in launcher_text:
+            fail(f"desktop_launcher.py is missing product marker: {marker}")
 
 
 def check_release_zip(zip_path: Path) -> None:
@@ -67,12 +79,16 @@ def check_release_zip(zip_path: Path) -> None:
         fail(f"release zip does not exist: {zip_path}")
     with ZipFile(zip_path) as archive:
         names = set(archive.namelist())
+        launcher_text = archive.read("desktop_launcher.py").decode("utf-8")
     missing = sorted(REQUIRED_RELEASE_FILES - names)
     if missing:
         fail(f"release zip is missing files: {', '.join(missing)}")
     forbidden = sorted(FORBIDDEN_RELEASE_FILES & names)
     if forbidden:
         fail(f"release zip contains sensitive files: {', '.join(forbidden)}")
+    for marker in DESKTOP_LAUNCHER_MARKERS:
+        if marker not in launcher_text:
+            fail(f"release zip desktop_launcher.py is missing product marker: {marker}")
 
 
 def check_built_artifact(path: Path) -> None:
