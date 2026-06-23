@@ -524,6 +524,20 @@ Still intentionally not included:
 - Uploading release artifacts.
 - Replacing manual review of GitHub Release assets.
 
+## v1.24 Manifest Metadata Validation
+
+Implemented scope:
+
+- Validate release manifest project name and version metadata.
+- Require `generated_at` to be a parseable timezone-aware timestamp.
+- Validate release safety metadata, including `real_vps_test_required: false`.
+
+Still intentionally not included:
+
+- Signing release artifacts.
+- Uploading release artifacts.
+- Running real VPS validation during release checks.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

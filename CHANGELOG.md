@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.24.0
+
+- Added release manifest project and generated_at validation.
+- Required generated_at to be a parseable timezone-aware timestamp.
+- Validated manifest safety flags including real_vps_test_required.
+
 ## v1.23.0
 
 - Added release manifest artifact size and SHA256 validation.

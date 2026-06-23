@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.23 also validates release manifest artifact checksums.
+v1.24 also validates release manifest metadata.
 
 ## Build Locally
 

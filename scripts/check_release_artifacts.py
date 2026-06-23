@@ -5,6 +5,7 @@ import hashlib
 import json
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -27,6 +28,8 @@ FORBIDDEN_ZIP_FILES = {
     "output/vless-qr.png",
     "output/subscription-qr.png",
 }
+
+EXPECTED_PROJECT = "vps-3xui-oneclick-ui"
 
 
 def sha256_file(path: Path) -> str:
@@ -122,6 +125,23 @@ def verify_manifest_artifacts(manifest: dict, expected_paths: list[Path]) -> Non
             raise SystemExit(f"release artifact check failed: manifest checksum mismatch for {path.name}")
 
 
+def verify_manifest_metadata(manifest: dict, version: str) -> None:
+    if manifest.get("project") != EXPECTED_PROJECT:
+        raise SystemExit("release artifact check failed: manifest project does not match this project.")
+    if manifest.get("version") != version:
+        raise SystemExit("release artifact check failed: manifest version does not match APP_VERSION.")
+
+    generated_at = manifest.get("generated_at")
+    if not isinstance(generated_at, str) or not generated_at:
+        raise SystemExit("release artifact check failed: manifest generated_at is missing.")
+    try:
+        generated_time = datetime.fromisoformat(generated_at)
+    except ValueError as exc:
+        raise SystemExit("release artifact check failed: manifest generated_at is not a valid ISO timestamp.") from exc
+    if generated_time.tzinfo is None:
+        raise SystemExit("release artifact check failed: manifest generated_at must include timezone information.")
+
+
 def verify_manifest(
     manifest_path: Path,
     version: str,
@@ -129,8 +149,7 @@ def verify_manifest(
     expected_artifact_paths: list[Path],
 ) -> None:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    if manifest.get("version") != version:
-        raise SystemExit("release artifact check failed: manifest version does not match APP_VERSION.")
+    verify_manifest_metadata(manifest, version)
     source = manifest.get("source", {})
     if not isinstance(source.get("git_commit"), str) or len(source.get("git_commit", "")) < 7:
         raise SystemExit("release artifact check failed: manifest source git_commit is missing.")
@@ -148,6 +167,8 @@ def verify_manifest(
     missing_flags = [flag for flag in required_flags if safety.get(flag) is not True]
     if missing_flags:
         raise SystemExit(f"release artifact check failed: manifest safety flags missing: {', '.join(missing_flags)}")
+    if safety.get("real_vps_test_required") is not False:
+        raise SystemExit("release artifact check failed: manifest safety real_vps_test_required must be false.")
     verify_manifest_artifacts(manifest, expected_artifact_paths)
 
 
