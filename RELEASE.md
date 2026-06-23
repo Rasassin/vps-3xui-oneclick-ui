@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.43 adds a Windows installer scaffold
+v1.44 adds macOS signing scaffolding
 
 ## Build Locally
 

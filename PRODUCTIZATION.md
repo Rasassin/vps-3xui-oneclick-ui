@@ -847,6 +847,22 @@ Still intentionally not included:
 - Windows auto-update integration.
 - CI installer build with Inno Setup.
 
+## v1.44 macOS Signing And Notarization Scaffold
+
+Implemented scope:
+
+- Add `desktop/sign_macos_app.sh`.
+- Check macOS signing script syntax during doctor and release readiness.
+- Document required Apple signing inputs without storing secrets.
+- Keep unsigned builds supported while defining the future notarization path.
+
+Still intentionally not included:
+
+- Actual signed public macOS release.
+- Storing Apple credentials.
+- CI notarization.
+- Automatic update installation.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

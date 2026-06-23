@@ -26,6 +26,7 @@ REQUIRED_RELEASE_FILES = {
     "desktop/build_windows_exe.ps1",
     "desktop/build_windows_installer.ps1",
     "desktop/check_desktop_package.py",
+    "desktop/sign_macos_app.sh",
     "desktop/vps_3xui_oneclick.spec",
     "desktop/windows_installer.iss",
     "docs/release/desktop-smoke-test.md",

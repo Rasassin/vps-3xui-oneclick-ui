@@ -70,6 +70,7 @@ def main() -> None:
     run(["bash", "-n", "remote_scripts/harden_after_success.sh"])
     run(["bash", "-n", "start_macos.command"])
     run(["bash", "-n", "desktop/build_macos_app.sh"])
+    run(["bash", "-n", "desktop/sign_macos_app.sh"])
     run(["bash", "-n", ".githooks/pre-commit"])
     run([sys.executable, "scripts/check_streamlit_app.py"])
 

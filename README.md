@@ -66,6 +66,7 @@ python3 desktop_launcher.py
 桌面打包相关文件：
 
 - `desktop/build_macos_app.sh`：实验性 macOS `.app` 构建脚本
+- `desktop/sign_macos_app.sh`：实验性 macOS 签名与公证脚本，需要维护者本机提供 Apple 签名环境变量
 - `desktop/build_windows_exe.ps1`：实验性 Windows 构建脚本
 - `desktop/build_windows_installer.ps1`：实验性 Windows Inno Setup 安装包构建脚本
 - `desktop/windows_installer.iss`：实验性 Windows 安装包模板

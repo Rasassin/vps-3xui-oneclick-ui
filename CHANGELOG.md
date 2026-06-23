@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.44.0
+
+- Added an experimental macOS signing and notarization script for release machines.
+- Validated the macOS signing script during doctor and release readiness checks.
+- Documented Apple signing inputs without storing signing secrets.
+
 ## v1.43.0
 
 - Added an experimental Inno Setup Windows installer template.

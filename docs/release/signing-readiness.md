@@ -24,6 +24,8 @@ Expected local tooling and environment:
 - `APPLE_SIGNING_IDENTITY`
 
 Future signed macOS releases should use Developer ID signing and notarization.
+`desktop/sign_macos_app.sh` is the experimental local script for that flow. It
+expects the variables above to be set in the release shell.
 
 ## Windows Inputs
 

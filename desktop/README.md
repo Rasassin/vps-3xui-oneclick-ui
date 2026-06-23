@@ -65,6 +65,16 @@ Then run:
 
 The script runs `desktop/check_desktop_package.py --built-artifact "dist/VPS 3x-ui Oneclick.app"` after PyInstaller finishes.
 
+## macOS Signing And Notarization Experiment
+
+On a prepared macOS release machine, after building the `.app`, set the required Apple signing variables and run the script:
+
+```bash
+./desktop/sign_macos_app.sh
+```
+
+Required variables are listed in [docs/release/signing-readiness.md](../docs/release/signing-readiness.md). The script signs, verifies, zips, submits for notarization, staples, validates, and then runs the desktop package checker. Do not commit signing secrets or put them in docs, logs, profiles, diagnostics, or release zips.
+
 ## Windows Build Experiment
 
 On Windows PowerShell, install packaging tools:

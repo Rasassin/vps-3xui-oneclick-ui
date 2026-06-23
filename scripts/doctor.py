@@ -51,6 +51,7 @@ def quick_checks() -> list[Check]:
         Check("hardening Bash syntax", ["bash", "-n", "remote_scripts/harden_after_success.sh"]),
         Check("macOS double-click launcher Bash syntax", ["bash", "-n", "start_macos.command"]),
         Check("desktop macOS build Bash syntax", ["bash", "-n", "desktop/build_macos_app.sh"]),
+        Check("desktop macOS signing Bash syntax", ["bash", "-n", "desktop/sign_macos_app.sh"]),
         Check("Git hook Bash syntax", ["bash", "-n", ".githooks/pre-commit"]),
         Check("desktop packaging inputs", [sys.executable, "desktop/check_desktop_package.py"]),
         Check("Streamlit UI smoke test", [sys.executable, "scripts/check_streamlit_app.py"]),
