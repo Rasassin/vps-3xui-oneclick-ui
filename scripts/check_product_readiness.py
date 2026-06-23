@@ -60,6 +60,7 @@ RELEASE_ITEMS = [
     RequiredItem("scripts/check_release_ready.py", ("without connecting to a VPS",)),
     RequiredItem("scripts/check_release_artifacts.py", ("Verify release artifacts",)),
     RequiredItem("scripts/check_product_package.py", ("Check product package artifacts",)),
+    RequiredItem("scripts/check_portable_user_package.py", ("extracted portable user package",)),
     RequiredItem("scripts/check_secret_hygiene.py"),
     RequiredItem("scripts/check_streamlit_app.py"),
     RequiredItem("scripts/check_portable_launchers.py", ("Validate portable launchers",)),

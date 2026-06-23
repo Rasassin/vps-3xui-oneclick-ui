@@ -64,6 +64,7 @@ def main() -> None:
     checks = quick_checks()
     if args.release:
         checks.append(Check("release readiness", [sys.executable, "scripts/check_release_ready.py", "--allow-dirty"]))
+        checks.append(Check("extracted portable package", [sys.executable, "scripts/check_portable_user_package.py"]))
 
     failed = [check.name for check in checks if not run_check(check)]
     if failed:

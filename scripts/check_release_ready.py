@@ -75,6 +75,7 @@ def main() -> None:
     build_release_bundle(APP_VERSION)
     run([sys.executable, "scripts/check_release_artifacts.py"])
     run([sys.executable, "scripts/check_product_package.py"])
+    run([sys.executable, "scripts/check_portable_user_package.py"])
     run(
         [
             sys.executable,

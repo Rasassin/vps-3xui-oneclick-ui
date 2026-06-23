@@ -667,6 +667,23 @@ Still intentionally not included:
 - Automatic updates.
 - Native Tauri UI.
 
+## v1.33 Extracted Portable Acceptance
+
+Implemented scope:
+
+- Add `scripts/check_portable_user_package.py`.
+- Extract the generated portable zip into a temporary directory and validate it from a downloaded-user perspective.
+- Verify bilingual quick-start files, launchers, sensitive-file exclusions, shell syntax, and absence of nested `dist/` artifacts.
+- Include extracted portable acceptance in release readiness, release doctor, CI, and docs.
+
+Still intentionally not included:
+
+- Running a real VPS deployment from the extracted package.
+- Signed native installers.
+- Bundled Python runtime.
+- Automatic updates.
+- Native Tauri UI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

@@ -205,6 +205,7 @@ python3 scripts/check_product_readiness.py
 python3 scripts/check_portable_launchers.py
 python3 scripts/build_product_package.py
 python3 scripts/check_product_package.py
+python3 scripts/check_portable_user_package.py
 python3 scripts/doctor.py --release
 python3 scripts/prepare_release.py --allow-dirty
 ```
@@ -220,6 +221,8 @@ python3 scripts/prepare_release.py --allow-dirty
 `check_release_artifacts.py` 会检查 `dist/` 里的发布 zip、Release 文案、SHA256SUMS 和 manifest，确认没有混入本地 `output/` 结果或 `data/profiles.json`，并验证 manifest 里的项目元数据、源码来源信息、artifact 文件名、大小和 SHA256。默认会拒绝旧 commit 构建的发布产物；如果只是检查历史产物，可显式添加 `--allow-stale-source`。
 
 `check_product_package.py` 会检查 portable product zip，确认包含中英文快速开始、启动脚本、产品就绪报告，并排除节点链接、二维码、订阅链接、面板信息和本地配置档。
+
+`check_portable_user_package.py` 会把 portable zip 解压到临时目录，模拟用户下载后的包结构，检查中英文快速开始、启动入口、敏感文件排除和 macOS/Linux 启动脚本语法。
 
 `check_secret_hygiene.py` 会检查 Git 已跟踪文件，防止误提交 output 结果、profiles、env、日志、私钥和明显的节点链接。
 
@@ -305,6 +308,7 @@ vps-3xui-oneclick-ui/
 │   ├── bump_version.py
 │   ├── check_open_source_ready.py
 │   ├── check_portable_launchers.py
+│   ├── check_portable_user_package.py
 │   ├── check_secret_hygiene.py
 │   ├── check_release_ready.py
 │   ├── check_streamlit_app.py

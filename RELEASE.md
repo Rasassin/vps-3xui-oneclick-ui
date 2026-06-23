@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.32 adds a Chinese quick-start guide to the portable package.
+v1.33 adds extracted portable package acceptance checks.
 
 ## Build Locally
 
@@ -46,6 +46,7 @@ python3 scripts/doctor.py --release
 VERSION="$(python3 -c 'from deployer.config import APP_VERSION; print(APP_VERSION)')"
 python3 scripts/check_release_artifacts.py
 python3 scripts/check_product_package.py
+python3 scripts/check_portable_user_package.py
 python3 scripts/check_portable_launchers.py \
   --zip-path "dist/vps-3xui-oneclick-ui-v${VERSION}.zip" \
   --zip-path "dist/vps-3xui-oneclick-ui-portable-v${VERSION}.zip"
@@ -81,6 +82,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Run `python3 scripts/check_streamlit_app.py`.
 - Run `python3 scripts/check_version_consistency.py`.
 - Run `python3 scripts/check_portable_launchers.py`.
+- Run `python3 scripts/check_portable_user_package.py`.
 - Use `python3 scripts/bump_version.py ...` when preparing a new version.
 - Run `python3 scripts/check_release_artifacts.py` after building the release bundle.
 - Run `python3 scripts/prepare_release.py --allow-dirty` during local release preparation.

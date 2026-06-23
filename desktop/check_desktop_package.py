@@ -36,6 +36,7 @@ REQUIRED_RELEASE_FILES = {
     "scripts/build_product_package.py",
     "scripts/check_product_package.py",
     "scripts/check_portable_launchers.py",
+    "scripts/check_portable_user_package.py",
     "scripts/check_open_source_ready.py",
     "scripts/check_product_readiness.py",
     "scripts/check_release_artifacts.py",

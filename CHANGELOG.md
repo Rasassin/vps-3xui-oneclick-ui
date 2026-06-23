@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.33.0
+
+- Added an extracted portable package acceptance checker that simulates a downloaded user package.
+- Validated bilingual quick-start files, startup launchers, sensitive-file exclusions, and shell syntax from the extracted portable zip.
+- Integrated extracted portable acceptance into release readiness, release docs, and productization tracking.
+
 ## v1.32.0
 
 - Added START_HERE.zh-CN.md to the portable package for Chinese users.

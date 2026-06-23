@@ -35,3 +35,4 @@ jobs:
           test -s "dist/release-manifest-v${VERSION}.json"
           test -s "dist/vps-3xui-oneclick-ui-portable-v${VERSION}.zip"
           test -s "dist/PRODUCT_READINESS_v${VERSION}.md"
+          python scripts/check_portable_user_package.py
