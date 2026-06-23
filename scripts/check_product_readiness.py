@@ -54,7 +54,9 @@ DESKTOP_ITEMS = [
     RequiredItem("desktop/README.md", ("PyInstaller",)),
     RequiredItem("desktop/build_macos_app.sh", ("pyinstaller", "check_desktop_package.py", "--built-artifact")),
     RequiredItem("desktop/build_windows_exe.ps1", ("pyinstaller", "check_desktop_package.py", "--built-artifact")),
+    RequiredItem("desktop/build_windows_installer.ps1", ("Inno Setup", "ISCC.exe", "--windows-installer")),
     RequiredItem("desktop/vps_3xui_oneclick.spec"),
+    RequiredItem("desktop/windows_installer.iss", ("PrivilegesRequired=lowest", "unsigned")),
     RequiredItem("docs/release/desktop-smoke-test.md"),
 ]
 

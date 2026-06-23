@@ -75,6 +75,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Manual VPS compatibility test worksheet generated with release artifacts.
 - Machine-readable update manifest for future update-channel tooling.
 - Signing readiness report for macOS notarization and Windows signing preparation.
+- Experimental Inno Setup Windows installer scaffold for future signed installer releases.
 
 ## Download
 
@@ -139,6 +140,7 @@ python3 desktop_launcher.py
 - The update checker only reads GitHub Release metadata and does not upload diagnostics or install updates.
 - The update manifest describes release assets and checksums, but does not auto-install anything.
 - Signing readiness reports do not include signing passwords, certificates, or app-specific passwords.
+- Windows installer outputs are experimental and must be labeled unsigned until code signing is implemented.
 - Server hardening remains opt-in.
 - Remote reset remains opt-in and requires the exact confirmation phrase `RESET_3XUI_ONECLICK`.
 - The first version does not default-disable root login, password login, or ping.

@@ -831,6 +831,22 @@ Still intentionally not included:
 - Windows installer signing.
 - Storing signing secrets in the repository.
 
+## v1.43 Windows Installer Scaffold
+
+Implemented scope:
+
+- Add `desktop/windows_installer.iss` for an experimental Inno Setup installer.
+- Add `desktop/build_windows_installer.ps1`.
+- Validate unsigned Windows installer outputs through `desktop/check_desktop_package.py --windows-installer`.
+- Document the installer as unsigned and experimental until Windows code signing is implemented.
+
+Still intentionally not included:
+
+- Signed Windows installer release.
+- Automatic installation from the app.
+- Windows auto-update integration.
+- CI installer build with Inno Setup.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

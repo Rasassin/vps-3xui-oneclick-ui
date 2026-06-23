@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.42 adds signing readiness reports
+v1.43 adds a Windows installer scaffold
 
 ## Build Locally
 
@@ -58,6 +58,8 @@ python3 scripts/check_portable_launchers.py \
 python3 desktop/check_desktop_package.py --release-zip "dist/vps-3xui-oneclick-ui-v${VERSION}.zip"
 # After building a PyInstaller artifact, also run:
 # python3 desktop/check_desktop_package.py --built-artifact "dist/VPS 3x-ui Oneclick.app"
+# After building a Windows installer, also run:
+# python3 desktop/check_desktop_package.py --windows-installer "dist/VPS-3x-ui-Oneclick-Windows-Setup-${VERSION}-unsigned.exe"
 test -s "dist/SHA256SUMS_v${VERSION}.txt"
 test -s "dist/release-manifest-v${VERSION}.json"
 test -s "dist/vps-3xui-oneclick-ui-portable-v${VERSION}.zip"
@@ -106,6 +108,7 @@ Do not test against a real VPS unless that is the explicit release validation go
 - Run `python3 scripts/check_portable_user_package.py`.
 - Run `bash -n remote_scripts/reset_remote.sh`.
 - Run `python3 desktop/check_desktop_package.py --built-artifact ...` after creating a PyInstaller artifact.
+- Run `python3 desktop/check_desktop_package.py --windows-installer ...` after creating a Windows installer.
 - Use `python3 scripts/bump_version.py ...` when preparing a new version.
 - Run `python3 scripts/check_release_artifacts.py` after building the release bundle.
 - Run `python3 scripts/prepare_release.py --allow-dirty` during local release preparation.

@@ -24,8 +24,10 @@ REQUIRED_RELEASE_FILES = {
     "desktop/README.md",
     "desktop/build_macos_app.sh",
     "desktop/build_windows_exe.ps1",
+    "desktop/build_windows_installer.ps1",
     "desktop/check_desktop_package.py",
     "desktop/vps_3xui_oneclick.spec",
+    "desktop/windows_installer.iss",
     "docs/release/desktop-smoke-test.md",
     "docs/release/github-release-template.md",
     "docs/release/signing-readiness.md",
@@ -136,6 +138,18 @@ def check_built_artifact(path: Path) -> None:
     print(f"built artifact checked: {path}")
 
 
+def check_windows_installer(path: Path) -> None:
+    if not path.exists() or not path.is_file():
+        fail(f"windows installer does not exist: {path}")
+    if path.stat().st_size == 0:
+        fail(f"windows installer is empty: {path}")
+    if path.suffix.lower() != ".exe":
+        fail(f"windows installer must be an .exe file: {path.name}")
+    if "unsigned" not in path.name.lower():
+        fail("windows installer filename must clearly include unsigned until signing is implemented.")
+    print(f"windows installer checked: {path}")
+
+
 def check_executable_file(path: Path) -> None:
     if path.stat().st_size == 0:
         fail(f"built executable is empty: {path}")
@@ -189,6 +203,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Check desktop packaging inputs without connecting to a VPS.")
     parser.add_argument("--release-zip", type=Path, help="Optional release zip to inspect.")
     parser.add_argument("--built-artifact", type=Path, help="Optional PyInstaller output to inspect.")
+    parser.add_argument("--windows-installer", type=Path, help="Optional Windows installer output to inspect.")
     args = parser.parse_args()
 
     check_source_tree()
@@ -196,6 +211,8 @@ def main() -> None:
         check_release_zip(args.release_zip)
     if args.built_artifact:
         check_built_artifact(args.built_artifact)
+    if args.windows_installer:
+        check_windows_installer(args.windows_installer)
     print("desktop package check ok")
 
 

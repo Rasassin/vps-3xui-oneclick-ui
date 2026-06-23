@@ -82,6 +82,22 @@ Then run:
 The PyInstaller output is written to `dist/`.
 The script runs `desktop\check_desktop_package.py --built-artifact "dist\VPS 3x-ui Oneclick"` after PyInstaller finishes.
 
+## Windows Installer Experiment
+
+After building the Windows PyInstaller output, install Inno Setup 6 and run:
+
+```powershell
+.\desktop\build_windows_installer.ps1
+```
+
+The installer output is written to:
+
+```text
+dist\VPS-3x-ui-Oneclick-Windows-Setup-X.Y.Z-unsigned.exe
+```
+
+The installer is intentionally marked `unsigned` until Windows code signing is implemented. The installer script uses `PrivilegesRequired=lowest`, installs only the bundled local app files, and does not connect to a VPS.
+
 ## Packaging Check
 
 Run the non-VPS packaging check from the project root:
@@ -94,6 +110,12 @@ After building a PyInstaller artifact:
 
 ```bash
 python desktop/check_desktop_package.py --built-artifact "dist/VPS 3x-ui Oneclick.app"
+```
+
+After building a Windows installer:
+
+```bash
+python desktop/check_desktop_package.py --windows-installer "dist/VPS-3x-ui-Oneclick-Windows-Setup-X.Y.Z-unsigned.exe"
 ```
 
 After building a source release zip:

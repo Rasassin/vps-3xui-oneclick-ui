@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.43.0
+
+- Added an experimental Inno Setup Windows installer template.
+- Added a Windows installer build script that validates unsigned installer outputs.
+- Documented the Windows installer as experimental until code signing is implemented.
+
 ## v1.42.0
 
 - Added a desktop signing readiness checker for macOS notarization and Windows signing inputs.
