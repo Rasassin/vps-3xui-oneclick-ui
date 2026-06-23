@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.46 adds go-live readiness reports
+v1.47 adds Git and tag go-live gates
 
 ## Build Locally
 
