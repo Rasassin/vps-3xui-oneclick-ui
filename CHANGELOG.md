@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.30.0
+
+- Added start_macos.command as a double-click macOS launcher.
+- Included the macOS launcher in release and portable package validation.
+- Updated user-facing docs and release notes for macOS double-click startup.
+
 ## v1.29.0
 
 - Added desktop launcher runtime file validation before starting Streamlit.

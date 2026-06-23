@@ -20,6 +20,7 @@ REQUIRED_FILES = {
     "docs/privacy.md",
     "app.py",
     "desktop_launcher.py",
+    "start_macos.command",
     "start_windows.bat",
     "start_mac_linux.sh",
     "requirements.txt",
@@ -53,6 +54,7 @@ def check_product_package(zip_path: Path, version: str) -> None:
         names = set(archive.namelist())
         start_here = archive.read("START_HERE.md").decode("utf-8") if "START_HERE.md" in names else ""
         report = archive.read(report_name).decode("utf-8") if report_name in names else ""
+        mac_command = archive.read("start_macos.command").decode("utf-8") if "start_macos.command" in names else ""
         mac_launcher = archive.read("start_mac_linux.sh").decode("utf-8") if "start_mac_linux.sh" in names else ""
         win_launcher = archive.read("start_windows.bat").decode("utf-8") if "start_windows.bat" in names else ""
 
@@ -75,7 +77,7 @@ def check_product_package(zip_path: Path, version: str) -> None:
     if dist_entries:
         fail("portable package must not include dist/ artifacts.")
 
-    for marker in ("start_windows.bat", "start_mac_linux.sh", "VPS root password"):
+    for marker in ("start_windows.bat", "start_mac_linux.sh", "start_macos.command", "VPS root password"):
         if marker not in start_here:
             fail(f"START_HERE.md is missing marker: {marker}")
     for marker in (".venv", "requirements.txt", "check_product_readiness.py", "does not connect to a VPS"):
@@ -84,6 +86,9 @@ def check_product_package(zip_path: Path, version: str) -> None:
     for marker in ("check_product_readiness.py", "requirements.txt", "启动失败"):
         if marker not in mac_launcher:
             fail(f"start_mac_linux.sh is missing startup marker: {marker}")
+    for marker in ("start_mac_linux.sh", "chmod +x", "不会连接 VPS"):
+        if marker not in mac_command:
+            fail(f"start_macos.command is missing startup marker: {marker}")
     for marker in ("check_product_readiness.py", "requirements.txt", "启动失败"):
         if marker not in win_launcher:
             fail(f"start_windows.bat is missing startup marker: {marker}")

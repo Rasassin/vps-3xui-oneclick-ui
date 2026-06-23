@@ -619,6 +619,22 @@ Still intentionally not included:
 - Automatic updates.
 - Native Tauri UI.
 
+## v1.30 macOS Double-Click Launcher
+
+Implemented scope:
+
+- Add `start_macos.command` as a double-click macOS portable launcher.
+- Automatically grants execute permission to `start_mac_linux.sh` before launching.
+- Keep the launcher local-only and explicitly state that it does not connect to a VPS.
+- Include the macOS launcher in release, portable package, desktop package, and product readiness checks.
+
+Still intentionally not included:
+
+- Signed and notarized macOS app bundle.
+- Bundled Python runtime.
+- Automatic updates.
+- Native Tauri UI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

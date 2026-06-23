@@ -44,6 +44,12 @@ Windows:
 start_windows.bat
 ```
 
+macOS double-click:
+
+```text
+start_macos.command
+```
+
 macOS / Linux:
 
 ```bash

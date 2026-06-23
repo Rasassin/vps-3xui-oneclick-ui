@@ -21,6 +21,7 @@ jobs:
           bash -n remote_scripts/preflight_remote.sh
           bash -n remote_scripts/install_remote.sh
           bash -n remote_scripts/harden_after_success.sh
+          bash -n start_macos.command
           bash -n desktop/build_macos_app.sh
       - name: Build source release zip
         run: |

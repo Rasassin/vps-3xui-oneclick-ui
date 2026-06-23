@@ -43,6 +43,12 @@ Supported variables:
 
 These options only affect the local launcher. They do not connect to a VPS.
 
+## macOS Double-Click Portable Launcher
+
+For portable zip users on macOS, `start_macos.command` is the simplest entry point. It grants execute permission to `start_mac_linux.sh`, then runs the same local startup path.
+
+This launcher only starts the local app. It does not connect to a VPS.
+
 ## macOS Build Experiment
 
 Install packaging tools in your virtual environment:

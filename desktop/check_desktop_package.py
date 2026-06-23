@@ -30,6 +30,7 @@ REQUIRED_RELEASE_FILES = {
     "docs/release/tagged-release.md",
     "docs/privacy.md",
     "requirements-desktop.txt",
+    "start_macos.command",
     "scripts/bump_version.py",
     "scripts/build_release_bundle.py",
     "scripts/build_product_package.py",

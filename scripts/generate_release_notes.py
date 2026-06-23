@@ -62,6 +62,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Release manifest and SHA256 coverage for product package artifacts.
 - Portable launch preflight checks for Python, virtual environment setup, dependency installation, and product readiness.
 - Desktop launcher runtime validation and local-only environment overrides.
+- Double-click macOS portable launcher through `start_macos.command`.
 
 ## Download
 
@@ -91,6 +92,14 @@ start_windows.bat
 ```
 
 macOS / Linux:
+
+Double-click on macOS:
+
+```text
+start_macos.command
+```
+
+Terminal fallback:
 
 ```bash
 chmod +x start_mac_linux.sh
@@ -127,6 +136,7 @@ python3 -m py_compile desktop_launcher.py desktop/check_desktop_package.py
 bash -n remote_scripts/preflight_remote.sh
 bash -n remote_scripts/install_remote.sh
 bash -n remote_scripts/harden_after_success.sh
+bash -n start_macos.command
 bash -n desktop/build_macos_app.sh
 python3 scripts/check_streamlit_app.py
 python3 scripts/check_release_ready.py

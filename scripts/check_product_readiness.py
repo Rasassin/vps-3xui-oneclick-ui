@@ -29,6 +29,7 @@ FOUNDATION_ITEMS = [
     RequiredItem("remote_scripts/harden_after_success.sh", ("set -Eeuo pipefail",)),
     RequiredItem("start_windows.bat", ("streamlit run app.py", "check_product_readiness.py")),
     RequiredItem("start_mac_linux.sh", ("streamlit run app.py", "check_product_readiness.py")),
+    RequiredItem("start_macos.command", ("start_mac_linux.sh", "不会连接 VPS")),
     RequiredItem("requirements.txt", ("streamlit", "paramiko", "qrcode", "pillow")),
 ]
 

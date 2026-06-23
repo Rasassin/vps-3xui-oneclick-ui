@@ -34,7 +34,13 @@ streamlit run app.py
 
 ## macOS / Linux 启动
 
-在项目目录执行：
+macOS 用户可以直接双击：
+
+```text
+start_macos.command
+```
+
+如果系统阻止运行，或者你更喜欢终端方式，在项目目录执行：
 
 ```bash
 chmod +x start_mac_linux.sh
@@ -55,7 +61,7 @@ python3 desktop_launcher.py
 
 打包或调试时可以用 `VPS_3XUI_PORT`、`VPS_3XUI_OPEN_BROWSER`、`VPS_3XUI_START_TIMEOUT` 调整本地启动行为；这些开关不会连接 VPS。
 
-实验性的 macOS 打包说明在 [desktop/README.md](desktop/README.md)。普通用户仍建议优先使用 `start_windows.bat` 或 `start_mac_linux.sh`。
+实验性的 macOS 打包说明在 [desktop/README.md](desktop/README.md)。普通用户仍建议优先使用 `start_windows.bat`、`start_macos.command` 或 `start_mac_linux.sh`。
 
 桌面打包相关文件：
 
@@ -258,6 +264,7 @@ vps-3xui-oneclick-ui/
 ├── AGENTS.md
 ├── requirements.txt
 ├── start_windows.bat
+├── start_macos.command
 ├── start_mac_linux.sh
 ├── app.py
 ├── desktop_launcher.py

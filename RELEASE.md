@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.29 improves the experimental desktop launcher runtime checks.
+v1.30 adds a double-click macOS launcher for portable users.
 
 ## Build Locally
 
@@ -52,6 +52,14 @@ test -s "dist/PRODUCT_READINESS_v${VERSION}.md"
 ```
 
 Then unzip the generated file in a temporary directory and start the app with:
+
+macOS double-click:
+
+```text
+start_macos.command
+```
+
+Terminal fallback:
 
 ```bash
 chmod +x start_mac_linux.sh
