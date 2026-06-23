@@ -2,7 +2,7 @@
 
 This project currently ships as a source zip plus one-click launch scripts.
 
-v1.31 adds dedicated portable launcher validation.
+v1.32 adds a Chinese quick-start guide to the portable package.
 
 ## Build Locally
 
@@ -21,6 +21,8 @@ The release artifacts are written to `dist/`:
 - `PRODUCT_READINESS_vX.Y.Z.md`
 
 The release manifest includes the source Git commit, branch, and dirty-worktree state used when the bundle was generated. It also records artifact sizes and checksums for the source zip, portable product zip, GitHub Release notes, product readiness report, and SHA256SUMS file.
+
+The portable zip includes both `START_HERE.md` and `START_HERE.zh-CN.md`.
 
 The zip intentionally excludes:
 

@@ -64,6 +64,7 @@ You provide the VPS IP, SSH user, SSH port, and VPS root password in the local p
 - Desktop launcher runtime validation and local-only environment overrides.
 - Double-click macOS portable launcher through `start_macos.command`.
 - Dedicated portable launcher validation for Windows, macOS, and Linux startup files.
+- Chinese portable quick-start guide through `START_HERE.zh-CN.md`.
 
 ## Download
 
@@ -83,6 +84,8 @@ dist/SHA256SUMS_v{version}.txt
 dist/release-manifest-v{version}.json
 dist/PRODUCT_READINESS_v{version}.md
 ```
+
+The portable zip includes both `START_HERE.md` and `START_HERE.zh-CN.md`.
 
 ## Quick Start
 

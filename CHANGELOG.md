@@ -2,6 +2,12 @@
 
 All notable product changes are tracked here. This project keeps product history separate from the Codex Skill.
 
+## v1.32.0
+
+- Added START_HERE.zh-CN.md to the portable package for Chinese users.
+- Validated the Chinese portable quick-start guide during product package checks.
+- Updated release and productization docs for bilingual portable onboarding.
+
 ## v1.31.0
 
 - Added a dedicated portable launcher validation script for Windows, macOS, and Linux startup files.

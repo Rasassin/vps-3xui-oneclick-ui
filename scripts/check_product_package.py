@@ -15,6 +15,7 @@ from deployer.config import APP_VERSION, PROJECT_ROOT
 
 REQUIRED_FILES = {
     "START_HERE.md",
+    "START_HERE.zh-CN.md",
     "README.md",
     "PRODUCTIZATION.md",
     "docs/privacy.md",
@@ -53,6 +54,7 @@ def check_product_package(zip_path: Path, version: str) -> None:
     with ZipFile(zip_path) as archive:
         names = set(archive.namelist())
         start_here = archive.read("START_HERE.md").decode("utf-8") if "START_HERE.md" in names else ""
+        start_here_zh = archive.read("START_HERE.zh-CN.md").decode("utf-8") if "START_HERE.zh-CN.md" in names else ""
         report = archive.read(report_name).decode("utf-8") if report_name in names else ""
         mac_command = archive.read("start_macos.command").decode("utf-8") if "start_macos.command" in names else ""
         mac_launcher = archive.read("start_mac_linux.sh").decode("utf-8") if "start_mac_linux.sh" in names else ""
@@ -83,6 +85,9 @@ def check_product_package(zip_path: Path, version: str) -> None:
     for marker in (".venv", "requirements.txt", "check_product_readiness.py", "does not connect to a VPS"):
         if marker not in start_here:
             fail(f"START_HERE.md is missing startup marker: {marker}")
+    for marker in ("start_windows.bat", "start_macos.command", "start_mac_linux.sh", "不会连接 VPS", "VPS root 密码", "公开诊断包"):
+        if marker not in start_here_zh:
+            fail(f"START_HERE.zh-CN.md is missing marker: {marker}")
     for marker in ("check_product_readiness.py", "requirements.txt", "启动失败"):
         if marker not in mac_launcher:
             fail(f"start_mac_linux.sh is missing startup marker: {marker}")

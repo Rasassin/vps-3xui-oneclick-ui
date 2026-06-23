@@ -651,6 +651,22 @@ Still intentionally not included:
 - Automatic updates.
 - Native Tauri UI.
 
+## v1.32 Bilingual Portable Onboarding
+
+Implemented scope:
+
+- Add `START_HERE.zh-CN.md` to the generated portable package.
+- Keep `START_HERE.md` for English users while adding Chinese startup, safety, and diagnostics guidance.
+- Validate the Chinese quick-start file during product package checks.
+- Document that portable packages contain bilingual quick-start guidance.
+
+Still intentionally not included:
+
+- Signed native installers.
+- Bundled Python runtime.
+- Automatic updates.
+- Native Tauri UI.
+
 ## Product Safety Rules
 
 - Do not save VPS root passwords.

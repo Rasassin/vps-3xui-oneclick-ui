@@ -82,6 +82,71 @@ See `PRODUCT_READINESS_v{version}.md` for the current product readiness report.
 """
 
 
+def start_here_zh(version: str) -> str:
+    return f"""# VPS 3x-ui 一键部署器 Portable v{version}
+
+这是 `vps-3xui-oneclick-ui` 的本地 portable 产品包。
+
+## 先点哪个文件
+
+Windows 用户双击：
+
+```text
+start_windows.bat
+```
+
+macOS 用户优先双击：
+
+```text
+start_macos.command
+```
+
+如果 macOS 阻止运行，或你更喜欢终端方式：
+
+```bash
+chmod +x start_mac_linux.sh
+./start_mac_linux.sh
+```
+
+Linux 用户使用：
+
+```bash
+chmod +x start_mac_linux.sh
+./start_mac_linux.sh
+```
+
+实验性桌面启动器：
+
+```bash
+python3 desktop_launcher.py
+```
+
+启动脚本会自动创建 `.venv`、安装 `requirements.txt`，并运行 `scripts/check_product_readiness.py` 本地产品自检，然后打开本地网页。这个启动前自检不会连接 VPS。
+
+## 你需要准备
+
+- VPS IP
+- SSH 端口
+- SSH 用户名
+- VPS root 密码
+
+VPS root 密码只保存在当前本地页面会话内存里；不会写入项目文件、release zip、Git、日志或 `output/`。
+
+## 重要提醒
+
+- 部署结果会显示在网页里，不需要手动找 `output/`。
+- `output/` 可能包含节点链接、二维码、订阅链接和面板信息，请当作敏感文件。
+- 公开 issue 或发给别人排查时，不要上传 `output/` 里的真实结果文件。
+- 可在页面侧边栏生成公开诊断包；公开诊断包会排除节点链接、二维码、订阅链接、面板信息和 VPS root 密码。
+
+## 产品状态
+
+当前是源码分发的本地 app，并带有实验性桌面打包脚手架；还不是已签名的原生安装包。
+
+产品就绪情况见 `PRODUCT_READINESS_v{version}.md`。
+"""
+
+
 def product_readiness_report(version: str) -> str:
     generated_at = datetime.now(timezone.utc).isoformat()
     gap_lines = "\n".join(f"- {gap}" for gap in PRODUCT_GAPS)
@@ -122,6 +187,7 @@ def build_portable_zip(version: str, report_path: Path) -> Path:
 
     with ZipFile(zip_path, "w", compression=ZIP_DEFLATED) as archive:
         archive.writestr("START_HERE.md", start_here(version))
+        archive.writestr("START_HERE.zh-CN.md", start_here_zh(version))
         archive.write(report_path, arcname=report_path.name)
         for path in iter_release_files():
             archive.write(path, arcname=path.relative_to(PROJECT_ROOT))
