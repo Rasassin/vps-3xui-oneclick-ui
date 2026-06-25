@@ -2,12 +2,17 @@ $ErrorActionPreference = "Stop"
 
 Set-Location (Join-Path $PSScriptRoot "..")
 
-if (-not (Get-Command pyinstaller -ErrorAction SilentlyContinue)) {
-  Write-Host "缺少 pyinstaller。请先执行：python -m pip install -r requirements-desktop.txt"
-  exit 1
+$PythonBin = "python"
+if (Test-Path ".venv\Scripts\python.exe") {
+  $PythonBin = ".venv\Scripts\python.exe"
 }
 
-pyinstaller --clean --noconfirm desktop/vps_3xui_oneclick.spec
-python desktop\check_desktop_package.py --built-artifact "dist\VPS 3x-ui Oneclick"
+& $PythonBin -m PyInstaller --version *> $null
+if ($LASTEXITCODE -ne 0) {
+  & $PythonBin -m pip install -r requirements-desktop.txt
+}
+
+& $PythonBin -m PyInstaller --clean --noconfirm desktop/vps_3xui_oneclick.spec
+& $PythonBin desktop\check_desktop_package.py --built-artifact "dist\VPS 3x-ui Oneclick"
 
 Write-Host "构建完成：dist/VPS 3x-ui Oneclick/"

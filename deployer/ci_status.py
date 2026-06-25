@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import shutil
+import subprocess
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
@@ -13,6 +15,12 @@ from .update_service import GITHUB_REPO
 
 
 GITHUB_ACTIONS_RUNS_API = f"https://api.github.com/repos/{GITHUB_REPO}/actions/runs?per_page=30"
+GITHUB_API_DIRECT_IPS = (
+    "140.82.112.6",
+    "140.82.113.6",
+    "140.82.114.6",
+    "140.82.121.5",
+)
 
 
 @dataclass(frozen=True)
@@ -33,6 +41,44 @@ def read_actions_runs(timeout: int = 8) -> dict[str, Any]:
     )
     with urllib.request.urlopen(request, timeout=timeout) as response:
         return json.loads(response.read().decode("utf-8"))
+
+
+def read_actions_runs_with_curl(timeout: int = 8) -> dict[str, Any]:
+    curl = shutil.which("curl")
+    if not curl:
+        raise OSError("curl is not available for GitHub Actions direct-IP fallback.")
+    errors = []
+    for direct_ip in GITHUB_API_DIRECT_IPS:
+        result = subprocess.run(
+            [
+                curl,
+                "--silent",
+                "--show-error",
+                "--fail",
+                "--location",
+                "--connect-timeout",
+                str(timeout),
+                "--max-time",
+                str(max(timeout + 4, 10)),
+                "--http1.1",
+                "--resolve",
+                f"api.github.com:443:{direct_ip}",
+                "-H",
+                "Accept: application/vnd.github+json",
+                "-H",
+                "User-Agent: vps-3xui-oneclick-ui",
+                GITHUB_ACTIONS_RUNS_API,
+            ],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            payload = json.loads(result.stdout)
+            payload["_oneclick_direct_ip"] = direct_ip
+            return payload
+        errors.append(f"{direct_ip}: {result.stderr.strip() or result.stdout.strip() or result.returncode}")
+    raise OSError("GitHub Actions direct-IP fallback failed: " + "; ".join(errors))
 
 
 def run_label(run: dict[str, Any]) -> str:
@@ -77,22 +123,41 @@ def check_named_workflow(runs: list[dict[str, Any]], names: set[str], label: str
 
 
 def collect_ci_checks(timeout: int = 8) -> list[CiCheck]:
+    api_detail = ""
     try:
         payload = read_actions_runs(timeout=timeout)
     except urllib.error.HTTPError as exc:
         return [CiCheck("GitHub Actions API", "pending", f"GitHub returned HTTP {exc.code}.")]
     except urllib.error.URLError as exc:
-        return [CiCheck("GitHub Actions API", "pending", f"Unable to connect to GitHub: {exc.reason}.")]
+        api_detail = f"Unable to connect to GitHub: {exc.reason}."
+        try:
+            payload = read_actions_runs_with_curl(timeout=timeout)
+            api_detail = f"{api_detail} Direct-IP fallback succeeded via {payload.get('_oneclick_direct_ip')}."
+        except (OSError, json.JSONDecodeError) as fallback_exc:
+            return [CiCheck("GitHub Actions API", "pending", f"{api_detail} Direct-IP fallback failed: {fallback_exc}")]
     except TimeoutError:
-        return [CiCheck("GitHub Actions API", "pending", "GitHub Actions API request timed out.")]
+        api_detail = "GitHub Actions API request timed out."
+        try:
+            payload = read_actions_runs_with_curl(timeout=timeout)
+            api_detail = f"{api_detail} Direct-IP fallback succeeded via {payload.get('_oneclick_direct_ip')}."
+        except (OSError, json.JSONDecodeError) as fallback_exc:
+            return [CiCheck("GitHub Actions API", "pending", f"{api_detail} Direct-IP fallback failed: {fallback_exc}")]
     except (OSError, json.JSONDecodeError) as exc:
-        return [CiCheck("GitHub Actions API", "pending", f"Unable to read GitHub Actions status: {exc}.")]
+        api_detail = f"Unable to read GitHub Actions status: {exc}."
+        try:
+            payload = read_actions_runs_with_curl(timeout=timeout)
+            api_detail = f"{api_detail} Direct-IP fallback succeeded via {payload.get('_oneclick_direct_ip')}."
+        except (OSError, json.JSONDecodeError) as fallback_exc:
+            return [CiCheck("GitHub Actions API", "pending", f"{api_detail} Direct-IP fallback failed: {fallback_exc}")]
 
     runs = payload.get("workflow_runs")
     if not isinstance(runs, list):
         return [CiCheck("GitHub Actions API", "fail", "workflow_runs is missing from the GitHub response.")]
     typed_runs = [run for run in runs if isinstance(run, dict)]
-    checks = [CiCheck("GitHub Actions API", "pass", f"read {len(typed_runs)} recent workflow runs.")]
+    detail = f"read {len(typed_runs)} recent workflow runs."
+    if api_detail:
+        detail = f"{detail} {api_detail}"
+    checks = [CiCheck("GitHub Actions API", "pass", detail)]
     checks.append(check_named_workflow(typed_runs, {"Static checks"}, "Static checks workflow", required=True))
     checks.append(check_named_workflow(typed_runs, {"Desktop build"}, "Desktop build workflow", required=False))
     checks.append(check_named_workflow(typed_runs, {"Release"}, "Release workflow", required=False))

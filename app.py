@@ -7,41 +7,20 @@ from pathlib import Path
 import streamlit as st
 import streamlit.components.v1 as components
 
-from deployer.ci_status import ci_overall_status, collect_ci_checks, write_ci_report
-from deployer.config import APP_VERSION, NodeConfig, OUTPUT_DIR, VPSLogin
-from deployer.diagnostics_service import build_public_diagnostics_zip, collect_local_diagnostics
-from deployer.desktop_artifacts import collect_desktop_artifacts, desktop_artifacts_overall_status, write_desktop_artifacts_report
+from deployer.config import NodeConfig, OUTPUT_DIR, VPSLogin
 from deployer.deploy_service import (
     ERROR_HINTS,
-    backup_remote_results,
     clear_output,
     deploy,
     download_remote_results,
     preflight,
     reset_remote_oneclick,
 )
-from deployer.export_service import build_export_zip
-from deployer.external_release_inputs import collect_external_input_checks, external_inputs_overall_status, write_external_inputs_report
-from deployer.go_live_dashboard import collect_dashboard_gates, dashboard_overall_status, write_dashboard_report
-from deployer.github_connectivity import (
-    collect_github_connectivity_checks,
-    github_connectivity_overall_status,
-    write_github_connectivity_report,
-)
-from deployer.profile_service import delete_profile, load_profiles, upsert_profile
-from deployer.product_maturity import collect_maturity_gates, maturity_score, product_tier, write_report as write_maturity_report
-from deployer.publish_assistant import collect_publish_steps, publish_plan_overall_status, write_publish_plan
-from deployer.publish_status import collect_publish_checks, publish_overall_status, write_publish_report
-from deployer.qr_service import regenerate_output_qrs
-from deployer.release_candidate import candidate_overall_status, collect_candidate_gates, write_candidate_report
-from deployer.release_status import collect_release_artifacts, load_release_source_summary, release_artifacts_ready
 from deployer.result_parser import load_results
 from deployer.ssh_runner import DeploymentError, redact
-from deployer.update_manifest import collect_update_manifest_checks, update_manifest_overall_status
-from deployer.update_service import check_latest_release
 
 
-st.set_page_config(page_title="VPS 3x-ui 一键部署器", page_icon="🚀", layout="wide")
+st.set_page_config(page_title="VPS 3x-ui Oneclick", page_icon="◉", layout="centered")
 
 
 def init_state() -> None:
@@ -63,23 +42,6 @@ def init_state() -> None:
     st.session_state.setdefault("reset_confirm_phrase", "")
     st.session_state.setdefault("reset_uninstall_xui", False)
     st.session_state.setdefault("last_preflight", load_results(OUTPUT_DIR).get("preflight", {}))
-    st.session_state.setdefault("export_zip_path", "")
-    st.session_state.setdefault("last_remote_backup", "")
-    st.session_state.setdefault("local_diagnostics", {})
-    st.session_state.setdefault("diagnostics_zip_path", "")
-    st.session_state.setdefault("update_status", {})
-    st.session_state.setdefault("update_manifest_checks", [])
-    st.session_state.setdefault("publish_checks", [])
-    st.session_state.setdefault("publish_steps", [])
-    st.session_state.setdefault("ci_checks", [])
-    st.session_state.setdefault("github_connectivity_checks", [])
-    st.session_state.setdefault("maturity_gates", collect_maturity_gates())
-    st.session_state.setdefault("dashboard_gates", [])
-    st.session_state.setdefault("candidate_gates", [])
-    st.session_state.setdefault("external_input_checks", [])
-    st.session_state.setdefault("desktop_artifacts", [])
-    st.session_state.setdefault("profile_name_input", "")
-    st.session_state.setdefault("selected_profile_name", "")
 
 
 def append_log(message: str, password: str = "") -> None:
@@ -89,7 +51,161 @@ def append_log(message: str, password: str = "") -> None:
 
 def render_logs(target=st) -> None:
     log_text = "\n".join(st.session_state.logs[-1000:])
-    target.text_area("部署进度", value=log_text, height=320, disabled=True)
+    target.text_area("技术日志", value=log_text, height=260, disabled=True, key="technical_logs_area")
+
+
+def apply_product_style() -> None:
+    st.markdown(
+        """
+<style>
+  :root {
+    color-scheme: light;
+  }
+  .stApp {
+    background:
+      radial-gradient(circle at 50% -10%, rgba(255,255,255,0.98), rgba(246,247,249,0.98) 46%, rgba(241,243,246,1) 100%);
+  }
+  [data-testid="stHeader"] {
+    background: transparent;
+  }
+  [data-testid="stToolbar"], [data-testid="stDecoration"], #MainMenu, footer {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  .block-container {
+    max-width: 980px;
+    padding-top: 38px;
+    padding-bottom: 72px;
+  }
+  h1, h2, h3 {
+    letter-spacing: 0;
+  }
+  h1 {
+    font-size: 40px !important;
+    line-height: 1.08 !important;
+    font-weight: 700 !important;
+    margin-bottom: 8px !important;
+  }
+  h2 {
+    font-size: 24px !important;
+    font-weight: 650 !important;
+  }
+  h3 {
+    font-size: 18px !important;
+    font-weight: 650 !important;
+  }
+  [data-testid="stMetric"] {
+    background: rgba(255,255,255,0.72);
+    border: 1px solid rgba(0,0,0,0.07);
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.04);
+  }
+  [data-testid="stForm"], [data-testid="stExpander"], div[data-testid="stVerticalBlockBorderWrapper"] {
+    border-radius: 18px !important;
+  }
+  div.stButton > button, div[data-testid="stFormSubmitButton"] button, .stDownloadButton button, .stLinkButton a {
+    border-radius: 999px !important;
+    min-height: 42px;
+    font-weight: 600;
+  }
+  button[data-testid="stBaseButton-primary"],
+  button[data-testid="stBaseButton-primaryFormSubmit"],
+  div[data-testid="stFormSubmitButton"] button {
+    min-height: 52px;
+    font-size: 17px;
+    background: #0071e3 !important;
+    border: 1px solid #0071e3 !important;
+    color: white !important;
+    box-shadow: 0 14px 28px rgba(0, 113, 227, 0.20);
+  }
+  button[data-testid="stBaseButton-primary"]:hover,
+  button[data-testid="stBaseButton-primaryFormSubmit"]:hover,
+  div[data-testid="stFormSubmitButton"] button:hover {
+    background: #0077ed !important;
+    border-color: #0077ed !important;
+    color: white !important;
+  }
+  button[data-testid="stBaseButton-primary"]:active,
+  button[data-testid="stBaseButton-primaryFormSubmit"]:active,
+  div[data-testid="stFormSubmitButton"] button:active {
+    background: #006edb !important;
+    border-color: #006edb !important;
+    color: white !important;
+  }
+  input, textarea, [data-baseweb="select"] > div {
+    border-radius: 12px !important;
+  }
+  .product-hero {
+    text-align: center;
+    margin: 4px auto 26px;
+  }
+  .product-hero p {
+    color: #667085;
+    font-size: 17px;
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 680px;
+  }
+  .quiet-note {
+    color: #667085;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .status-pill {
+    width: fit-content;
+    margin: 0 auto 24px;
+    padding: 7px 13px;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.74);
+    color: #475467;
+    font-size: 14px;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.05);
+  }
+  .status-pill strong {
+    color: #111827;
+    font-weight: 650;
+  }
+  .result-note {
+    color: #667085;
+    font-size: 13px;
+  }
+</style>
+""",
+        unsafe_allow_html=True,
+    )
+
+
+def render_product_hero(existing_success: bool) -> None:
+    subtitle = (
+        "节点已经就绪。你可以直接扫码、复制链接，或在需要时重新部署。"
+        if existing_success
+        else "输入 VPS IP 和 root 密码，其余配置可以保持默认。部署完成后直接扫码导入客户端。"
+    )
+    st.markdown(
+        f"""
+<div class="product-hero">
+  <h1>VPS 3x-ui Oneclick</h1>
+  <p>{html.escape(subtitle)}</p>
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+
+
+def render_product_status(results: dict, existing_success: bool) -> None:
+    if existing_success:
+        text = f"已部署 · Reality {html.escape(str(results.get('reality_port', '未知')))}"
+        if results.get("subscription_link"):
+            text += " · 订阅可用"
+        else:
+            text += " · 单节点可用"
+    elif has_failed_result(results):
+        text = f"上次未完成 · {html.escape(str(results.get('error_code', 'UNKNOWN')))}"
+    else:
+        text = "准备就绪 · 填写 VPS IP 和 root 密码即可开始"
+    st.markdown(f'<div class="status-pill"><strong>{text}</strong></div>', unsafe_allow_html=True)
 
 
 def image_exists(path: Path) -> bool:
@@ -106,40 +222,6 @@ def has_success_result(results: dict) -> bool:
 
 def has_failed_result(results: dict) -> bool:
     return bool(results.get("error_code")) or results.get("status") == "failed"
-
-
-def render_readiness_summary(results: dict, existing_success: bool) -> None:
-    st.subheader("当前状态")
-    cols = st.columns(4)
-    if existing_success:
-        cols[0].metric("本地结果", "已有可用节点")
-        cols[1].metric("Reality 端口", results.get("reality_port", "未知"))
-        cols[2].metric("订阅", "已生成" if results.get("subscription_link") else "单节点可用")
-        cols[3].metric("建议操作", "查看结果")
-    elif has_failed_result(results):
-        cols[0].metric("本地结果", "上次失败")
-        cols[1].metric("错误代码", results.get("error_code", "unknown"))
-        cols[2].metric("VLESS", "有链接" if results.get("vless_link") else "未生成")
-        cols[3].metric("建议操作", "看恢复提示")
-    else:
-        cols[0].metric("本地结果", "未部署")
-        cols[1].metric("输入", "IP + 密码")
-        cols[2].metric("预检", "建议先跑")
-        cols[3].metric("下一步", "开始部署")
-
-
-def render_first_run_guide(existing_success: bool) -> None:
-    if existing_success:
-        return
-    with st.expander("部署前快速确认", expanded=True):
-        st.markdown(
-            """
-- 你只需要填写 VPS IP 和 VPS 密码；密码不会保存到项目文件、日志或 output。
-- 建议先点“刷新远程状态”，它只读取服务器状态，不会安装软件或修改配置。
-- Reality 端口默认 443；如果被占用，可以点“随机 Reality 端口”，并在 VPS 服务商安全组放行对应 TCP 端口。
-- 服务器加固默认不执行；只有你主动勾选时才会运行。
-"""
-        )
 
 
 def recovery_hint(error_code: str) -> str:
@@ -186,381 +268,6 @@ def validate_form_ready(host: str, ssh_user: str, ssh_password: str, action: str
         st.error(f"{action}前请先填写：{', '.join(missing)}。")
         return False
     return True
-
-
-def render_sidebar() -> None:
-    with st.sidebar:
-        st.subheader("产品信息")
-        st.caption(f"版本：v{APP_VERSION}")
-        st.link_button("GitHub 仓库", "https://github.com/Rasassin/vps-3xui-oneclick-ui", use_container_width=True)
-        update_cols = st.columns([1, 1])
-        if update_cols[0].button("检查更新", use_container_width=True):
-            st.session_state.update_status = check_latest_release().to_dict()
-        update_cols[1].caption("只访问 GitHub，不连接 VPS。")
-        update_status = st.session_state.get("update_status", {})
-        if update_status:
-            if update_status.get("error"):
-                st.warning(update_status["error"])
-            elif update_status.get("is_newer"):
-                st.success(f"发现新版本：{update_status.get('latest_version')}")
-                release_url = update_status.get("release_url", "")
-                if release_url:
-                    st.link_button("打开最新版 Release", release_url, use_container_width=True)
-            else:
-                latest = update_status.get("latest_version") or f"v{APP_VERSION}"
-                st.info(f"当前已是最新版本：{latest}")
-        with st.expander("更新通道"):
-            st.caption("只校验本地 update manifest 和下载资产信息；不会自动下载、安装、连接 VPS 或保存凭据。")
-            if st.button("校验更新 manifest", use_container_width=True):
-                st.session_state.update_manifest_checks = collect_update_manifest_checks()
-            update_manifest_checks = st.session_state.get("update_manifest_checks", [])
-            if update_manifest_checks:
-                overall = update_manifest_overall_status(update_manifest_checks)
-                if overall == "pass":
-                    st.success("本地更新 manifest 通过。")
-                else:
-                    st.error("本地更新 manifest 需要修复。")
-                for check in update_manifest_checks:
-                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(check.status, check.status)
-                    st.caption(f"{label} · {check.name} · {check.detail}")
-            else:
-                st.info("点击后会核对 update-manifest、资产大小、SHA256 和安全边界。")
-        with st.expander("隐私与数据边界"):
-            st.markdown(
-                """
-- VPS 密码只保存在当前页面会话内存，不写入日志、配置档、诊断包或 output。
-- `output/` 可能包含节点链接、二维码、订阅链接和面板信息，请当作敏感文件。
-- 本地配置档只保存常用参数，不保存 VPS 密码。
-- 公开诊断包会排除节点链接、二维码、订阅链接、面板账号密码和 VPS root 密码。
-- “检查更新”只访问 GitHub Release 信息，不连接 VPS，也不上传本地诊断。
-- 只有点击部署、预检、重新下载或远程备份这类按钮时，才会通过 SSH 连接 VPS。
-"""
-            )
-            st.caption("完整说明见 docs/privacy.md。")
-        with st.expander("发布包状态"):
-            gates = st.session_state.get("maturity_gates", collect_maturity_gates())
-            earned, total, percent = maturity_score(gates)
-            st.metric("产品化进度", f"{percent}%", f"{earned}/{total}")
-            st.progress(percent / 100)
-            st.caption(f"当前阶段：{product_tier(percent)}")
-            if st.button("刷新产品化报告", use_container_width=True):
-                gates = collect_maturity_gates()
-                write_maturity_report(gates)
-                st.session_state.maturity_gates = gates
-                st.toast("产品化报告已刷新。")
-            artifacts = collect_release_artifacts()
-            if release_artifacts_ready():
-                st.success("当前版本发布产物已生成。")
-            else:
-                st.info("需要发布时运行：python3 scripts/prepare_release.py --allow-dirty")
-            source = load_release_source_summary()
-            if source:
-                st.caption(
-                    f"来源：{source.git_branch} · {source.short_commit} · 工作区{source.dirty_label}"
-                )
-                if source.is_dirty:
-                    st.warning("当前发布产物来自未提交工作区，只建议本地测试，不建议作为正式 GitHub Release 发布。")
-                if source.is_stale:
-                    st.warning(
-                        "当前发布产物来自旧代码："
-                        f"{source.short_commit}，本地当前代码是 {source.current_short_commit}。"
-                        "正式发布前请重新运行 python3 scripts/prepare_release.py --allow-dirty。"
-                    )
-            for artifact in artifacts:
-                status = "已生成" if artifact.exists else "未生成"
-                st.caption(f"{status} · {artifact.label} · {artifact.display_size}")
-                if artifact.exists:
-                    st.download_button(
-                        f"下载{artifact.label}",
-                        data=artifact.path.read_bytes(),
-                        file_name=artifact.path.name,
-                        mime=artifact.mime_type,
-                        key=f"release_artifact_{artifact.path.name}",
-                        use_container_width=True,
-                    )
-        with st.expander("Go-live 总览"):
-            st.caption("汇总发布包、产品成熟度、GitHub 发布状态、CI、签名和 VPS 兼容矩阵。")
-            if st.button("刷新 Go-live 总览", use_container_width=True):
-                gates = collect_dashboard_gates()
-                write_dashboard_report(gates)
-                st.session_state.dashboard_gates = gates
-            dashboard_gates = st.session_state.get("dashboard_gates", [])
-            if dashboard_gates:
-                overall = dashboard_overall_status(dashboard_gates)
-                if overall == "pass":
-                    st.success("Go-live 状态通过。")
-                elif overall == "fail":
-                    st.error("Go-live 有必须修复项。")
-                else:
-                    st.warning("Go-live 仍有待处理项。")
-                for gate in dashboard_gates:
-                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(gate.status, gate.status)
-                    st.caption(f"{label} · {gate.name} · {gate.detail}")
-            else:
-                st.info("点击刷新后显示最终上线门槛。")
-        with st.expander("Release Candidate"):
-            st.caption("汇总 portable 产品包、更新通道、发布计划、签名状态和 VPS 证据；不会发布、下载、安装或连接 VPS。")
-            if st.button("刷新候选版本验收", use_container_width=True):
-                gates = collect_candidate_gates()
-                write_candidate_report(gates)
-                st.session_state.candidate_gates = gates
-            candidate_gates = st.session_state.get("candidate_gates", [])
-            if candidate_gates:
-                overall = candidate_overall_status(candidate_gates)
-                if overall == "pass":
-                    st.success("候选版本所有门槛通过。")
-                elif overall == "candidate":
-                    st.warning("可作为开源 portable 候选版本，但仍有外部发布门槛。")
-                elif overall == "fail":
-                    st.error("候选版本有必须修复项。")
-                else:
-                    st.warning("候选版本仍有待处理项。")
-                for gate in candidate_gates:
-                    label = {"pass": "通过", "candidate": "候选", "pending": "待处理", "fail": "失败"}.get(gate.status, gate.status)
-                    st.caption(f"{label} · {gate.name} · {gate.detail}")
-            else:
-                st.info("点击后显示当前版本是否适合作为公开开源候选版本。")
-        with st.expander("桌面产物"):
-            st.caption("检查本地 dist/ 下的 unsigned 桌面产物；不会签名、安装、上传或连接 VPS。")
-            if st.button("刷新桌面产物", use_container_width=True):
-                artifacts = collect_desktop_artifacts()
-                write_desktop_artifacts_report(artifacts)
-                st.session_state.desktop_artifacts = artifacts
-            desktop_artifacts = st.session_state.get("desktop_artifacts", [])
-            if desktop_artifacts:
-                overall = desktop_artifacts_overall_status(desktop_artifacts)
-                if overall == "pass":
-                    st.success("桌面产物检查通过。")
-                elif overall == "fail":
-                    st.error("桌面产物检查失败。")
-                else:
-                    st.warning("未发现桌面产物。")
-                for artifact in desktop_artifacts:
-                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(artifact.status, artifact.status)
-                    st.caption(f"{label} · {artifact.path.name} · {artifact.kind} · {artifact.size_bytes} bytes")
-            else:
-                st.info("点击后检查 PyInstaller 产物或 desktop-build workflow 下载到 dist/ 的产物。")
-        with st.expander("外部发布输入"):
-            st.caption("检查 GitHub 登录、签名环境、桌面产物和真实 VPS 证据；不会 push、签名、上传或连接 VPS。")
-            if st.button("刷新外部输入", use_container_width=True):
-                checks = collect_external_input_checks()
-                write_external_inputs_report(checks)
-                st.session_state.external_input_checks = checks
-            external_checks = st.session_state.get("external_input_checks", [])
-            if external_checks:
-                overall = external_inputs_overall_status(external_checks)
-                if overall == "pass":
-                    st.success("外部发布输入齐全。")
-                elif overall == "fail":
-                    st.error("外部发布输入有失败项。")
-                else:
-                    st.warning("还有外部发布输入待补齐。")
-                for check in external_checks:
-                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(check.status, check.status)
-                    st.caption(f"{label} · {check.name} · {check.detail}")
-                    if check.action:
-                        st.caption(f"动作：{check.action}")
-            else:
-                st.info("点击后显示产品化剩余外部输入。")
-        with st.expander("GitHub 发布准备度"):
-            st.caption("只读检查：不会 push、不会创建 tag、不会上传 Release、不会连接 VPS。")
-            if st.button("刷新发布准备度", use_container_width=True):
-                checks = collect_publish_checks()
-                write_publish_report(checks)
-                st.session_state.publish_checks = checks
-            publish_checks = st.session_state.get("publish_checks", [])
-            if publish_checks:
-                overall = publish_overall_status(publish_checks)
-                if overall == "pass":
-                    st.success("GitHub 发布准备度通过。")
-                elif overall == "fail":
-                    st.error("GitHub 发布状态需要修复。")
-                else:
-                    st.warning("GitHub 发布仍有待处理项。")
-                for check in publish_checks:
-                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(check.status, check.status)
-                    st.caption(f"{label} · {check.name} · {check.detail}")
-            else:
-                st.info("点击刷新后显示 GitHub remote、分支同步、tag、网络和 CLI 登录状态。")
-        with st.expander("GitHub 连接修复"):
-            st.caption("只处理本机到 GitHub 的 DNS/SSL/代理诊断；不会真实 push、不会上传 Release、不会读取或显示 token。")
-            github_cols = st.columns(2)
-            if github_cols[0].button("诊断 GitHub 连接", use_container_width=True):
-                checks = collect_github_connectivity_checks()
-                write_github_connectivity_report(checks)
-                st.session_state.github_connectivity_checks = checks
-            if github_cols[1].button("应用直连修复", use_container_width=True):
-                checks = collect_github_connectivity_checks(apply_repair=True)
-                write_github_connectivity_report(checks)
-                st.session_state.github_connectivity_checks = checks
-            github_checks = st.session_state.get("github_connectivity_checks", [])
-            if github_checks:
-                overall = github_connectivity_overall_status(github_checks)
-                if overall == "pass":
-                    st.success("GitHub 连接与认证检查通过。")
-                elif overall == "fail":
-                    st.error("GitHub 连接仍有阻塞项。")
-                else:
-                    st.warning("GitHub 发布仍有待处理项，多数情况是认证或本机网络。")
-                for check in github_checks:
-                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(check.status, check.status)
-                    st.caption(f"{label} · {check.name} · {check.detail}")
-                    if check.recovery:
-                        st.caption(f"建议：{check.recovery}")
-            else:
-                st.info("如果看到 LibreSSL SSL_ERROR_SYSCALL 或 CONNECT 503，先点“诊断 GitHub 连接”。")
-        with st.expander("发布向导"):
-            st.caption("生成本地发布步骤和命令；不会 push、不会创建 tag、不会上传 Release、不会连接 VPS。")
-            if st.button("生成发布计划", use_container_width=True):
-                steps = collect_publish_steps()
-                write_publish_plan(steps)
-                st.session_state.publish_steps = steps
-            publish_steps = st.session_state.get("publish_steps", [])
-            if publish_steps:
-                overall = publish_plan_overall_status(publish_steps)
-                if overall == "pass":
-                    st.success("发布计划通过，剩余只需按发布策略执行。")
-                elif overall == "fail":
-                    st.error("发布计划有必须修复项。")
-                else:
-                    st.warning("发布计划仍有待处理项。")
-                for step in publish_steps:
-                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(step.status, step.status)
-                    st.caption(f"{label} · {step.name} · {step.detail}")
-                    if step.command and step.status != "pass":
-                        st.code(step.command, language="bash")
-            else:
-                st.info("点击后会显示 worktree、artifact、GitHub 连接、登录、push、tag 和 Release 上传步骤。")
-        with st.expander("GitHub CI 状态"):
-            st.caption("只读检查：只读取公开 GitHub Actions 元数据，不连接 VPS、不上传诊断。")
-            if st.button("刷新 CI 状态", use_container_width=True):
-                checks = collect_ci_checks()
-                write_ci_report(checks)
-                st.session_state.ci_checks = checks
-            ci_checks = st.session_state.get("ci_checks", [])
-            if ci_checks:
-                overall = ci_overall_status(ci_checks)
-                if overall == "pass":
-                    st.success("GitHub CI 状态通过。")
-                elif overall == "fail":
-                    st.error("GitHub CI 有失败项。")
-                else:
-                    st.warning("GitHub CI 仍有待处理项。")
-                for check in ci_checks:
-                    label = {"pass": "通过", "pending": "待处理", "fail": "失败"}.get(check.status, check.status)
-                    st.caption(f"{label} · {check.name} · {check.detail}")
-                    if check.url:
-                        st.link_button(f"打开{check.name}", check.url, use_container_width=True)
-            else:
-                st.info("点击刷新后显示 Static checks、Desktop build 和 Release workflow 最近状态。")
-        st.divider()
-        render_profiles_sidebar()
-        st.divider()
-        st.subheader("本地诊断")
-        if st.button("运行本地自检", use_container_width=True):
-            st.session_state.local_diagnostics = collect_local_diagnostics(OUTPUT_DIR)
-        if st.button("生成公开诊断包", use_container_width=True):
-            zip_path = build_public_diagnostics_zip(OUTPUT_DIR)
-            st.session_state.diagnostics_zip_path = str(zip_path)
-            st.session_state.local_diagnostics = collect_local_diagnostics(OUTPUT_DIR)
-            st.toast("公开诊断包已生成。")
-
-        diagnostics = st.session_state.get("local_diagnostics", {})
-        if diagnostics:
-            deps = diagnostics.get("dependencies", {})
-            files = diagnostics.get("files", {})
-            missing_deps = [name for name, ok in deps.items() if not ok]
-            missing_files = [name for name, info in files.items() if not info.get("exists")]
-            if missing_deps or missing_files:
-                st.warning("本地自检发现问题。")
-                if missing_deps:
-                    st.caption(f"缺少依赖：{', '.join(missing_deps)}")
-                if missing_files:
-                    st.caption(f"缺少文件：{', '.join(missing_files)}")
-            else:
-                st.success("本地自检通过。")
-
-        diagnostics_zip_path = st.session_state.get("diagnostics_zip_path", "")
-        if diagnostics_zip_path and Path(diagnostics_zip_path).exists():
-            st.caption("公开诊断包不包含节点链接、二维码、订阅链接、面板账号密码或 VPS root 密码。")
-            st.download_button(
-                "下载公开诊断包",
-                data=Path(diagnostics_zip_path).read_bytes(),
-                file_name=Path(diagnostics_zip_path).name,
-                mime="application/zip",
-                use_container_width=True,
-            )
-
-
-def current_profile_from_state() -> dict:
-    return {
-        "host": st.session_state.get("host_value", "").strip(),
-        "ssh_port": int(st.session_state.get("ssh_port_value", 22)),
-        "ssh_user": st.session_state.get("ssh_user_value", "root").strip(),
-        "node_name": st.session_state.get("node_name_value", "auto-reality").strip() or "auto-reality",
-        "reality_port": int(st.session_state.get("reality_port_value", 443)),
-        "sni": st.session_state.get("sni_value", "www.microsoft.com").strip(),
-        "target": st.session_state.get("target_value", "www.microsoft.com:443").strip(),
-        "fingerprint": st.session_state.get("fingerprint_value", "chrome"),
-        "panel_port": int(st.session_state.get("panel_port_value", 2053)),
-        "generate_ssh_key": bool(st.session_state.get("generate_ssh_key_value", True)),
-        "run_hardening": bool(st.session_state.get("run_hardening_value", False)),
-    }
-
-
-def apply_profile_to_state(profile: dict) -> None:
-    field_to_key = {
-        "host": "host_value",
-        "ssh_port": "ssh_port_value",
-        "ssh_user": "ssh_user_value",
-        "node_name": "node_name_value",
-        "reality_port": "reality_port_value",
-        "sni": "sni_value",
-        "target": "target_value",
-        "fingerprint": "fingerprint_value",
-        "panel_port": "panel_port_value",
-        "generate_ssh_key": "generate_ssh_key_value",
-        "run_hardening": "run_hardening_value",
-    }
-    for field, state_key in field_to_key.items():
-        if field in profile:
-            st.session_state[state_key] = profile[field]
-
-
-def render_profiles_sidebar() -> None:
-    st.subheader("本地配置档")
-    profiles = load_profiles()
-    profile_names = sorted(profiles)
-    options = [""] + profile_names
-    if st.session_state.selected_profile_name not in options:
-        st.session_state.selected_profile_name = ""
-    selected = st.selectbox(
-        "选择配置档",
-        options,
-        format_func=lambda item: item or "未选择",
-        key="selected_profile_name",
-    )
-
-    col_load, col_delete = st.columns(2)
-    if col_load.button("载入", disabled=not selected, use_container_width=True):
-        apply_profile_to_state(profiles[selected])
-        st.toast(f"已载入配置档：{selected}")
-        st.rerun()
-    if col_delete.button("删除", disabled=not selected, use_container_width=True):
-        delete_profile(selected)
-        st.session_state.selected_profile_name = ""
-        st.toast(f"已删除配置档：{selected}")
-        st.rerun()
-
-    st.text_input("配置档名称", key="profile_name_input", placeholder="例如：my-vps")
-    if st.button("保存当前配置", use_container_width=True):
-        try:
-            upsert_profile(st.session_state.profile_name_input, current_profile_from_state())
-            st.session_state.selected_profile_name = st.session_state.profile_name_input.strip()
-            st.success("配置档已保存，不包含 VPS 密码。")
-        except ValueError as exc:
-            st.error(str(exc))
-    st.caption("配置档只保存在本机 data/，不会保存 VPS 密码；VPS IP 等环境信息也不会提交到 GitHub。")
 
 
 def build_login_and_config(
@@ -642,50 +349,6 @@ def copy_inline(label: str, value: str) -> None:
     )
 
 
-def render_management_mode(results: dict) -> None:
-    if not has_success_result(results):
-        return
-    st.subheader("管理模式")
-    status_cols = st.columns(4)
-    status_cols[0].metric("部署状态", "可用")
-    status_cols[1].metric("Reality 端口", results.get("reality_port", "未知"))
-    status_cols[2].metric("节点名称", results.get("node_name", "auto-reality"))
-    status_cols[3].metric("订阅", "已生成" if results.get("subscription_link") else "单节点")
-
-    actions = st.columns(4)
-    panel_url = results.get("panel_url", "")
-    if panel_url:
-        actions[0].link_button("打开 3x-ui 面板", panel_url, use_container_width=True)
-    else:
-        actions[0].button("打开 3x-ui 面板", disabled=True, use_container_width=True)
-    if actions[1].button("生成导出配置包", use_container_width=True):
-        zip_path = build_export_zip(OUTPUT_DIR)
-        st.session_state.export_zip_path = str(zip_path)
-        st.toast("导出配置包已生成。")
-    if actions[2].button("重建本地二维码", use_container_width=True):
-        regenerated = regenerate_output_qrs(OUTPUT_DIR)
-        st.session_state.last_results = load_results(OUTPUT_DIR)
-        if regenerated:
-            st.toast(f"已重建 {len(regenerated)} 个二维码。")
-        else:
-            st.warning("没有可用于重建二维码的链接。")
-    actions[3].button("远程重置/卸载", disabled=True, use_container_width=True)
-    st.caption("远程重置/卸载属于危险操作，请在下方表单的“高级选项”里输入确认短语后执行。")
-
-    export_zip_path = st.session_state.get("export_zip_path", "")
-    if export_zip_path and Path(export_zip_path).exists():
-        st.warning("导出配置包包含节点链接、订阅链接和面板信息，请只保存在你信任的位置。")
-        st.download_button(
-            "下载导出配置包",
-            data=Path(export_zip_path).read_bytes(),
-            file_name=Path(export_zip_path).name,
-            mime="application/zip",
-            use_container_width=True,
-        )
-    if st.session_state.get("last_remote_backup"):
-        st.info(f"最近一次远程备份位置：{st.session_state.last_remote_backup}")
-
-
 def render_preflight(preflight_result: dict) -> None:
     if not preflight_result:
         return
@@ -695,7 +358,7 @@ def render_preflight(preflight_result: dict) -> None:
         "warning": "有提醒",
         "blocked": "阻塞",
     }.get(status, status)
-    st.subheader("部署前检测")
+    st.markdown("**服务器检测结果**")
     cols = st.columns(5)
     cols[0].metric("检测状态", status_text)
     cols[1].metric("系统", preflight_result.get("os_name", "unknown"))
@@ -729,9 +392,9 @@ def render_panel_access(results: dict) -> None:
     if not (panel_url or panel_username or panel_password or panel_login):
         return
 
-    st.subheader("3x-ui 面板")
+    st.markdown("**3x-ui 面板**")
     if panel_url:
-        st.link_button("打开 3x-ui 面板", panel_url)
+        st.link_button("打开 3x-ui 面板", panel_url, use_container_width=True)
         copy_inline("面板地址", panel_url)
     copy_inline("面板账号", panel_username)
     copy_inline("面板密码", panel_password)
@@ -769,119 +432,120 @@ def render_results(results: dict) -> None:
     render_reset_result(results)
     if not (results.get("vless_link") or results.get("panel_login") or (OUTPUT_DIR / "result.json").exists()):
         return
-    st.subheader("结果")
+    st.subheader("连接")
     vless_link = results.get("vless_link", "")
     subscription_link = results.get("subscription_link", "")
     vless_qr_path = Path(results.get("vless_qr_path", OUTPUT_DIR / "vless-qr.png"))
     subscription_qr_path = Path(results.get("subscription_qr_path", OUTPUT_DIR / "subscription-qr.png"))
 
-    node_col, sub_col = st.columns(2)
-    with node_col:
+    primary_col, secondary_col = st.columns([1, 1], vertical_alignment="top")
+    with primary_col:
         with st.container(border=True):
-            st.markdown("**VLESS Reality 节点**")
+            st.markdown("**推荐订阅**")
+            if subscription_link:
+                if image_exists(subscription_qr_path):
+                    st.image(str(subscription_qr_path), caption="订阅二维码", width=240)
+                else:
+                    st.warning("订阅链接已生成，但订阅二维码图片不存在。")
+                copy_box("订阅链接", subscription_link, height=76)
+            elif vless_link:
+                st.info("订阅链接生成失败，但单节点 VLESS 二维码已经生成，可直接扫码使用。")
+                if image_exists(vless_qr_path):
+                    st.image(str(vless_qr_path), caption="VLESS Reality 节点二维码", width=240)
+                copy_box("vless:// 链接", vless_link, height=100)
+
+    with secondary_col:
+        with st.container(border=True):
+            st.markdown("**单节点备用**")
             if image_exists(vless_qr_path):
-                st.image(str(vless_qr_path), caption="VLESS Reality 节点二维码", width=260)
+                st.image(str(vless_qr_path), caption="VLESS Reality 节点二维码", width=240)
             elif vless_link:
                 st.warning("VLESS 链接已生成，但本地二维码图片不存在。")
             copy_box("vless:// 链接", vless_link, height=100)
 
-    with sub_col:
-        with st.container(border=True):
-            st.markdown("**订阅**")
-            if subscription_link:
-                copy_box("订阅链接", subscription_link, height=72)
-                if image_exists(subscription_qr_path):
-                    st.image(str(subscription_qr_path), caption="订阅二维码", width=260)
-                else:
-                    st.warning("订阅链接已生成，但订阅二维码图片不存在。")
-            elif vless_link:
-                st.info("订阅链接生成失败，但单节点 VLESS 二维码已经生成，可直接扫码使用。")
-
-    with st.container(border=True):
+    with st.expander("面板登录信息", expanded=False):
         render_panel_access(results)
 
     deploy_report = results.get("deploy_report", "")
     if deploy_report:
-        st.text_area("部署报告", value=deploy_report, height=260, disabled=True, key="deploy_report_area")
+        with st.expander("部署报告", expanded=False):
+            st.text_area("部署报告", value=deploy_report, height=260, disabled=True, key="deploy_report_area")
 
     local_output_dir = results.get("local_output_dir") or str(OUTPUT_DIR)
-    st.caption(f"本地结果已保存到：{local_output_dir}")
-    st.warning("安全提示：部署完成后请尽快修改 VPS root 密码，或切换为 SSH key 登录。第一版不会默认关闭 root 登录、密码登录或 ping。")
+    st.markdown(f'<p class="result-note">结果已自动保存到本机：{html.escape(local_output_dir)}</p>', unsafe_allow_html=True)
+    st.warning("部署完成后请尽快修改 VPS root 密码，或切换为 SSH key 登录。")
 
 
 def main() -> None:
     init_state()
-    render_sidebar()
-    st.title("VPS 3x-ui 一键部署器")
+    apply_product_style()
     current_results = st.session_state.last_results or load_results(OUTPUT_DIR)
     existing_success = has_success_result(current_results)
     existing_port = current_results.get("reality_port", "")
 
-    render_readiness_summary(current_results, existing_success)
-    render_first_run_guide(existing_success)
-    render_failure_recovery(current_results)
-
-    if existing_success:
-        st.info(
-            f"检测到已有成功部署结果，Reality 端口：{existing_port or '未知'}。"
-            "如果只是查看二维码、订阅链接或面板信息，不需要再次点击部署。"
-        )
-        render_management_mode(current_results)
-
-    with st.container(border=True):
-        st.subheader("快捷优化")
-        port_col, action_col = st.columns([2, 1])
-        port_col.caption(
-            "Reality 入站端口不一定必须是 443。443 更像普通 HTTPS；如果 443 已被占用，"
-            "可以换成随机高位端口，但需要在 VPS 服务商安全组放行对应 TCP 端口。"
-        )
-        if action_col.button("随机 Reality 端口", disabled=st.session_state.is_running):
-            st.session_state.reality_port_value = generate_random_reality_port()
-            st.toast(f"已生成端口：{st.session_state.reality_port_value}")
-            st.rerun()
+    render_product_hero(existing_success)
+    render_product_status(current_results, existing_success)
+    if has_failed_result(current_results):
+        render_failure_recovery(current_results)
 
     confirm_redeploy = True
-    if existing_success:
-        confirm_redeploy = st.checkbox(
-            "我确认要重新部署。重复使用同一个 Reality 端口可能会因为端口已占用而失败。",
-            key="confirm_redeploy",
-            disabled=st.session_state.is_running,
-        )
-
     with st.form("deploy_form"):
-        col1, col2 = st.columns(2)
-        with col1:
-            st.subheader("VPS 登录信息")
-            host = st.text_input("VPS IP", placeholder="例如：1.2.3.4", key="host_value")
-            ssh_port = st.number_input("SSH 端口", min_value=1, max_value=65535, step=1, key="ssh_port_value")
-            ssh_user = st.text_input("SSH 用户", key="ssh_user_value")
-            ssh_password = st.text_input("VPS 密码", type="password")
-        with col2:
-            st.subheader("节点配置")
-            node_name = st.text_input("节点名称", key="node_name_value")
-            reality_port = st.number_input(
-                "Reality 入站端口",
-                min_value=1,
-                max_value=65535,
-                step=1,
-                key="reality_port_value",
-            )
-            st.caption("如果使用随机端口，请确认 VPS 服务商安全组已放行该 TCP 端口。")
-            sni = st.text_input("SNI", key="sni_value")
-            target = st.text_input("Target", key="target_value")
+        st.subheader("部署")
+        host = st.text_input("VPS IP", placeholder="例如：1.2.3.4", key="host_value")
+        ssh_password = st.text_input("root 密码", type="password", help="只保存在当前页面会话内存，不写入日志或文件。")
+
+        with st.expander("高级设置", expanded=False):
+            top_cols = st.columns(3)
+            with top_cols[0]:
+                ssh_port = st.number_input("SSH 端口", min_value=1, max_value=65535, step=1, key="ssh_port_value")
+            with top_cols[1]:
+                ssh_user = st.text_input("SSH 用户", key="ssh_user_value")
+            with top_cols[2]:
+                panel_port = st.number_input("3x-ui 面板端口", min_value=1, max_value=65535, step=1, key="panel_port_value")
+            config_cols = st.columns(2)
+            with config_cols[0]:
+                node_name = st.text_input("节点名称", key="node_name_value")
+                reality_port = st.number_input(
+                    "Reality 入站端口",
+                    min_value=1,
+                    max_value=65535,
+                    step=1,
+                    key="reality_port_value",
+                )
+            with config_cols[1]:
+                sni = st.text_input("SNI", key="sni_value")
+                target = st.text_input("Target", key="target_value")
             fingerprint = st.selectbox(
                 "Fingerprint",
                 ["chrome", "firefox", "safari", "ios", "android", "edge", "random"],
                 key="fingerprint_value",
             )
+            setting_cols = st.columns(2)
+            with setting_cols[0]:
+                generate_ssh_key = st.checkbox("安装完成后生成 SSH key", key="generate_ssh_key_value")
+            with setting_cols[1]:
+                run_hardening = st.checkbox("执行服务器加固", key="run_hardening_value")
+            st.caption("默认值适合第一次使用。若 443 被占用，可换高位端口，并在 VPS 服务商安全组放行对应 TCP 端口。")
 
-        with st.expander("高级选项", expanded=True):
-            panel_port = st.number_input("3x-ui 面板端口", min_value=1, max_value=65535, step=1, key="panel_port_value")
-            generate_ssh_key = st.checkbox("安装完成后生成 SSH key", key="generate_ssh_key_value")
-            run_hardening = st.checkbox("执行服务器加固", key="run_hardening_value")
-            st.caption("服务器加固脚本默认不会执行；只有主动勾选时才会运行。第一版不会默认关闭 root 登录、密码登录或 ping。")
+        if existing_success:
+            confirm_redeploy = st.checkbox(
+                "重新部署",
+                key="confirm_redeploy",
+                disabled=st.session_state.is_running,
+            )
+
+        start_disabled = st.session_state.is_running or (existing_success and not confirm_redeploy)
+        start = st.form_submit_button("开始一键部署", type="primary", disabled=start_disabled, use_container_width=True)
+
+        with st.expander("更多操作", expanded=False):
+            st.caption("只在需要排错、换端口或重新整理结果时使用。")
+            maintenance_cols = st.columns(4)
+            check = maintenance_cols[0].form_submit_button("检测服务器", disabled=st.session_state.is_running)
+            redownload = maintenance_cols[1].form_submit_button("重新下载结果", disabled=st.session_state.is_running)
+            clear = maintenance_cols[2].form_submit_button("清空本机结果", disabled=st.session_state.is_running)
+            random_port = maintenance_cols[3].form_submit_button("随机端口", disabled=st.session_state.is_running)
             st.divider()
-            st.markdown("**危险操作：远程重置 / 卸载**")
+            st.caption("危险操作：远程重置只在需要清理 oneclick 结果或停用 3x-ui 时使用。")
             reset_confirm_phrase = st.text_input(
                 "远程重置确认短语",
                 key="reset_confirm_phrase",
@@ -891,31 +555,54 @@ def main() -> None:
                 "同时停用并归档 3x-ui",
                 key="reset_uninstall_xui",
             )
-            st.caption(
-                "远程重置会先备份 /root/3xui-oneclick-result，再清理 oneclick 结果和临时脚本。"
-                "只有勾选“同时停用并归档 3x-ui”时，才会停止 x-ui 服务并把 3x-ui 目录归档后改名停用。"
-            )
+            remote_reset = st.form_submit_button("执行远程重置", disabled=st.session_state.is_running)
 
-        col_a, col_b, col_c, col_d, col_e, col_f = st.columns([1, 1, 1, 1, 1, 1])
-        start_disabled = st.session_state.is_running or (existing_success and not confirm_redeploy)
-        check = col_a.form_submit_button("刷新远程状态", disabled=st.session_state.is_running)
-        redownload = col_b.form_submit_button("重新下载结果", disabled=st.session_state.is_running)
-        backup_remote = col_c.form_submit_button("远程备份结果", disabled=st.session_state.is_running)
-        start = col_d.form_submit_button("开始一键部署", type="primary", disabled=start_disabled)
-        clear = col_e.form_submit_button("清空本地输出", disabled=st.session_state.is_running)
-        remote_reset = col_f.form_submit_button("远程重置/卸载", disabled=st.session_state.is_running)
+        if "ssh_port" not in locals():
+            ssh_port = st.session_state.ssh_port_value
+        if "ssh_user" not in locals():
+            ssh_user = st.session_state.ssh_user_value
+        if "panel_port" not in locals():
+            panel_port = st.session_state.panel_port_value
+        if "node_name" not in locals():
+            node_name = st.session_state.node_name_value
+        if "reality_port" not in locals():
+            reality_port = st.session_state.reality_port_value
+        if "sni" not in locals():
+            sni = st.session_state.sni_value
+        if "target" not in locals():
+            target = st.session_state.target_value
+        if "fingerprint" not in locals():
+            fingerprint = st.session_state.fingerprint_value
+        if "generate_ssh_key" not in locals():
+            generate_ssh_key = st.session_state.generate_ssh_key_value
+        if "run_hardening" not in locals():
+            run_hardening = st.session_state.run_hardening_value
+        if "reset_confirm_phrase" not in locals():
+            reset_confirm_phrase = st.session_state.reset_confirm_phrase
+        if "reset_uninstall_xui" not in locals():
+            reset_uninstall_xui = st.session_state.reset_uninstall_xui
+        if "remote_reset" not in locals():
+            remote_reset = False
+        if "random_port" not in locals():
+            random_port = False
+
+    if random_port:
+        st.session_state.reality_port_value = generate_random_reality_port()
+        st.toast(f"已生成端口：{st.session_state.reality_port_value}")
+        st.rerun()
 
     if clear:
         clear_output()
         st.session_state.logs = []
         st.session_state.last_results = load_results(OUTPUT_DIR)
         st.session_state.last_preflight = {}
-        st.session_state.export_zip_path = ""
-        st.session_state.last_remote_backup = ""
-        st.success("本地 output/ 已清空。")
+        st.success("本机结果已清空。")
 
     log_placeholder = st.empty()
-    render_logs(log_placeholder)
+    if st.session_state.logs:
+        with st.expander("开发者日志", expanded=False):
+            log_placeholder = st.empty()
+            render_logs(log_placeholder)
 
     if check:
         if not validate_form_ready(host, ssh_user, ssh_password, "刷新远程状态"):
@@ -943,7 +630,6 @@ def main() -> None:
 
         def ui_log(line: str) -> None:
             append_log(line, ssh_password)
-            render_logs(log_placeholder)
 
         try:
             ui_log("开始部署前检测。检测只读取服务器状态，不安装软件、不修改配置。")
@@ -961,7 +647,6 @@ def main() -> None:
             st.error(f"检测失败：{exc}")
         finally:
             st.session_state.is_running = False
-            render_logs(log_placeholder)
 
     if redownload:
         if not validate_form_ready(host, ssh_user, ssh_password, "重新下载结果"):
@@ -976,7 +661,6 @@ def main() -> None:
 
         def ui_log(line: str) -> None:
             append_log(line, ssh_password)
-            render_logs(log_placeholder)
 
         try:
             ui_log("开始从远程重新下载结果文件。不会重新部署，也不会修改 3x-ui 配置。")
@@ -994,39 +678,6 @@ def main() -> None:
             st.error(f"重新下载失败：{exc}")
         finally:
             st.session_state.is_running = False
-            render_logs(log_placeholder)
-
-    if backup_remote:
-        if not validate_form_ready(host, ssh_user, ssh_password, "远程备份结果"):
-            render_preflight(st.session_state.last_preflight or (st.session_state.last_results or {}).get("preflight", {}))
-            results = st.session_state.last_results or load_results(OUTPUT_DIR)
-            if results.get("vless_link") or results.get("panel_login") or (OUTPUT_DIR / "result.json").exists():
-                render_results(results)
-            return
-        st.session_state.is_running = True
-        st.session_state.logs = []
-        login = VPSLogin(host=host.strip(), port=int(ssh_port), username=ssh_user.strip(), password=ssh_password)
-
-        def ui_log(line: str) -> None:
-            append_log(line, ssh_password)
-            render_logs(log_placeholder)
-
-        try:
-            ui_log("开始备份远程结果目录。备份只保存到 VPS，不下载到本地。")
-            backup_hint = backup_remote_results(login, ui_log)
-            st.session_state.last_remote_backup = backup_hint
-            ui_log(f"远程备份完成：{backup_hint}")
-            st.success("远程结果目录已备份。")
-        except DeploymentError as exc:
-            append_log(f"错误：{exc.message}", ssh_password)
-            hint = ERROR_HINTS.get(exc.code, exc.message)
-            st.error(hint)
-        except Exception as exc:  # noqa: BLE001
-            append_log(f"未知错误：{exc}", ssh_password)
-            st.error(f"远程备份失败：{exc}")
-        finally:
-            st.session_state.is_running = False
-            render_logs(log_placeholder)
 
     if remote_reset:
         if not validate_form_ready(host, ssh_user, ssh_password, "远程重置"):
@@ -1041,7 +692,6 @@ def main() -> None:
 
         def ui_log(line: str) -> None:
             append_log(line, ssh_password)
-            render_logs(log_placeholder)
 
         try:
             ui_log("开始远程重置。将先备份远程结果目录，再执行清理；不会修改 VPS root 密码。")
@@ -1066,7 +716,6 @@ def main() -> None:
             st.error(f"远程重置失败：{exc}")
         finally:
             st.session_state.is_running = False
-            render_logs(log_placeholder)
 
     if start:
         if not validate_form_ready(host, ssh_user, ssh_password, "开始部署"):
@@ -1096,7 +745,6 @@ def main() -> None:
 
         def ui_log(line: str) -> None:
             append_log(line, ssh_password)
-            render_logs(log_placeholder)
 
         try:
             ui_log("开始部署。VPS 密码只保存在当前页面会话内存，不会写入日志或 output。")
@@ -1115,10 +763,12 @@ def main() -> None:
             st.error(f"部署失败：{exc}")
         finally:
             st.session_state.is_running = False
-            render_logs(log_placeholder)
 
     results = st.session_state.last_results or load_results(OUTPUT_DIR)
-    render_preflight(st.session_state.last_preflight or results.get("preflight", {}))
+    preflight_data = st.session_state.last_preflight or results.get("preflight", {})
+    if preflight_data:
+        with st.expander("服务器检测结果", expanded=False):
+            render_preflight(preflight_data)
     if (
         results.get("vless_link")
         or results.get("panel_login")
@@ -1126,8 +776,6 @@ def main() -> None:
         or (OUTPUT_DIR / "result.json").exists()
     ):
         render_results(results)
-    else:
-        st.info("填写 VPS IP 和 root 密码后，点击“开始一键部署”。完成后这里会直接显示二维码、链接和面板信息。")
 
 
 if __name__ == "__main__":

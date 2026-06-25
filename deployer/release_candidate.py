@@ -33,7 +33,8 @@ def gate_release_artifacts(version: str) -> CandidateGate:
     missing = [
         path.name
         for _, path in expected_release_artifacts(version)
-        if not path.name.startswith("RELEASE_CANDIDATE_v") and (not path.exists() or path.stat().st_size == 0)
+        if not path.name.startswith(("RELEASE_CANDIDATE_v", "EXTERNAL_GO_NO_GO_v"))
+        and (not path.exists() or path.stat().st_size == 0)
     ]
     if missing:
         return CandidateGate("Release artifacts", "fail", "Missing: " + ", ".join(missing))

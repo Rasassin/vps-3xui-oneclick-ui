@@ -9,6 +9,7 @@ from pathlib import Path
 
 from .config import APP_VERSION, PROJECT_ROOT
 from .desktop_artifacts import collect_desktop_artifacts
+from .external_release_evidence import latest_by_type, load_evidence
 from .vps_compatibility import SUPPORTED_SYSTEMS, load_results
 
 
@@ -43,6 +44,52 @@ def check_github_auth() -> ExternalInputCheck:
     if result.returncode == 0:
         return ExternalInputCheck("GitHub authentication", "pass", "GitHub CLI auth is available.")
     return ExternalInputCheck("GitHub authentication", "pending", "GitHub CLI is installed but not logged in.", "gh auth login")
+
+
+def check_github_desktop_route() -> ExternalInputCheck:
+    macos_path = Path("/Applications/GitHub Desktop.app")
+    windows_path = Path.home() / "AppData" / "Local" / "GitHubDesktop" / "GitHubDesktop.exe"
+    if macos_path.exists():
+        return ExternalInputCheck(
+            "GitHub Desktop publish route",
+            "pass",
+            f"GitHub Desktop is installed at {macos_path}.",
+            "Run scripts/prepare_github_desktop_publish.py, then push/release manually.",
+        )
+    if windows_path.exists():
+        return ExternalInputCheck(
+            "GitHub Desktop publish route",
+            "pass",
+            f"GitHub Desktop is installed at {windows_path}.",
+            "Run scripts/prepare_github_desktop_publish.py, then push/release manually.",
+        )
+    return ExternalInputCheck(
+        "GitHub Desktop publish route",
+        "pending",
+        "GitHub Desktop was not detected.",
+        "Install GitHub Desktop or authenticate GitHub CLI.",
+    )
+
+
+def check_recorded_release_evidence() -> list[ExternalInputCheck]:
+    latest = latest_by_type(load_evidence())
+    checks = []
+    expected = {
+        "github_desktop_push": "Record after pushing commits with GitHub Desktop.",
+        "github_release_upload": "Record after uploading GitHub Release assets.",
+        "github_actions_static_checks": "Record after Static checks workflow is green.",
+        "github_actions_desktop_build": "Record after Desktop build workflow is green.",
+        "macos_notarization": "Record after notarized macOS app is stapled and validated.",
+        "windows_signing": "Record after Windows signed artifact is verified.",
+        "signed_artifact_validation": "Record after check_signed_artifacts.py validates provided signed artifacts.",
+    }
+    for evidence_type, action in expected.items():
+        item = latest.get(evidence_type)
+        if item and item.status in {"pass", "partial"}:
+            checks.append(ExternalInputCheck(f"Evidence: {evidence_type}", item.status, item.summary, action))
+        else:
+            checks.append(ExternalInputCheck(f"Evidence: {evidence_type}", "pending", "No passing evidence has been recorded.", action))
+    return checks
 
 
 def check_macos_signing_inputs() -> ExternalInputCheck:
@@ -106,10 +153,12 @@ def collect_external_input_checks() -> list[ExternalInputCheck]:
     return [
         check_github_push_readiness(),
         check_github_auth(),
+        check_github_desktop_route(),
         check_macos_signing_inputs(),
         check_windows_signing_inputs(),
         check_vps_evidence(),
         check_desktop_artifacts(),
+        *check_recorded_release_evidence(),
     ]
 
 

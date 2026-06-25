@@ -9,7 +9,7 @@ SCRIPT_ROOT = Path(__file__).resolve().parents[1]
 if str(SCRIPT_ROOT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_ROOT))
 
-from deployer.config import APP_VERSION
+from deployer.config import APP_VERSION, PROJECT_ROOT
 from deployer.desktop_artifacts import collect_desktop_artifacts, desktop_artifacts_overall_status, write_desktop_artifacts_report
 
 
@@ -26,7 +26,7 @@ def main() -> None:
     if not artifacts:
         print("pending: Desktop artifacts - No desktop artifacts found under dist/.")
     for artifact in artifacts:
-        print(f"{artifact.status}: {artifact.path.name} - {artifact.kind}, {artifact.size_bytes} bytes")
+        print(f"{artifact.status}: {artifact.path.relative_to(PROJECT_ROOT)} - {artifact.kind}, {artifact.size_bytes} bytes")
     if args.strict and desktop_artifacts_overall_status(artifacts) != "pass":
         raise SystemExit(1)
 

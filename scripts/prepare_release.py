@@ -24,6 +24,7 @@ def artifact_paths(version: str) -> list[Path]:
         dist_dir / f"PRODUCT_READINESS_v{version}.md",
         dist_dir / f"PRODUCT_MATURITY_v{version}.md",
         dist_dir / f"VPS_COMPATIBILITY_TEST_v{version}.md",
+        dist_dir / f"VPS_COMPATIBILITY_NEXT_TESTS_v{version}.md",
         dist_dir / f"update-manifest-v{version}.json",
         dist_dir / f"SIGNING_READINESS_v{version}.md",
         dist_dir / f"SIGNED_ARTIFACT_VALIDATION_v{version}.md",
@@ -31,13 +32,20 @@ def artifact_paths(version: str) -> list[Path]:
         dist_dir / f"RELEASE_COMMANDS_v{version}.md",
         dist_dir / f"PUBLISH_READINESS_v{version}.md",
         dist_dir / f"PUBLISH_PLAN_v{version}.md",
+        dist_dir / f"GITHUB_DESKTOP_PUBLISH_STEPS_v{version}.md",
         dist_dir / f"GITHUB_CONNECTIVITY_v{version}.md",
         dist_dir / f"CI_READINESS_v{version}.md",
         dist_dir / f"GO_LIVE_DASHBOARD_v{version}.md",
         dist_dir / f"RELEASE_CANDIDATE_v{version}.md",
         dist_dir / f"DESKTOP_ARTIFACTS_v{version}.md",
         dist_dir / f"EXTERNAL_RELEASE_INPUTS_v{version}.md",
+        dist_dir / f"EXTERNAL_RELEASE_EVIDENCE_v{version}.md",
+        dist_dir / f"EXTERNAL_OPERATOR_GUIDE_v{version}.md",
+        dist_dir / f"EXTERNAL_NEXT_ACTIONS_v{version}.md",
+        dist_dir / f"EXTERNAL_GO_NO_GO_v{version}.md",
         dist_dir / f"RELEASE_CHANNELS_v{version}.md",
+        dist_dir / f"EXTERNAL_RELEASE_HANDOFF_v{version}.zip",
+        dist_dir / f"SHA256SUMS_EXTERNAL_RELEASE_HANDOFF_v{version}.txt",
     ]
 
 

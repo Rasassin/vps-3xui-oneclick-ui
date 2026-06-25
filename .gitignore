@@ -7,6 +7,9 @@ data/*
 secrets*
 **pycache**/
 .venv/
+node_modules/
+npm-debug.log*
+*.tsbuildinfo
 dist/
 build/
 __pycache__/

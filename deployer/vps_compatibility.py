@@ -127,10 +127,13 @@ def build_result(
 
 def markdown_rows(results: list[VpsCompatibilityResult]) -> str:
     if results:
-        return "\n".join(
+        rows = [
             "| {system} | {provider_region} | {status} | {ssh} | {preflight} | {deploy} | {vless_qr} | {subscription} | {panel_login} | {reset} | {notes} |".format(
                 **asdict(result)
             )
             for result in results
-        )
+        ]
+        covered_systems = {result.system for result in results}
+        rows.extend(f"| {system} |  | pending |  |  |  |  |  |  |  | |" for system in SUPPORTED_SYSTEMS if system not in covered_systems)
+        return "\n".join(rows)
     return "\n".join(f"| {system} |  | pending |  |  |  |  |  |  |  | |" for system in SUPPORTED_SYSTEMS)

@@ -23,6 +23,7 @@ def main() -> None:
     )
     parser.add_argument("--version", default=APP_VERSION)
     parser.add_argument("--apply-repair", action="store_true", help="Apply a repo-local GitHub direct-IP override if one works.")
+    parser.add_argument("--skip-direct-ip", action="store_true", help="Skip slow candidate GitHub direct-IP probing.")
     parser.add_argument("--skip-dry-run", action="store_true", help="Skip git push --dry-run authentication check.")
     parser.add_argument("--strict", action="store_true", help="Fail unless every connectivity check is pass.")
     parser.add_argument("--write-report", action="store_true", help="Write dist/GITHUB_CONNECTIVITY_vX.Y.Z.md.")
@@ -31,6 +32,7 @@ def main() -> None:
     checks = collect_github_connectivity_checks(
         apply_repair=args.apply_repair,
         include_dry_run=not args.skip_dry_run,
+        include_direct_ip=not args.skip_direct_ip,
     )
     if args.write_report:
         print(write_github_connectivity_report(checks, args.version))

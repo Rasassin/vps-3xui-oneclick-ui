@@ -19,11 +19,11 @@ from scripts.build_release import iter_release_files
 PRODUCT_GAPS = [
     "Signed and notarized macOS .app is not implemented.",
     "Signed Windows installer or .exe distribution is not implemented.",
-    "Native Tauri UI is not implemented; Streamlit remains the primary UI.",
+    "Electron desktop packages are unsigned until platform signing is completed.",
     "Automatic update channel is not implemented.",
     "OS keychain integration is not implemented because password persistence remains intentionally out of scope.",
     "Real VPS compatibility matrix testing is manual and not part of CI.",
-    "Guarded remote uninstall/reset flow remains intentionally unimplemented.",
+    "Guarded remote reset archives and disables local 3x-ui paths, but full official 3x-ui uninstall remains out of scope.",
 ]
 
 

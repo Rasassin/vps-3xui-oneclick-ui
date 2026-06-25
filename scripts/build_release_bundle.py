@@ -17,6 +17,11 @@ from deployer.ci_status import write_ci_report
 from deployer.config import APP_VERSION, PROJECT_ROOT
 from deployer.desktop_artifacts import write_desktop_artifacts_report
 from deployer.external_release_inputs import write_external_inputs_report
+from deployer.external_operator_guide import write_guide as write_external_operator_guide
+from deployer.external_release_checklist import write_checklist as write_external_release_checklist
+from deployer.external_release_consistency import write_report as write_external_release_consistency_report
+from deployer.external_release_index import write_index as write_external_release_index
+from deployer.external_status import write_report as write_external_status_report
 from deployer.go_live_dashboard import write_dashboard_report
 from deployer.github_connectivity import write_github_connectivity_report
 from deployer.product_maturity import write_report as write_maturity_report
@@ -26,10 +31,17 @@ from deployer.release_candidate import write_candidate_report
 from scripts.build_release import build_release_zip
 from scripts.build_product_package import build_product_package
 from scripts.build_update_manifest import write_update_manifest
+from scripts.build_external_evidence_commands import write_report as write_external_evidence_commands
+from scripts.build_external_release_packet import build_packet as build_external_release_packet
+from scripts.build_external_evidence_report import write_report as write_external_evidence_report
+from scripts.build_external_next_actions import write_report as write_external_next_actions_report
 from scripts.build_vps_test_report import write_report as write_vps_test_report
+from scripts.check_external_go_no_go import write_report as write_external_go_no_go_report
+from scripts.prepare_github_desktop_publish import write_report as write_github_desktop_publish_steps
 from scripts.build_release_commands import write_report as write_release_commands
 from deployer.publish_status import write_publish_report
-from scripts.check_signed_artifacts import check_macos_app, check_windows_installer, write_report as write_signed_artifact_report
+from deployer.vps_compatibility_plan import write_report as write_vps_compatibility_plan
+from scripts.check_signed_artifacts import check_macos_app, check_windows_bundle, check_windows_installer, write_report as write_signed_artifact_report
 from scripts.check_signing_readiness import macos_checks, windows_checks, write_report as write_signing_report
 from scripts.check_go_live_readiness import collect_gates as collect_go_live_gates, write_report as write_go_live_report
 from scripts.generate_release_notes import write_release_notes
@@ -112,13 +124,24 @@ def build_release_bundle(version: str = APP_VERSION) -> list[Path]:
     portable_zip_path, product_report_path = build_product_package(version)
     maturity_report_path = write_maturity_report(version=version)
     vps_test_report_path = write_vps_test_report(version)
+    vps_next_tests_report_path = write_vps_compatibility_plan(version=version)
     signing_report_path = write_signing_report([*macos_checks(), *windows_checks()])
-    signed_artifact_report_path = write_signed_artifact_report([*check_macos_app(None), *check_windows_installer(None)])
-    core_artifact_paths = [zip_path, notes_path, portable_zip_path, product_report_path, maturity_report_path, vps_test_report_path]
+    signed_artifact_report_path = write_signed_artifact_report(
+        [*check_macos_app(None), *check_windows_installer(None), *check_windows_bundle(None)]
+    )
+    core_artifact_paths = [
+        zip_path,
+        notes_path,
+        portable_zip_path,
+        product_report_path,
+        maturity_report_path,
+        vps_test_report_path,
+    ]
     update_manifest_path = write_update_manifest(version, core_artifact_paths)
     release_commands_path = write_release_commands(version)
     publish_report_path = write_publish_report(version=version)
     publish_plan_path = write_publish_plan(version=version)
+    github_desktop_steps_path = write_github_desktop_publish_steps(version=version)
     github_connectivity_report_path = write_github_connectivity_report(version=version)
     ci_report_path = write_ci_report(version=version)
     go_live_report_path = write_go_live_report(collect_go_live_gates(version), version)
@@ -126,15 +149,27 @@ def build_release_bundle(version: str = APP_VERSION) -> list[Path]:
     candidate_report_path = write_candidate_report(version=version)
     desktop_artifacts_report_path = write_desktop_artifacts_report(version=version)
     external_inputs_report_path = write_external_inputs_report(version=version)
+    external_status_report_path = write_external_status_report(version=version)
+    external_evidence_report_path = write_external_evidence_report(version=version)
+    external_evidence_commands_path = write_external_evidence_commands(version=version)
+    write_external_release_checklist(version=version)
+    external_release_index_path = write_external_release_index(version=version)
+    external_operator_guide_path = write_external_operator_guide(version=version)
+    external_next_actions_path = write_external_next_actions_report(version=version)
+    external_go_no_go_path = write_external_go_no_go_report(version=version)
+    external_consistency_path, external_consistency_json_path = write_external_release_consistency_report(version=version)
     release_channels_report_path = write_release_channels_report(version=version)
+    external_packet_path, external_packet_checksum_path = build_external_release_packet(version)
     artifact_paths = [
         *core_artifact_paths,
+        vps_next_tests_report_path,
         update_manifest_path,
         signing_report_path,
         signed_artifact_report_path,
         release_commands_path,
         publish_report_path,
         publish_plan_path,
+        github_desktop_steps_path,
         github_connectivity_report_path,
         ci_report_path,
         go_live_report_path,
@@ -142,7 +177,16 @@ def build_release_bundle(version: str = APP_VERSION) -> list[Path]:
         candidate_report_path,
         desktop_artifacts_report_path,
         external_inputs_report_path,
+        external_evidence_report_path,
+        external_evidence_commands_path,
+        external_operator_guide_path,
+        external_next_actions_path,
+        external_go_no_go_path,
+        external_consistency_path,
+        external_consistency_json_path,
         release_channels_report_path,
+        external_packet_path,
+        external_packet_checksum_path,
     ]
     checksums_path = write_sha256sums(artifact_paths, version)
     manifest_path = write_manifest(artifact_paths, checksums_path, version)

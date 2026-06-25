@@ -6,8 +6,10 @@ import platform
 import shutil
 import subprocess
 import sys
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
+from zipfile import ZipFile
 
 
 SCRIPT_ROOT = Path(__file__).resolve().parents[1]
@@ -104,6 +106,75 @@ def check_windows_installer(path: Path | None) -> list[ArtifactCheck]:
     return [ArtifactCheck("Windows Authenticode", "ok" if ok else "failed", detail)]
 
 
+def windows_launcher_in_bundle(bundle_path: Path) -> Path:
+    launcher = bundle_path / "VPS 3x-ui Oneclick.exe"
+    if launcher.exists() and launcher.is_file():
+        return launcher
+    matches = sorted(bundle_path.rglob("VPS 3x-ui Oneclick.exe"))
+    if matches:
+        return matches[0]
+    raise FileNotFoundError(f"VPS 3x-ui Oneclick.exe not found under {bundle_path}")
+
+
+def check_windows_executable_signature(path: Path, label: str = "Windows Authenticode") -> list[ArtifactCheck]:
+    if platform.system() != "Windows":
+        return [ArtifactCheck(label, "unsupported", "Authenticode validation requires Windows.")]
+    if not path.exists() or not path.is_file():
+        return [ArtifactCheck(label, "failed", f"Missing executable: {path}")]
+
+    powershell = shutil.which("powershell") or shutil.which("pwsh")
+    if not powershell:
+        return [ArtifactCheck(label, "failed", "PowerShell is missing.")]
+    command = [
+        powershell,
+        "-NoProfile",
+        "-Command",
+        (
+            "$sig = Get-AuthenticodeSignature -FilePath "
+            + json.dumps(str(path))
+            + "; $sig | Select-Object Status,StatusMessage,SignerCertificate | ConvertTo-Json -Compress"
+        ),
+    ]
+    result = run(command)
+    if result.returncode != 0:
+        return [ArtifactCheck(label, "failed", (result.stderr or result.stdout).strip())]
+    try:
+        payload = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        return [ArtifactCheck(label, "failed", result.stdout.strip())]
+    status = str(payload.get("Status") or "")
+    signer = payload.get("SignerCertificate")
+    signer_present = bool(signer)
+    ok = status == "Valid" and signer_present
+    detail = f"Status={status}; SignerCertificate={'present' if signer_present else 'missing'}; Path={path.name}"
+    return [ArtifactCheck(label, "ok" if ok else "failed", detail)]
+
+
+def check_windows_bundle(path: Path | None) -> list[ArtifactCheck]:
+    if path is None:
+        return [ArtifactCheck("Windows Electron bundle", "not_provided", "No Windows Electron bundle path was provided.")]
+    if not path.exists():
+        return [ArtifactCheck("Windows Electron bundle", "failed", f"Missing Windows Electron bundle: {path}")]
+    if path.is_dir():
+        try:
+            launcher = windows_launcher_in_bundle(path)
+        except FileNotFoundError as exc:
+            return [ArtifactCheck("Windows Electron bundle", "failed", str(exc))]
+        return check_windows_executable_signature(launcher, "Windows Electron Authenticode")
+    if path.is_file() and path.suffix.lower() == ".zip":
+        if platform.system() != "Windows":
+            return [ArtifactCheck("Windows Electron Authenticode", "unsupported", "Zip Authenticode validation requires Windows.")]
+        with tempfile.TemporaryDirectory(prefix="vps-3xui-windows-signature-") as temp_dir:
+            with ZipFile(path) as archive:
+                archive.extractall(temp_dir)
+            try:
+                launcher = windows_launcher_in_bundle(Path(temp_dir))
+            except FileNotFoundError as exc:
+                return [ArtifactCheck("Windows Electron bundle", "failed", str(exc))]
+            return check_windows_executable_signature(launcher, "Windows Electron Authenticode")
+    return [ArtifactCheck("Windows Electron bundle", "failed", f"Expected directory or zip: {path}")]
+
+
 def report_text(checks: list[ArtifactCheck]) -> str:
     rows = "\n".join(f"| {check.name} | {check.status} | `{check.detail}` |" for check in checks)
     return f"""# Signed Artifact Validation v{APP_VERSION}
@@ -142,6 +213,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Validate signed desktop artifacts without connecting to a VPS.")
     parser.add_argument("--macos-app", type=Path, help="Optional signed macOS .app bundle to validate.")
     parser.add_argument("--windows-installer", type=Path, help="Optional signed Windows installer .exe to validate.")
+    parser.add_argument("--windows-bundle", type=Path, help="Optional signed Windows Electron bundle directory or zip to validate.")
     parser.add_argument("--strict", action="store_true", help="Fail if any provided artifact validation fails.")
     parser.add_argument("--write-report", action="store_true", help="Write dist/SIGNED_ARTIFACT_VALIDATION_vX.Y.Z.md.")
     args = parser.parse_args()
@@ -149,6 +221,7 @@ def main() -> None:
     checks = [
         *check_macos_app(args.macos_app),
         *check_windows_installer(args.windows_installer),
+        *check_windows_bundle(args.windows_bundle),
     ]
     if args.write_report:
         print(write_report(checks))

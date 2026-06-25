@@ -2,13 +2,22 @@
 
 This folder is separate from the Codex Skill. It is an experimental packaging layer for turning the Streamlit tool into a local desktop-style app.
 
-Current approach:
+Current Python launcher approach:
 
 - keep `app.py` and the existing Python deployment modules
 - start Streamlit through `desktop_launcher.py`
 - open a local browser page automatically
 - package the launcher and project files with PyInstaller
 - bundle generated desktop icons for macOS and Windows test builds
+
+Electron shell approach:
+
+- start the same local Streamlit app from Electron
+- show the UI inside an Electron `BrowserWindow`
+- do not jump to Safari, Chrome, or another system browser
+- package the PyInstaller Streamlit sidecar inside the Electron app for double-click builds
+- keep logs and runtime data under the user's application data directory
+- do not connect to a VPS until the user clicks a deployment action in the UI
 
 Security boundaries stay the same:
 
@@ -43,6 +52,52 @@ Supported variables:
 - `VPS_3XUI_OPEN_BROWSER`: set to `0` to skip opening the browser automatically
 
 These options only affect the local launcher. They do not connect to a VPS.
+
+## Electron Desktop Window
+
+The Electron shell is the preferred productization path for a real desktop-style app window:
+
+```bash
+./start_electron_mac.sh
+```
+
+or:
+
+```bash
+npm install
+npm run electron:dev
+```
+
+The Electron shell starts Streamlit on a local loopback port and loads it inside an app window. It does not open the system browser and does not connect to a VPS by itself.
+
+To build the current macOS Electron app bundle:
+
+```bash
+npm run electron:build:mac
+```
+
+This deterministic builder rebuilds the PyInstaller Streamlit sidecar, copies Electron.app, embeds the app source under
+`Contents/Resources/app`, embeds the PyInstaller Streamlit sidecar under
+`Contents/Resources/streamlit-server`, updates `Info.plist`, then performs an
+ad-hoc codesign verification. The output is:
+
+```text
+dist/electron-app/VPS 3x-ui Oneclick.app
+```
+
+For faster local rebuilds while editing only the Electron shell:
+
+```bash
+python3 scripts/build_electron_bundle_macos.py --reuse-sidecar
+```
+
+To create a shareable local test package and copy it to `~/Downloads`:
+
+```bash
+npm run electron:release:mac
+```
+
+The packaged folder includes `README_FIRST.txt`, the `.app`, and `SHA256SUMS.txt`.
 
 ## macOS Double-Click Portable Launcher
 

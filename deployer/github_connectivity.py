@@ -21,6 +21,8 @@ GITHUB_CANDIDATE_IPS = (
     "140.82.121.4",
 )
 
+_COLLECT_CACHE: dict[tuple[bool, bool], list["GitHubConnectivityCheck"]] = {}
+
 
 @dataclass(frozen=True)
 class GitHubConnectivityCheck:
@@ -139,8 +141,8 @@ def check_configured_resolve() -> GitHubConnectivityCheck:
     )
 
 
-def ls_remote(extra_git_args: list[str] | None = None) -> tuple[int, str]:
-    return run_command(["git", *(extra_git_args or []), "ls-remote", "--exit-code", "origin", "HEAD"], timeout=20)
+def ls_remote(extra_git_args: list[str] | None = None, timeout: int = 3) -> tuple[int, str]:
+    return run_command(["git", *(extra_git_args or []), "ls-remote", "--exit-code", "origin", "HEAD"], timeout=timeout)
 
 
 def check_normal_reachability() -> GitHubConnectivityCheck:
@@ -157,7 +159,7 @@ def check_normal_reachability() -> GitHubConnectivityCheck:
 
 def test_candidate_ip(ip: str) -> GitHubConnectivityCheck:
     resolve_arg = f"http.curloptResolve=github.com:443:{ip}"
-    code, output = ls_remote(["-c", "http.version=HTTP/1.1", "-c", resolve_arg])
+    code, output = ls_remote(["-c", "http.version=HTTP/1.1", "-c", resolve_arg], timeout=6)
     if code == 0:
         return GitHubConnectivityCheck("Direct IP test", "pass", f"{ip} can reach origin HEAD.")
     return GitHubConnectivityCheck("Direct IP test", "pending", f"{ip} failed: {output or 'no output'}")
@@ -252,7 +254,7 @@ def check_git_credential() -> GitHubConnectivityCheck:
 
 def check_push_dry_run() -> GitHubConnectivityCheck:
     branch = git_output("branch", "--show-current") or "main"
-    code, output = run_command(["git", "push", "--dry-run", "origin", f"HEAD:{branch}"], timeout=25)
+    code, output = run_command(["git", "push", "--dry-run", "origin", f"HEAD:{branch}"], timeout=8)
     if code == 0:
         return GitHubConnectivityCheck("Git push dry-run", "pass", "Git can authenticate and simulate push without uploading.")
     if "could not read Username" in output or "Authentication failed" in output:
@@ -272,20 +274,30 @@ def check_push_dry_run() -> GitHubConnectivityCheck:
     return GitHubConnectivityCheck("Git push dry-run", "pending", output or "dry-run push failed with no output.")
 
 
-def collect_github_connectivity_checks(apply_repair: bool = False, include_dry_run: bool = True) -> list[GitHubConnectivityCheck]:
+def collect_github_connectivity_checks(
+    apply_repair: bool = False,
+    include_dry_run: bool = True,
+    include_direct_ip: bool = True,
+) -> list[GitHubConnectivityCheck]:
+    cache_key = (include_dry_run, include_direct_ip)
+    if not apply_repair and cache_key in _COLLECT_CACHE:
+        return list(_COLLECT_CACHE[cache_key])
     checks = [
         check_remote(),
         check_dns(),
         check_configured_resolve(),
         check_normal_reachability(),
-        check_direct_ip_reachability(),
     ]
+    if include_direct_ip or apply_repair:
+        checks.append(check_direct_ip_reachability())
     if apply_repair:
         checks.append(apply_direct_ip_repair())
         checks.append(check_normal_reachability())
     checks.append(check_git_credential())
     if include_dry_run:
         checks.append(check_push_dry_run())
+    if not apply_repair:
+        _COLLECT_CACHE[cache_key] = list(checks)
     return checks
 
 
@@ -333,7 +345,7 @@ def write_github_connectivity_report(
     dist_dir.mkdir(parents=True, exist_ok=True)
     path = dist_dir / f"GITHUB_CONNECTIVITY_v{version}.md"
     path.write_text(
-        github_connectivity_report_text(checks or collect_github_connectivity_checks(include_dry_run=False), version),
+        github_connectivity_report_text(checks or collect_github_connectivity_checks(include_dry_run=False, include_direct_ip=False), version),
         encoding="utf-8",
     )
     return path

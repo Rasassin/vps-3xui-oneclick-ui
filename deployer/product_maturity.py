@@ -23,11 +23,12 @@ def collect_maturity_gates() -> list[MaturityGate]:
         MaturityGate("Open-source project hygiene", 9, 9, "complete", "README, LICENSE, CONTRIBUTING, SECURITY, changelog, issue templates, and static CI are present."),
         MaturityGate("Release packaging and integrity", 12, 12, "complete", "Release bundle, portable package, checksums, manifests, and artifact verification are automated."),
         MaturityGate("Portable local launch experience", 10, 10, "complete", "Windows, macOS, and Linux launchers create a venv, install dependencies, and run the local UI."),
-        MaturityGate("Release and CI visibility", 8, 8, "complete", "Sidebar panels and reports cover release artifacts, publish readiness, update checks, and GitHub Actions status."),
-        MaturityGate("Desktop packaging scaffold", 8, 10, "partial", "PyInstaller, Windows installer scaffold, signing scripts, desktop icons, and local unsigned macOS artifact validation exist, but signed binaries are still experimental."),
+        MaturityGate("Release and CI visibility", 8, 8, "complete", "Local reports cover release artifacts, publish readiness, update checks, GitHub Actions status, and release channels without cluttering the user UI."),
+        MaturityGate("Desktop app packaging", 12, 12, "complete", "Electron macOS app, Electron Windows build scaffold, bundled Streamlit sidecar, deterministic local release packaging, PyInstaller fallback, installer scaffold, icons, and bundle validation exist."),
+        MaturityGate("Local user-facing macOS App package", 6, 6, "complete", "The Downloads App folder, zip, DMG, local app release report, checksums, duplicate-app check, and product check are automated."),
         MaturityGate("Signed and notarized binaries", 0, 8, "pending", "macOS notarization and Windows code signing are scaffolded but not producing trusted public binaries yet."),
         MaturityGate("Real VPS compatibility matrix", 2, 8, "partial", "The worksheet and local evidence recorder exist, but supported-provider VPS tests are still manual and not completed as release evidence."),
-        MaturityGate("Native app and update channel", 1, 3, "partial", "The update manifest has local validation and UI visibility, but automatic updates and a native Tauri-style UI are not implemented."),
+        MaturityGate("Native app and update channel", 2, 3, "partial", "The UI now runs in an Electron app window and the update manifest has local validation, but automatic updates are not implemented."),
     ]
 
 

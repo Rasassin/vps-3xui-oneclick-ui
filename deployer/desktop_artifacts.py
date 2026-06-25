@@ -18,6 +18,13 @@ class DesktopArtifact:
 
 
 def artifact_kind(path: Path) -> str:
+    text = str(path)
+    if path.suffix.lower() == ".dmg":
+        return "macOS Electron DMG"
+    if "Windows" in path.name and "Electron" in path.name:
+        return "Windows Electron zip"
+    if "electron-app" in text or "electron-release" in text or "Electron" in path.name:
+        return "macOS Electron app"
     suffix = path.suffix.lower()
     if suffix == ".app":
         return "macOS app"
@@ -34,19 +41,47 @@ def candidate_paths() -> list[Path]:
         return []
     candidates = [
         *dist_dir.glob("VPS*Oneclick*.app"),
+        *dist_dir.glob("electron-app/VPS*Oneclick*.app"),
+        *dist_dir.glob("electron-release/*/VPS*Oneclick*.app"),
         *dist_dir.glob("VPS*Oneclick*.exe"),
+        *dist_dir.glob("VPS*Oneclick*.dmg"),
         *dist_dir.glob("VPS*Oneclick*.zip"),
         *dist_dir.glob("VPS*3x-ui*.zip"),
+        *dist_dir.glob("electron-release/*/VPS*Oneclick*.zip"),
     ]
-    return sorted({path for path in candidates if path.exists()}, key=lambda item: item.name)
+    selected = []
+    for path in candidates:
+        if not path.exists():
+            continue
+        relative_parts = path.relative_to(dist_dir).parts
+        if any(part.endswith(".app") for part in relative_parts[:-1]):
+            continue
+        selected.append(path)
+    return sorted(set(selected), key=lambda item: str(item.relative_to(PROJECT_ROOT)))
+
+
+def is_electron_bundle(path: Path) -> bool:
+    text = str(path)
+    return path.suffix == ".app" and ("electron-app" in text or "electron-release" in text)
+
+
+def check_command_for_artifact(path: Path) -> list[str]:
+    if is_electron_bundle(path):
+        return ["python3", "scripts/check_electron_bundle.py", "--app", str(path)]
+    if path.suffix in {".zip", ".dmg"} and "Electron" in path.name:
+        return [
+            "python3",
+            "-c",
+            "from pathlib import Path; p=Path(__import__('sys').argv[1]); assert p.exists() and p.stat().st_size > 0; print('electron artifact checked:', p)",
+            str(path),
+        ]
+    if path.suffix == ".exe" and "Setup" in path.name:
+        return ["python3", "desktop/check_desktop_package.py", "--windows-installer", str(path)]
+    return ["python3", "desktop/check_desktop_package.py", "--built-artifact", str(path)]
 
 
 def check_artifact(path: Path) -> DesktopArtifact:
-    command = ["python3", "desktop/check_desktop_package.py"]
-    if path.suffix == ".exe" and "Setup" in path.name:
-        command.extend(["--windows-installer", str(path)])
-    else:
-        command.extend(["--built-artifact", str(path)])
+    command = check_command_for_artifact(path)
     result = subprocess.run(command, cwd=PROJECT_ROOT, text=True, capture_output=True)
     output = (result.stdout + "\n" + result.stderr).strip().replace("\n", " ")[:400]
     return DesktopArtifact(
@@ -73,7 +108,7 @@ def desktop_artifacts_overall_status(artifacts: list[DesktopArtifact]) -> str:
 def report_text(artifacts: list[DesktopArtifact], version: str = APP_VERSION) -> str:
     generated_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
     rows = "\n".join(
-        f"| {artifact.path.name} | {artifact.kind} | {artifact.status} | {artifact.size_bytes} | `{artifact.detail}` |"
+        f"| {artifact.path.relative_to(PROJECT_ROOT)} | {artifact.kind} | {artifact.status} | {artifact.size_bytes} | `{artifact.detail}` |"
         for artifact in artifacts
     )
     if not rows:

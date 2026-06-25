@@ -16,6 +16,8 @@ if str(SCRIPT_ROOT) not in sys.path:
 
 from deployer.config import APP_VERSION, PROJECT_ROOT
 from desktop.check_desktop_package import check_release_zip
+from scripts.check_external_release_packet import check_checksum as check_external_packet_checksum
+from scripts.check_external_release_packet import check_zip as check_external_packet_zip
 
 
 FORBIDDEN_ZIP_FILES = {
@@ -60,13 +62,14 @@ def verify_zip_contents(zip_path: Path) -> None:
 
 def verify_checksums(sums_path: Path) -> None:
     lines = [line for line in sums_path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    if len(lines) != 20:
+    if len(lines) != 31:
         raise SystemExit(
             "release artifact check failed: SHA256SUMS should list exactly source zip, release notes, "
-            "portable zip, product report, product maturity report, VPS compatibility report, update manifest, signing readiness report, "
+            "portable zip, product report, product maturity report, VPS compatibility report, VPS next-tests report, update manifest, signing readiness report, "
             "signed artifact validation report, go-live readiness report, release command checklist, "
-            "publish readiness report, publish plan report, GitHub connectivity report, CI readiness report, go-live dashboard, "
-            "release candidate report, desktop artifacts report, external release inputs report, and release channels report."
+            "publish readiness report, publish plan report, GitHub Desktop publish steps, GitHub connectivity report, CI readiness report, go-live dashboard, "
+            "release candidate report, desktop artifacts report, external release inputs report, external evidence report, external evidence command sheet, external operator guide, external next-actions report, external go/no-go report, external release consistency report, external release consistency JSON, release channels report, external handoff packet, "
+            "and external handoff checksums."
         )
     for line in lines:
         try:
@@ -232,6 +235,7 @@ def main() -> None:
     product_report_path = args.dist_dir / f"PRODUCT_READINESS_v{args.version}.md"
     maturity_report_path = args.dist_dir / f"PRODUCT_MATURITY_v{args.version}.md"
     vps_test_report_path = args.dist_dir / f"VPS_COMPATIBILITY_TEST_v{args.version}.md"
+    vps_next_tests_report_path = args.dist_dir / f"VPS_COMPATIBILITY_NEXT_TESTS_v{args.version}.md"
     update_manifest_path = args.dist_dir / f"update-manifest-v{args.version}.json"
     signing_report_path = args.dist_dir / f"SIGNING_READINESS_v{args.version}.md"
     signed_artifact_report_path = args.dist_dir / f"SIGNED_ARTIFACT_VALIDATION_v{args.version}.md"
@@ -239,18 +243,36 @@ def main() -> None:
     release_commands_path = args.dist_dir / f"RELEASE_COMMANDS_v{args.version}.md"
     publish_report_path = args.dist_dir / f"PUBLISH_READINESS_v{args.version}.md"
     publish_plan_path = args.dist_dir / f"PUBLISH_PLAN_v{args.version}.md"
+    github_desktop_steps_path = args.dist_dir / f"GITHUB_DESKTOP_PUBLISH_STEPS_v{args.version}.md"
     github_connectivity_report_path = args.dist_dir / f"GITHUB_CONNECTIVITY_v{args.version}.md"
     ci_report_path = args.dist_dir / f"CI_READINESS_v{args.version}.md"
     dashboard_report_path = args.dist_dir / f"GO_LIVE_DASHBOARD_v{args.version}.md"
     candidate_report_path = args.dist_dir / f"RELEASE_CANDIDATE_v{args.version}.md"
     desktop_artifacts_report_path = args.dist_dir / f"DESKTOP_ARTIFACTS_v{args.version}.md"
     external_inputs_report_path = args.dist_dir / f"EXTERNAL_RELEASE_INPUTS_v{args.version}.md"
+    external_evidence_report_path = args.dist_dir / f"EXTERNAL_RELEASE_EVIDENCE_v{args.version}.md"
+    external_evidence_commands_path = args.dist_dir / f"EXTERNAL_EVIDENCE_COMMANDS_v{args.version}.md"
+    external_operator_guide_path = args.dist_dir / f"EXTERNAL_OPERATOR_GUIDE_v{args.version}.md"
+    external_next_actions_path = args.dist_dir / f"EXTERNAL_NEXT_ACTIONS_v{args.version}.md"
+    external_go_no_go_path = args.dist_dir / f"EXTERNAL_GO_NO_GO_v{args.version}.md"
+    external_consistency_path = args.dist_dir / f"EXTERNAL_RELEASE_CONSISTENCY_v{args.version}.md"
+    external_consistency_json_path = args.dist_dir / f"EXTERNAL_RELEASE_CONSISTENCY_v{args.version}.json"
     release_channels_report_path = args.dist_dir / f"RELEASE_CHANNELS_v{args.version}.md"
+    external_packet_path = args.dist_dir / f"EXTERNAL_RELEASE_HANDOFF_v{args.version}.zip"
+    external_packet_checksum_path = args.dist_dir / f"SHA256SUMS_EXTERNAL_RELEASE_HANDOFF_v{args.version}.txt"
     sums_path = args.dist_dir / f"SHA256SUMS_v{args.version}.txt"
     manifest_path = args.dist_dir / f"release-manifest-v{args.version}.json"
-    core_asset_paths = [zip_path, notes_path, portable_zip_path, product_report_path, maturity_report_path, vps_test_report_path]
+    core_asset_paths = [
+        zip_path,
+        notes_path,
+        portable_zip_path,
+        product_report_path,
+        maturity_report_path,
+        vps_test_report_path,
+    ]
     release_asset_paths = [
         *core_asset_paths,
+        vps_next_tests_report_path,
         update_manifest_path,
         signing_report_path,
         signed_artifact_report_path,
@@ -258,13 +280,23 @@ def main() -> None:
         release_commands_path,
         publish_report_path,
         publish_plan_path,
+        github_desktop_steps_path,
         github_connectivity_report_path,
         ci_report_path,
         dashboard_report_path,
         candidate_report_path,
         desktop_artifacts_report_path,
         external_inputs_report_path,
+        external_evidence_report_path,
+        external_evidence_commands_path,
+        external_operator_guide_path,
+        external_next_actions_path,
+        external_go_no_go_path,
+        external_consistency_path,
+        external_consistency_json_path,
         release_channels_report_path,
+        external_packet_path,
+        external_packet_checksum_path,
     ]
     require_nonempty([*release_asset_paths, sums_path, manifest_path])
     check_release_zip(zip_path)
@@ -277,6 +309,8 @@ def main() -> None:
         args.allow_stale_source,
         [*release_asset_paths, sums_path],
     )
+    check_external_packet_zip(external_packet_path, args.version)
+    check_external_packet_checksum(external_packet_path, external_packet_checksum_path)
     print(f"release artifact check ok: v{args.version}")
 
 

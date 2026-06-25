@@ -5,6 +5,7 @@ import socket
 import subprocess
 import sys
 import time
+import http.client
 import urllib.error
 import urllib.request
 import webbrowser
@@ -14,10 +15,14 @@ from pathlib import Path
 
 APP_NAME = "VPS 3x-ui Oneclick"
 LAUNCHER_SAFETY_NOTE = "The desktop launcher starts only local Streamlit and does not connect to a VPS."
-DEFAULT_PORT = 8501
+DEFAULT_PORT = 18501
 DEFAULT_HOST = "127.0.0.1"
-DEFAULT_TIMEOUT = 45
+DEFAULT_TIMEOUT = 120
 LAUNCH_LOG = "desktop-launcher.log"
+PORT_SCAN_WINDOW = 20
+STREAMLIT_CHILD_FLAG = "--vps-3xui-streamlit-child"
+CHILD_HOST_ENV = "VPS_3XUI_CHILD_HOST"
+CHILD_PORT_ENV = "VPS_3XUI_CHILD_PORT"
 REQUIRED_RUNTIME_PATHS = (
     "app.py",
     "deployer",
@@ -82,21 +87,37 @@ def find_free_port(host: str, start: int = DEFAULT_PORT) -> int:
     raise RuntimeError("无法找到可用的本地端口。")
 
 
-def wait_for_streamlit(host: str, port: int, timeout: int = DEFAULT_TIMEOUT) -> bool:
+def health_check(host: str, port: int) -> bool:
+    connection = http.client.HTTPConnection(host, port, timeout=2)
+    try:
+        connection.request("GET", "/_stcore/health")
+        response = connection.getresponse()
+        body = response.read().decode("utf-8", errors="ignore").strip()
+        return response.status == 200 and body == "ok"
+    except (TimeoutError, socket.timeout, OSError, http.client.HTTPException):
+        return False
+    finally:
+        connection.close()
+
+
+def wait_for_streamlit(host: str, port: int, timeout: int = DEFAULT_TIMEOUT) -> int | None:
     deadline = time.time() + timeout
-    url = f"http://{host}:{port}/_stcore/health"
     while time.time() < deadline:
-        try:
-            with urllib.request.urlopen(url, timeout=2) as response:
-                if response.read().decode("utf-8", errors="ignore").strip() == "ok":
-                    return True
-        except (urllib.error.URLError, TimeoutError):
-            time.sleep(0.5)
-    return False
+        for candidate_port in range(port, min(port + PORT_SCAN_WINDOW + 1, 65536)):
+            if health_check(host, candidate_port):
+                return candidate_port
+        time.sleep(0.5)
+    return None
+
+
+def is_frozen_app() -> bool:
+    return bool(getattr(sys, "frozen", False))
 
 
 def build_streamlit_command(root: Path, host: str, port: int) -> list[str]:
     app_path = root / "app.py"
+    if is_frozen_app():
+        return [sys.executable, STREAMLIT_CHILD_FLAG]
     return [
         sys.executable,
         "-m",
@@ -116,6 +137,30 @@ def build_streamlit_command(root: Path, host: str, port: int) -> list[str]:
     ]
 
 
+def run_streamlit_in_process(root: Path, host: str, port: int) -> int:
+    from streamlit.web import bootstrap
+
+    app_path = root / "app.py"
+    flag_options = {
+        "global.developmentMode": False,
+        "server.address": host,
+        "server.port": port,
+        "server.headless": True,
+        "server.fileWatcherType": "none",
+        "browser.gatherUsageStats": False,
+    }
+    bootstrap.load_config_options(flag_options=flag_options)
+    bootstrap.run(str(app_path), False, [], flag_options)
+    return 0
+
+
+def run_streamlit_child() -> int:
+    root = resource_root()
+    host = os.environ.get(CHILD_HOST_ENV, DEFAULT_HOST)
+    port = env_int(CHILD_PORT_ENV, DEFAULT_PORT, 1024, 65535)
+    return run_streamlit_in_process(root, host, port)
+
+
 def check_runtime_dependencies() -> list[str]:
     missing = []
     for module_name in ["streamlit", "paramiko", "qrcode", "PIL"]:
@@ -133,7 +178,15 @@ def validate_runtime_files(root: Path) -> list[str]:
 
 
 def launcher_log_path(root: Path) -> Path:
-    output_dir = root / "output"
+    if is_frozen_app():
+        if sys.platform == "darwin":
+            output_dir = Path.home() / "Library" / "Application Support" / APP_NAME / "logs"
+        elif sys.platform.startswith("win"):
+            output_dir = Path.home() / "AppData" / "Local" / APP_NAME / "logs"
+        else:
+            output_dir = Path.home() / ".local" / "share" / "vps-3xui-oneclick-ui" / "logs"
+    else:
+        output_dir = root / "output"
     output_dir.mkdir(parents=True, exist_ok=True)
     return output_dir / LAUNCH_LOG
 
@@ -148,7 +201,25 @@ def stop_process(process: subprocess.Popen[str]) -> None:
         process.kill()
 
 
+def tail_text(path: Path, lines: int = 40) -> str:
+    try:
+        content = path.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return ""
+    return "\n".join(content[-lines:])
+
+
+def announce(message: str, log_file: object | None = None) -> None:
+    print(message, flush=True)
+    if log_file is not None:
+        log_file.write(f"{message}\n")
+        log_file.flush()
+
+
 def main() -> int:
+    if STREAMLIT_CHILD_FLAG in sys.argv:
+        return run_streamlit_child()
+
     root = resource_root()
     app_path = root / "app.py"
     if not app_path.exists():
@@ -175,6 +246,8 @@ def main() -> int:
     env = os.environ.copy()
     env["PYTHONPATH"] = str(root) + os.pathsep + env.get("PYTHONPATH", "")
     env["STREAMLIT_BROWSER_GATHER_USAGE_STATS"] = "false"
+    env[CHILD_HOST_ENV] = host
+    env[CHILD_PORT_ENV] = str(port)
 
     command = build_streamlit_command(root, host, port)
     log_path = launcher_log_path(root)
@@ -183,18 +256,23 @@ def main() -> int:
     log_file.write(f"{LAUNCHER_SAFETY_NOTE}\n")
     log_file.flush()
     process = subprocess.Popen(command, cwd=str(root), env=env, stdout=log_file, stderr=subprocess.STDOUT)
-    url = f"http://{host}:{port}"
 
     try:
-        if wait_for_streamlit(host, port, timeout):
-            print(f"{APP_NAME} 已启动：{url}")
-            print(f"启动日志：{log_path}")
+        actual_port = wait_for_streamlit(host, port, timeout)
+        if actual_port is not None:
+            url = f"http://{host}:{actual_port}"
+            announce(f"{APP_NAME} 已启动：{url}", log_file)
+            announce(f"启动日志：{log_path}", log_file)
             if open_browser:
                 webbrowser.open(url)
             else:
-                print("已按 VPS_3XUI_OPEN_BROWSER=0 跳过自动打开浏览器。")
+                announce("已按 VPS_3XUI_OPEN_BROWSER=0 跳过自动打开浏览器。", log_file)
         else:
-            print(f"{APP_NAME} 启动超时，请查看日志：{log_path}")
+            announce(f"{APP_NAME} 启动超时，请查看日志：{log_path}", log_file)
+            recent_log = tail_text(log_path)
+            if recent_log:
+                announce("最近启动日志：")
+                announce(recent_log)
             stop_process(process)
             return process.poll() or 1
 

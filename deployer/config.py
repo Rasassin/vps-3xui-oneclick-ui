@@ -1,13 +1,29 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import sys
 from pathlib import Path
 
 
 APP_VERSION = "1.55.0"
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-OUTPUT_DIR = PROJECT_ROOT / "output"
-DATA_DIR = PROJECT_ROOT / "data"
+
+
+def _app_support_dir() -> Path:
+    if sys.platform == "darwin":
+        return Path.home() / "Library" / "Application Support" / "VPS 3x-ui Oneclick"
+    if sys.platform.startswith("win"):
+        return Path.home() / "AppData" / "Local" / "VPS 3x-ui Oneclick"
+    return Path.home() / ".local" / "share" / "vps-3xui-oneclick-ui"
+
+
+def _is_frozen_app() -> bool:
+    return bool(getattr(sys, "frozen", False))
+
+
+RUNTIME_DATA_ROOT = _app_support_dir() if _is_frozen_app() else PROJECT_ROOT
+OUTPUT_DIR = RUNTIME_DATA_ROOT / "output"
+DATA_DIR = RUNTIME_DATA_ROOT / "data"
 PROFILES_FILE = DATA_DIR / "profiles.json"
 LAST_SUCCESS_DIR = OUTPUT_DIR / "_last_success"
 REMOTE_SCRIPT = PROJECT_ROOT / "remote_scripts" / "install_remote.sh"

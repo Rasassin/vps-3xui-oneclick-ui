@@ -19,13 +19,17 @@ class PublishStep:
     command: str = ""
 
 
-def run_git(*args: str) -> tuple[int, str]:
-    result = subprocess.run(
-        ["git", *args],
-        cwd=PROJECT_ROOT,
-        text=True,
-        capture_output=True,
-    )
+def run_git(*args: str, timeout: int = 3) -> tuple[int, str]:
+    try:
+        result = subprocess.run(
+            ["git", *args],
+            cwd=PROJECT_ROOT,
+            text=True,
+            capture_output=True,
+            timeout=timeout,
+        )
+    except subprocess.TimeoutExpired:
+        return 124, f"git {' '.join(args)} timed out after {timeout}s"
     return result.returncode, (result.stdout + result.stderr).strip()
 
 
@@ -75,6 +79,9 @@ def tag_step(version: str) -> PublishStep:
 
 def push_tag_step(version: str) -> PublishStep:
     tag_name = f"v{version}"
+    tag_ref = git_output("rev-parse", "-q", "--verify", f"refs/tags/{tag_name}")
+    if not tag_ref:
+        return PublishStep("Push tag", "pending", f"Local tag {tag_name} does not exist yet.", f"git push origin {tag_name}")
     code, output = run_git("ls-remote", "--tags", "origin", f"refs/tags/{tag_name}")
     if code == 0 and tag_name in output:
         return PublishStep("Push tag", "pass", f"Remote tag {tag_name} exists.")
@@ -108,7 +115,7 @@ def github_auth_step() -> PublishStep:
 
 
 def connectivity_step() -> PublishStep:
-    checks = collect_github_connectivity_checks(include_dry_run=False)
+    checks = collect_github_connectivity_checks(include_dry_run=False, include_direct_ip=False)
     status = github_connectivity_overall_status(checks)
     blocking = [check for check in checks if check.status != "pass"]
     if not blocking:

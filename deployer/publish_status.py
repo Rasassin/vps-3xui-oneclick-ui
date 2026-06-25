@@ -83,10 +83,13 @@ def check_release_tag(version: str) -> PublishCheck:
 
 
 def check_git_remote_reachable() -> PublishCheck:
-    code, output = run_command(["git", "ls-remote", "--exit-code", "origin", "HEAD"], timeout=15)
-    if code == 0:
-        return PublishCheck("GitHub remote reachability", "pass", "origin HEAD is reachable.")
-    return PublishCheck("GitHub remote reachability", "pending", output or "no output")
+    checks = collect_github_connectivity_checks(include_dry_run=False, include_direct_ip=False)
+    reachability = next((check for check in checks if check.name == "GitHub reachability"), None)
+    if reachability and reachability.status == "pass":
+        return PublishCheck("GitHub remote reachability", "pass", reachability.detail)
+    if reachability:
+        return PublishCheck("GitHub remote reachability", "pending", reachability.detail)
+    return PublishCheck("GitHub remote reachability", "pending", "GitHub reachability check was not available.")
 
 
 def check_gh_auth() -> PublishCheck:
@@ -99,7 +102,7 @@ def check_gh_auth() -> PublishCheck:
 
 
 def check_github_connectivity() -> PublishCheck:
-    checks = collect_github_connectivity_checks(include_dry_run=False)
+    checks = collect_github_connectivity_checks(include_dry_run=False, include_direct_ip=False)
     status = github_connectivity_overall_status(checks)
     blocking = [check for check in checks if check.status != "pass"]
     if not blocking:
